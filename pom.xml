@@ -94,7 +94,7 @@
         <repository>
             <id>internal.repo</id>
             <name>Internal repo</name>
-            <url>file:D:\\Desktop\\Rozne - potencjalnie potrzebne\\Programing\\Charactermancer\\mvn-out\\</url>
+            <url>file:./out/mvn/</url>
         </repository>
     </distributionManagement>
 </project>

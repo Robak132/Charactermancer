@@ -15,14 +15,13 @@ public class Main {
     final Connection connection;
     CharacterSheet sheet;
 
-    private JComboBox<ImageIcon> comboBox1;
-    private JButton createcharButton;
-    private JButton createsheetButton;
+    JComboBox<ImageIcon> comboBox1;
+    JButton createcharButton;
+    JButton createsheetButton;
     JPanel mainPanel;
 
     public static void main(String[] args) {
         languagePack = new LanguagePack(0);
-
         frame = new JFrame("Charactermancer");
         startPanel = new Main().mainPanel;
         frame.setContentPane(startPanel);

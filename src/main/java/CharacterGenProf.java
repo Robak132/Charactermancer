@@ -69,10 +69,12 @@ public class CharacterGenProf {
             try {
                 if (Integer.parseInt(rollResult1.getText()) > 0 && Integer.parseInt(rollResult1.getText()) <= 100) {
                     rollResultNumeric1 = Integer.parseInt(rollResult1.getText());
-                    profList.add(connection.getProfFromTable(sheet.getRase().getId(), rollResultNumeric1));
-                    Profession prof = profList.get(0);
+                    Profession prof = connection.getProfFromTable(sheet.getRase().getId(), rollResultNumeric1);
+                    profList.add(prof);
                     rollResultField1a.setText(prof.getCareer());
                     rollResultField1b.setText(prof.getProfession());
+                    rollResultField2a.setText(prof.getCareer());
+                    rollResultField2b.setText(prof.getProfession());
                     changePhase1(false);
                     Phase2.setVisible(true);
                 }
