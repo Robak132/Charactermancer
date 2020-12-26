@@ -1,4 +1,3 @@
-import mappings.ProfTable;
 import mappings.Profession;
 import mappings.Rase;
 import mappings.RaseTable;
@@ -14,6 +13,8 @@ import org.hibernate.query.Query;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Connection {
     private StandardServiceRegistry registry;
@@ -45,6 +46,7 @@ public class Connection {
             Query SQLQuery = session.createQuery("SELECT r FROM RaseTable t, Rase r WHERE t.IDrase = r.id AND t.id = :param");
             SQLQuery.setParameter("param", n);
             rase = (Rase) SQLQuery.list().get(0);
+            session.close();
         } catch (Exception ex) {
             abort();
         }
@@ -57,6 +59,7 @@ public class Connection {
             Query SQLQuery = session.createQuery("FROM Rase WHERE name = :param");
             SQLQuery.setParameter("param", name);
             rase = (Rase) SQLQuery.list().get(0);
+            session.close();
         } catch (Exception ex) {
             abort();
         }
@@ -70,10 +73,23 @@ public class Connection {
             SQLQuery.setParameter("param1", n);
             SQLQuery.setParameter("param2", rase);
             prof = (Profession) SQLQuery.list().get(0);
+            session.close();
         } catch (Exception ex) {
             abort();
         }
         return prof;
+    }
+    List getProfs() {
+        List profs = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query SQLQuery = session.createQuery("FROM Profession WHERE level=1 AND clss!='Zwierzęta'");
+            profs = SQLQuery.list();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+        }
+        return profs;
     }
     void recover() {
         try {

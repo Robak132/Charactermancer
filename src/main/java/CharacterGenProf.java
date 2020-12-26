@@ -1,6 +1,9 @@
 import mappings.Profession;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
 
@@ -15,10 +18,9 @@ public class CharacterGenProf {
     private JTextField rollResultField1a;
     private JButton rollButton1;
     private JButton okButton1;
-    private JButton SELECTButton;
-    private JTextField rollResultField;
+    private JButton SELECTButton5;
     private JComboBox<String> comboBox1;
-    private JPanel Results;
+    private JPanel Phase3;
     private JButton backButton;
     private JLabel charcreation;
     private JPanel Phase2;
@@ -39,6 +41,8 @@ public class CharacterGenProf {
     private JButton SELECTButton3;
     private JButton SELECTButton4;
     private JButton SELECTButton1;
+    private JLabel rollLabel;
+    private JComboBox<String> comboBox;
 
     int rollResultNumeric1, rollResultNumeric2;
     List<Profession> profList;
@@ -51,6 +55,7 @@ public class CharacterGenProf {
         sheet = _sheet;
         expField.setText("" + sheet.getExp());
         profList = new ArrayList<>();
+        fillCombos();
 
         // Phase 1 //
         rollButton1.addActionListener(e -> {
@@ -85,6 +90,8 @@ public class CharacterGenProf {
 
         // Phase 2 //
         rollButton2.addActionListener(e -> {
+            rollResult2.setForeground(Color.BLACK);
+            rollLabel.setVisible(false);
             Profession prof;
             if (profList.size() < 3) {
                 do {
@@ -94,19 +101,29 @@ public class CharacterGenProf {
                 } while (profList.contains(prof));
                 profList.add(prof);
             }
-            switch (profList.size()) {
-                case 3:
-                    rollResultField4a.setText(profList.get(2).getCareer());
-                    rollResultField4b.setText(profList.get(2).getProfession());
-                    changePhase2(false);
-                    changePhase2Results(true);
-                case 2:
-                    rollResultField3a.setText(profList.get(1).getCareer());
-                    rollResultField3b.setText(profList.get(1).getProfession());
-                    break;
-                default:
-                    break;
+            updateFields();
+            Phase2Results.setVisible(true);
+            Phase1.setVisible(false);
+        });
+        okButton2.addActionListener(e -> {
+            try {
+                if (Integer.parseInt(rollResult2.getText()) > 0 && Integer.parseInt(rollResult2.getText()) <= 100) {
+                    rollResultNumeric2 = Integer.parseInt(rollResult2.getText());
+                    Profession prof = connection.getProfFromTable(sheet.getRase().getId(), rollResultNumeric2);
+                    if (!profList.contains(prof)) {
+                        rollResult2.setForeground(Color.BLACK);
+                        rollLabel.setVisible(false);
+                        profList.add(prof);
+                    }
+                    else {
+                        rollResult2.setForeground(Color.RED);
+                        rollLabel.setVisible(true);
+                    }
+                }
+            } catch (Exception ex) {
+                rollResult2.setText("");
             }
+            updateFields();
             Phase2Results.setVisible(true);
             Phase1.setVisible(false);
         });
@@ -117,27 +134,51 @@ public class CharacterGenProf {
             frame.validate();
         });
     }
-
+    void updateFields() {
+        switch (profList.size()) {
+            case 3:
+                rollResultField4a.setText(profList.get(2).getCareer());
+                rollResultField4b.setText(profList.get(2).getProfession());
+                changePhase2(false);
+                changePhase2Results(true);
+                Phase3.setVisible(true);
+            case 2:
+                rollResultField3a.setText(profList.get(1).getCareer());
+                rollResultField3b.setText(profList.get(1).getProfession());
+                break;
+            default:
+                break;
+        }
+    }
     void changePhase1(boolean status) {
         rollButton1.setEnabled(status);
         rollResult1.setEditable(status);
         okButton1.setEnabled(status);
     }
-
     void changePhase2(boolean status) {
-        rollButton2.setEnabled(status);
-        rollResult2.setEditable(status);
-        okButton2.setEnabled(status);
+        rollButton2.setVisible(status);
+        rollResult2.setVisible(status);
+        okButton2.setVisible(status);
     }
-
     void changePhase2Results(boolean status) {
         SELECTButton2.setEnabled(status);
         SELECTButton3.setEnabled(status);
         SELECTButton4.setEnabled(status);
     }
 
+    void fillCombos() {
+        List list = connection.getProfs();
+        comboBox.addItem("");
+        comboBox1.addItem("");
+        for (Object prof:list) {
+            Profession temp = (Profession) prof;
+            if(((DefaultComboBoxModel)comboBox.getModel()).getIndexOf(temp.getClss()) == -1)
+                comboBox.addItem(temp.getClss());
+            if(((DefaultComboBoxModel)comboBox1.getModel()).getIndexOf(temp.getProfession()) == -1)
+                comboBox1.addItem(temp.getProfession());
+        }
+    }
     public int randomIntInRange(int min, int max) {
         return min + new Random().nextInt(max - min + 1);
     }
-
 }

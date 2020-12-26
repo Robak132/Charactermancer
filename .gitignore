@@ -8,5 +8,7 @@
 /.idea
 /.mvn
 /target
-/mvn-out
 /out
+./database_backup.h2.db
+./database_backup_2.h2.db
+./database.trace.db

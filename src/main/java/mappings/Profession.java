@@ -166,4 +166,17 @@ public class Profession {
     public void setProfList(List<ProfTable> tableList) {
         this.profList = profList;
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof Profession)) {
+            return false;
+        }
+        Profession c = (Profession) o;
+        return Integer.compare(id, c.id) == 0;
+    }
 }
