@@ -1,0 +1,13 @@
+createchar;;Stwórz bohatera Gracza;;Create Player Character
+createsheet;;Stwórz kartę postaci;;Create Character Sheet
+back;;Powrót;;Back
+forward;;Dalej;;Forward
+select;;Wybierz;;Select
+charcreation;;Tworzenie Bohatera;;Character Creation
+human;;Człowiek;;Human
+halfling;;Niziołek;;Halfling
+dwarf;;Krasnolud;;Dwarf
+gnome;;Gnom;;Gnome
+woodelf;;Leśny elf;;Wood Elf
+highelf;;Wysoki elf;;High Elf
+exit;;Wyjdź;;Exit
