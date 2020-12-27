@@ -11,6 +11,7 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.query.Query;
 
 import java.io.File;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -30,7 +31,12 @@ public class Connection {
         refresh();
     }
     private void refresh() {
-        registry = new StandardServiceRegistryBuilder().configure("hibernate.cfg.xml").build();
+        URL path = Connection.class.getResource("Connection.class");
+        if(path.toString().startsWith("jar:"))
+            registry = new StandardServiceRegistryBuilder().configure("hibernate_jar.cfg.xml").build();
+        else
+            registry = new StandardServiceRegistryBuilder().configure("hibernate.cfg.xml").build();
+
         Metadata meta = new MetadataSources(registry).getMetadataBuilder().build();
         factory = meta.getSessionFactoryBuilder().build();
     }

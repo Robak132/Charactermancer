@@ -33,7 +33,7 @@ public class LanguagePack {
                 line = br.readLine();
             }
         } catch (Exception e) {
-            System.out.print("Language Pack not loaded.");
+            System.out.print("Language Pack not loaded.\n");
         }
     }
 
@@ -42,7 +42,7 @@ public class LanguagePack {
             String[] record = map.get(code);
             return record[language_code];
         } catch (Exception ex) {
-            System.out.print("Invalid code");
+            System.out.print("Invalid code: " + code + "\n");
             return code;
         }
     }

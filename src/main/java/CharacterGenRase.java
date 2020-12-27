@@ -43,6 +43,7 @@ public class CharacterGenRase {
         comboBox.addItem(languagePack.localise("gnome"));
         comboBox.addItem(languagePack.localise("highelf"));
         comboBox.addItem(languagePack.localise("woodelf"));
+        repaint();
 
         // Phase 1 //
         rollButton.addActionListener(e -> {
