@@ -1,6 +1,7 @@
 import mappings.Profession;
 import mappings.Rase;
 import mappings.RaseTable;
+import mappings.Skill;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -96,21 +97,5 @@ public class Connection {
             abort();
         }
         return profs;
-    }
-    void recover() {
-        try {
-            Session session = factory.openSession();
-            Transaction tx = session.beginTransaction();
-
-            for (int i=1;i<101;i++) {
-                //System.out.print(i+"\t"+i%101+"\t"+(i/101+1)+ "\n");
-                RaseTable table = new RaseTable(i, 1);
-                session.save(table);
-            }
-            tx.commit();
-            session.close();
-        } catch (Exception ex) {
-            abort();
-        }
     }
 }

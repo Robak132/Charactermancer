@@ -4,14 +4,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.*;
 
 public class CharacterGenRase {
     JFrame frame;
-    JPanel mainPanel, previous_panel, next_panel;
+    JPanel mainPanel;
+
     LanguagePack languagePack;
     Connection connection;
     CharacterSheet sheet;
+
+    Main previous_screen;
+    CharacterGenProf next_screen;
 
     JTextField rollResult;
     JButton rollButton;
@@ -29,9 +35,9 @@ public class CharacterGenRase {
     int rollResultNumeric;
     Rase rollRase;
 
-    public CharacterGenRase(JFrame _frame, JPanel _panel, LanguagePack _languagepack, Connection _connection, CharacterSheet _sheet) {
+    public CharacterGenRase(JFrame _frame, Main _screen, LanguagePack _languagepack, Connection _connection, CharacterSheet _sheet) {
         frame = _frame;
-        previous_panel = _panel;
+        previous_screen = _screen;
         languagePack = _languagepack;
         connection = _connection;
         sheet = _sheet;
@@ -44,6 +50,7 @@ public class CharacterGenRase {
         comboBox.addItem(languagePack.localise("highelf"));
         comboBox.addItem(languagePack.localise("woodelf"));
         repaint();
+        update_data();
 
         // Phase 1 //
         rollButton.addActionListener(e -> {
@@ -71,9 +78,9 @@ public class CharacterGenRase {
             comboBox.setSelectedItem(rollResultField.getText());
             sheet.setRase(rollRase);
             sheet.addExp(20);
-            expField.setText("" + sheet.getExp());
-            next_panel = new CharacterGenProf(frame, mainPanel, languagePack, connection, sheet).mainPanel;
-            frame.setContentPane(next_panel);
+            update_data();
+            next_screen = new CharacterGenProf(frame, this, languagePack, connection, sheet);
+            frame.setContentPane(next_screen.mainPanel);
             frame.validate();
             forwardButton.setEnabled(true);
             forwardButton.setVisible(true);
@@ -82,8 +89,8 @@ public class CharacterGenRase {
         SELECT2Button.addActionListener(e -> {
             rollResultField.setText(comboBox.getSelectedItem().toString());
             sheet.setRase(connection.getRase(comboBox.getSelectedItem().toString()));
-            next_panel = new CharacterGenProf(frame, mainPanel, languagePack, connection, sheet).mainPanel;
-            frame.setContentPane(next_panel);
+            next_screen = new CharacterGenProf(frame, this, languagePack, connection, sheet);
+            frame.setContentPane(next_screen.mainPanel);
             frame.validate();
             forwardButton.setEnabled(true);
             forwardButton.setVisible(true);
@@ -92,15 +99,17 @@ public class CharacterGenRase {
 
         // Navigation //
         exitButton.addActionListener(e -> {
-            frame.setContentPane(previous_panel);
+            frame.setContentPane(previous_screen.mainPanel);
             frame.validate();
         });
         forwardButton.addActionListener(e -> {
-            frame.setContentPane(next_panel);
+            frame.setContentPane(next_screen.mainPanel);
             frame.validate();
         });
     }
-
+    void update_data() {
+        expField.setText("" + sheet.getExp());
+    }
     void changePhase2(boolean status) {
         SELECT1Button.setEnabled(status);
         SELECT2Button.setEnabled(status);

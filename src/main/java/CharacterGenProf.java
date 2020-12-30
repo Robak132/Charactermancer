@@ -2,14 +2,14 @@ import mappings.Profession;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
 
 public class CharacterGenProf {
     JFrame frame;
-    JPanel mainPanel, previous_panel;
+    JPanel mainPanel;
+    CharacterGenRase previous_screen;
+    CharacterGenAttr next_screen;
     LanguagePack languagePack;
     Connection connection;
     CharacterSheet sheet;
@@ -43,19 +43,20 @@ public class CharacterGenProf {
     private JButton SELECTButton1;
     private JLabel rollLabel;
     private JComboBox<String> comboBox;
+    private JButton forwardButton;
 
     int rollResultNumeric1, rollResultNumeric2;
     List<Profession> profList;
 
-    public CharacterGenProf(JFrame _frame, JPanel _panel, LanguagePack _languagepack, Connection _connection, CharacterSheet _sheet) {
+    public CharacterGenProf(JFrame _frame, CharacterGenRase _screen, LanguagePack _languagepack, Connection _connection, CharacterSheet _sheet) {
         frame = _frame;
-        previous_panel = _panel;
+        previous_screen = _screen;
         languagePack = _languagepack;
         connection = _connection;
         sheet = _sheet;
-        expField.setText("" + sheet.getExp());
         profList = new ArrayList<>();
         fillCombos();
+        update_data();
 
         // Phase 1 //
         rollButton1.addActionListener(e -> {
@@ -86,6 +87,18 @@ public class CharacterGenProf {
             } catch (Exception ex) {
                 rollResult1.setText("");
             }
+        });
+        SELECTButton1.addActionListener(e -> {
+            sheet.setProf(profList.get(0));
+            sheet.addExp(50);
+            update_data();
+            next_screen = new CharacterGenAttr(frame, mainPanel, languagePack, connection, sheet);
+            frame.setContentPane(next_screen.mainPanel);
+            frame.validate();
+            forwardButton.setEnabled(true);
+            forwardButton.setVisible(true);
+            SELECTButton1.setEnabled(false);
+            setEnabledPhase2(false);
         });
 
         // Phase 2 //
@@ -130,7 +143,12 @@ public class CharacterGenProf {
 
         // Navigation //
         backButton.addActionListener(e -> {
-            frame.setContentPane(previous_panel);
+            previous_screen.update_data();
+            frame.setContentPane(previous_screen.mainPanel);
+            frame.validate();
+        });
+        forwardButton.addActionListener(e -> {
+            frame.setContentPane(next_screen.mainPanel);
             frame.validate();
         });
     }
@@ -139,7 +157,7 @@ public class CharacterGenProf {
             case 3:
                 rollResultField4a.setText(profList.get(2).getCareer());
                 rollResultField4b.setText(profList.get(2).getProfession());
-                changePhase2(false);
+                setVisiblePhase2(false);
                 changePhase2Results(true);
                 Phase3.setVisible(true);
             case 2:
@@ -155,10 +173,15 @@ public class CharacterGenProf {
         rollResult1.setEditable(status);
         okButton1.setEnabled(status);
     }
-    void changePhase2(boolean status) {
+    void setVisiblePhase2(boolean status) {
         rollButton2.setVisible(status);
         rollResult2.setVisible(status);
         okButton2.setVisible(status);
+    }
+    void setEnabledPhase2(boolean status) {
+        rollButton2.setEnabled(status);
+        rollResult2.setEnabled(status);
+        okButton2.setEnabled(status);
     }
     void changePhase2Results(boolean status) {
         SELECTButton2.setEnabled(status);
@@ -166,6 +189,9 @@ public class CharacterGenProf {
         SELECTButton4.setEnabled(status);
     }
 
+    void update_data() {
+        expField.setText("" + sheet.getExp());
+    }
     void fillCombos() {
         List list = connection.getProfs();
         comboBox.addItem("");

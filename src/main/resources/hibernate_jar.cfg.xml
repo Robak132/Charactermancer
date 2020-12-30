@@ -14,5 +14,6 @@
         <mapping class="mappings.ProfTable" />
         <mapping class="mappings.Rase" />
         <mapping class="mappings.Profession" />
+        <mapping class="mappings.Skill" />
     </session-factory>
 </hibernate-configuration>
