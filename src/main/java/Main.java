@@ -33,7 +33,7 @@ public class Main {
         comboBox1.addItem(new ImageIcon("src/main/resources/images/pl.gif"));
         comboBox1.addItem(new ImageIcon("src/main/resources/images/eng.gif"));
         createcharButton.addActionListener(e -> {
-            frame.setContentPane(new CharacterGenRase(frame, this, languagePack, connection, sheet).mainPanel);
+            frame.setContentPane(new CharacterGenRace(frame, this, languagePack, connection, sheet).mainPanel);
             frame.validate();
         });
         createsheetButton.addActionListener(e -> {
@@ -45,9 +45,7 @@ public class Main {
             repaint();
         });
     }
-    void update_data() {
-
-    }
+    void update_data() { }
     void repaint() {
         createcharButton.setText(languagePack.localise(createcharButton.getName()));
         createsheetButton.setText(languagePack.localise(createsheetButton.getName()));

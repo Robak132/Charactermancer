@@ -6,7 +6,7 @@
         <setting name="validation-enabled" value="true" />
         <setting name="provider-name" value="Hibernate" />
         <datasource-mapping>
-          <factory-entry name="Charactermancer" />
+          <factory-entry name="Charactermancer" value="4e29e2dc-17fc-41f3-b235-90f0c2bf91f8" />
         </datasource-mapping>
         <naming-strategy-map />
       </configuration>
