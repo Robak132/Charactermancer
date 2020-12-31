@@ -11,14 +11,14 @@ public class ProfTable {
     private int id;
     private int index;
     private int IDprof;
-    private int IDrase;
+    private int IDrace;
 
     public ProfTable() {}
-    public ProfTable(int id, int IDprof, int index, int IDrase) {
+    public ProfTable(int id, int IDprof, int index, int IDrace) {
         this.id = id;
         this.index = index;
         this.IDprof = IDprof;
-        this.IDrase = IDrase;
+        this.IDrace = IDrace;
     }
 
     @Id
@@ -46,11 +46,11 @@ public class ProfTable {
         this.index = index;
     }
 
-    @Column(name = "IDRASE")
-    public void setIDrase(int IDrase) {
-        this.IDrase = IDrase;
+    @Column(name = "IDRACE")
+    public void setIDrace(int IDrace) {
+        this.IDrace = IDrace;
     }
-    public int getIDrase() {
-        return IDrase;
+    public int getIDrace() {
+        return IDrace;
     }
 }

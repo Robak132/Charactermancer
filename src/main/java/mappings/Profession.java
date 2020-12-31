@@ -15,7 +15,7 @@ public class Profession {
     @Column(name = "CAREER")
     private String career;
     @Column(name = "PROFESSION")
-    private String profession;;
+    private String profession;
     @Column(name = "PROFESSIONENG")
     private String professioneng;
     @Column(name = "LEVEL")
@@ -163,7 +163,7 @@ public class Profession {
     public List<ProfTable> getProfList() {
         return profList;
     }
-    public void setProfList(List<ProfTable> tableList) {
+    public void setProfList(List<ProfTable> profList) {
         this.profList = profList;
     }
 
@@ -177,6 +177,6 @@ public class Profession {
             return false;
         }
         Profession c = (Profession) o;
-        return Integer.compare(id, c.id) == 0;
+        return id == c.id;
     }
 }

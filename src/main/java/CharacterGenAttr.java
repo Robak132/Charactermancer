@@ -49,12 +49,24 @@ public class CharacterGenAttr {
     private JButton okButton;
     private JPanel Phase1;
     private JLabel descLabel;
-    private JButton SELECTButton;
+    private JButton SELECTButton1;
     private JPanel Phase2;
-    private JButton button1;
+    private JButton SELECTButton2;
+    private JButton SELECTButton3;
+    private JButton pButton1;
+    private JButton pButton2;
+    private JButton pButton3;
+    private JButton pButton4;
+    private JButton pButton5;
+    private JButton pButton6;
+    private JButton pButton7;
+    private JButton pButton8;
+    private JButton pButton9;
+    private JButton pButton0;
 
     int rollResultNumeric;
     List<JTextField> AAttr, BAttr, TAttr;
+    List<JButton> PButtons;
     List<Integer> AAttr_num, BAttr_num, TAttr_num;
     int aattr_it=0;
 
@@ -81,9 +93,17 @@ public class CharacterGenAttr {
             }
             if (aattr_it == AAttr.size()) {
                 descLabel.setVisible(false);
-                rollButton.setVisible(false);
-                okButton.setVisible(false);
+                rollButton.setEnabled(false);
+                okButton.setEnabled(false);
                 Phase2.setVisible(true);
+            }
+        });
+
+        SELECTButton1.addActionListener(e -> {
+            sheet.setBAtributes(TAttr_num);
+            for (JButton button:PButtons) {
+                button.setVisible(true);
+                Phase2.setVisible(false);
             }
         });
         // Navigation //
@@ -121,6 +141,8 @@ public class CharacterGenAttr {
         BAttr = Arrays.asList(BAttr1, BAttr2, BAttr3, BAttr4, BAttr5, BAttr6, BAttr7, BAttr8, BAttr9, BAttr0);
         AAttr = Arrays.asList(AAttr1, AAttr2, AAttr3, AAttr4, AAttr5, AAttr6, AAttr7, AAttr8, AAttr9, AAttr0);
         TAttr = Arrays.asList(TAttr1, TAttr2, TAttr3, TAttr4, TAttr5, TAttr6, TAttr7, TAttr8, TAttr9, TAttr0);
+        PButtons = Arrays.asList(pButton1, pButton2, pButton3, pButton4, pButton5, pButton6, pButton7, pButton8, pButton9, pButton0);
+
     }
     void update() {
         expField.setText("" + sheet.getExp());

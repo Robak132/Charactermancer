@@ -8,7 +8,7 @@ import java.util.List;
 public class CharacterGenProf {
     JFrame frame;
     JPanel mainPanel;
-    CharacterGenRase previous_screen;
+    CharacterGenRace previous_screen;
     CharacterGenAttr next_screen;
     LanguagePack languagePack;
     Connection connection;
@@ -19,7 +19,7 @@ public class CharacterGenProf {
     private JButton rollButton1;
     private JButton okButton1;
     private JButton SELECTButton5;
-    private JComboBox<String> comboBox1;
+    private JComboBox<String> profComboBox;
     private JPanel Phase3;
     private JButton backButton;
     private JLabel charcreation;
@@ -42,13 +42,13 @@ public class CharacterGenProf {
     private JButton SELECTButton4;
     private JButton SELECTButton1;
     private JLabel rollLabel;
-    private JComboBox<String> comboBox;
+    private JComboBox<String> classComboBox;
     private JButton forwardButton;
 
     int rollResultNumeric1, rollResultNumeric2;
     List<Profession> profList;
 
-    public CharacterGenProf(JFrame _frame, CharacterGenRase _screen, LanguagePack _languagepack, Connection _connection, CharacterSheet _sheet) {
+    public CharacterGenProf(JFrame _frame, CharacterGenRace _screen, LanguagePack _languagepack, Connection _connection, CharacterSheet _sheet) {
         frame = _frame;
         previous_screen = _screen;
         languagePack = _languagepack;
@@ -140,6 +140,70 @@ public class CharacterGenProf {
             Phase2Results.setVisible(true);
             Phase1.setVisible(false);
         });
+        SELECTButton2.addActionListener(e -> {
+            sheet.setProf(profList.get(0));
+            sheet.addExp(25);
+            update_data();
+            next_screen = new CharacterGenAttr(frame, mainPanel, languagePack, connection, sheet);
+            frame.setContentPane(next_screen.mainPanel);
+            frame.validate();
+            forwardButton.setVisible(true);
+            SELECTButton1.setEnabled(false);
+            setEnabledPhase2(false);
+        });
+        SELECTButton3.addActionListener(e -> {
+            sheet.setProf(profList.get(1));
+            sheet.addExp(25);
+            update_data();
+            next_screen = new CharacterGenAttr(frame, mainPanel, languagePack, connection, sheet);
+            frame.setContentPane(next_screen.mainPanel);
+            frame.validate();
+            forwardButton.setVisible(true);
+            SELECTButton1.setEnabled(false);
+            setEnabledPhase2(false);
+        });
+        SELECTButton4.addActionListener(e -> {
+            sheet.setProf(profList.get(2));
+            sheet.addExp(25);
+            update_data();
+            next_screen = new CharacterGenAttr(frame, mainPanel, languagePack, connection, sheet);
+            frame.setContentPane(next_screen.mainPanel);
+            frame.validate();
+            forwardButton.setVisible(true);
+            SELECTButton1.setEnabled(false);
+            setEnabledPhase2(false);
+        });
+
+        // Phase 3 //
+        classComboBox.addActionListener(e -> {
+            if (classComboBox.getSelectedItem().toString().equals("---")) {
+                profComboBox.removeAllItems();
+                List list = connection.getProfs(sheet.getRase().getId());
+                profComboBox.addItem("---");
+                fillprofs(list);
+            }
+            else {
+                profComboBox.removeAllItems();
+                List list = connection.getProfs(sheet.getRase().getId(), classComboBox.getSelectedItem().toString());
+                fillprofs(list);
+            }
+        });
+        SELECTButton5.addActionListener(e -> {
+            if (!profComboBox.getSelectedItem().toString().equals("---")) {
+                Profession prof = connection.getProf(profComboBox.getSelectedItem().toString(), 1);
+                sheet.setProf(prof);
+                next_screen = new CharacterGenAttr(frame, mainPanel, languagePack, connection, sheet);
+                frame.setContentPane(next_screen.mainPanel);
+                frame.validate();
+                forwardButton.setVisible(true);
+                SELECTButton2.setEnabled(false);
+                SELECTButton3.setEnabled(false);
+                SELECTButton4.setEnabled(false);
+                SELECTButton5.setEnabled(false);
+                classComboBox.setEnabled(false);
+                profComboBox.setEnabled(false);
+            }
+        });
 
         // Navigation //
         backButton.addActionListener(e -> {
@@ -193,15 +257,22 @@ public class CharacterGenProf {
         expField.setText("" + sheet.getExp());
     }
     void fillCombos() {
-        List list = connection.getProfs();
-        comboBox.addItem("");
-        comboBox1.addItem("");
+        List list = connection.getProfs(sheet.getRase().getId());
+        classComboBox.addItem("---");
+        profComboBox.addItem("---");
         for (Object prof:list) {
             Profession temp = (Profession) prof;
-            if(((DefaultComboBoxModel)comboBox.getModel()).getIndexOf(temp.getClss()) == -1)
-                comboBox.addItem(temp.getClss());
-            if(((DefaultComboBoxModel)comboBox1.getModel()).getIndexOf(temp.getProfession()) == -1)
-                comboBox1.addItem(temp.getProfession());
+            if(((DefaultComboBoxModel) classComboBox.getModel()).getIndexOf(temp.getClss()) == -1)
+                classComboBox.addItem(temp.getClss());
+            if(((DefaultComboBoxModel) profComboBox.getModel()).getIndexOf(temp.getProfession()) == -1)
+                profComboBox.addItem(temp.getProfession());
+        }
+    }
+    void fillprofs(List list) {
+        for (Object prof:list) {
+            Profession temp = (Profession) prof;
+            if(((DefaultComboBoxModel) profComboBox.getModel()).getIndexOf(temp.getProfession()) == -1)
+                profComboBox.addItem(temp.getProfession());
         }
     }
     public int randomIntInRange(int min, int max) {

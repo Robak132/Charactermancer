@@ -1,17 +1,15 @@
 import mappings.Profession;
-import mappings.Rase;
+import mappings.Race;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 public class CharacterSheet {
     private static JFrame frame;
@@ -44,10 +42,11 @@ public class CharacterSheet {
     private JTextField Char22;
     private JTextField Char23;
     private JTextField nameField;
-    private JComboBox raseSelect;
+    private JComboBox<String> raseSelect;
 
-    Rase rase;
+    Race rase;
     Profession prof;
+    List<Integer> base_atributes;
     int exp;
 
     public CharacterSheet() {
@@ -139,30 +138,33 @@ public class CharacterSheet {
 //        });
     }
 
-    public Rase getRase() {
+    public Race getRase() {
         return rase;
     }
-
-    public void setRase(Rase rase) {
+    public void setRase(Race rase) {
         this.rase = rase;
     }
 
     public Profession getProf() {
         return prof;
     }
-
     public void setProf(Profession prof) {
         this.prof = prof;
+    }
+
+    public List<Integer> getBAtributes() {
+        return base_atributes;
+    }
+    public void setBAtributes(List<Integer> base_atributes) {
+        this.base_atributes = base_atributes;
     }
 
     public int getExp() {
         return exp;
     }
-
     public void setExp(int exp) {
         this.exp = exp;
     }
-
     public void addExp(int exp) {
         this.exp += exp;
     }

@@ -9,10 +9,9 @@
         <property name="dialect">org.hibernate.dialect.H2Dialect</property>
         <property name="show_sql">true</property>
 
-        <mapping class="mappings.ProfesjeTalenty"/>
-        <mapping class="mappings.RaseTable" />
+        <mapping class="mappings.RaceTable" />
         <mapping class="mappings.ProfTable" />
-        <mapping class="mappings.Rase" />
+        <mapping class="mappings.Race" />
         <mapping class="mappings.Profession" />
         <mapping class="mappings.Skill" />
     </session-factory>
