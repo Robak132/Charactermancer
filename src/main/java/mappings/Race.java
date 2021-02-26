@@ -32,6 +32,16 @@ public class Race {
     private int sw;
     @Column(name = "OGD")
     private int ogd;
+    @Column(name = "M")
+    private int m;
+    @Column(name = "FATE")
+    private int fate;
+    @Column(name = "RESILIENCE")
+    private int resilience;
+    @Column(name = "EXTRA")
+    private int extra;
+    @Column(name = "SIZE")
+    private int size;
 
     @OneToMany
     List<RaceTable> raseList = new ArrayList<>();
@@ -39,7 +49,7 @@ public class Race {
     List<ProfTable> profList = new ArrayList<>();
 
     public Race() {}
-    public Race(int id, String name, int ww, int us, int s, int wt, int i, int zw, int zr, int it, int sw, int ogd) {
+    public Race(int id, String name, int ww, int us, int s, int wt, int i, int zw, int zr, int it, int sw, int ogd, int m, int fate, int resilience, int extra, int size) {
         this.id = id;
         this.name = name;
         this.ww = ww;
@@ -52,6 +62,11 @@ public class Race {
         this.it = it;
         this.sw = sw;
         this.ogd = ogd;
+        this.m = m;
+        this.fate = fate;
+        this.resilience = resilience;
+        this.extra = extra;
+        this.size = size;
     }
 
     public int getId() {
@@ -126,6 +141,37 @@ public class Race {
     public void setOgd(int ogd) {
         this.ogd = ogd;
     }
+    public int getM() {
+        return m;
+    }
+    public void setM(int m) {
+        this.m = m;
+    }
+    public int getFate() {
+        return fate;
+    }
+    public void setFate(int fate) {
+        this.fate = fate;
+    }
+    public int getResilience() {
+        return resilience;
+    }
+    public void setResilience(int resilience) {
+        this.resilience = resilience;
+    }
+    public int getExtra() {
+        return extra;
+    }
+    public void setExtra(int extra) {
+        this.extra = extra;
+    }
+    public int getSize() {
+        return size;
+    }
+    public void setSize(int size) {
+        this.size = size;
+    }
+
     public List<RaceTable> getRaseList() {
         return raseList;
     }

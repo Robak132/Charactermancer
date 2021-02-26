@@ -22,10 +22,10 @@ public class Connection {
     Connection() {
         try {
             Files.copy(new File("./src/main/resources/db/database_backup.h2.db").toPath(), new File("./src/main/resources/db/database_backup_2.h2.db").toPath(), StandardCopyOption.REPLACE_EXISTING);            Files.copy(new File("./src/main/resources/db/database.h2.db").toPath(), new File("./src/main/resources/db/database_backup.h2.db").toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (Exception ex) {}
+        } catch (Exception ignored) {}
         try {
             Files.copy(new File("./src/main/resources/db/database.h2.db").toPath(), new File("./src/main/resources/db/database_backup.h2.db").toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (Exception ex) {}
+        } catch (Exception ignored) {}
         refresh();
     }
     private void refresh() {
@@ -43,39 +43,41 @@ public class Connection {
         StandardServiceRegistryBuilder.destroy(registry);
         refresh();
     }
+
     Race getRaceFromTable(int n) {
-        Race rase = new Race();
+        Race race = new Race();
         try {
             Session session = factory.openSession();
             Query SQLQuery = session.createQuery("SELECT r FROM RaceTable t, Race r WHERE t.IDrase = r.id AND t.id = :param");
             SQLQuery.setParameter("param", n);
-            rase = (Race) SQLQuery.list().get(0);
+            race = (Race) SQLQuery.list().get(0);
             session.close();
         } catch (Exception ex) {
             abort();
         }
-        return rase;
+        return race;
     }
     Race getRace(String name) {
-        Race rase = new Race();
+        Race race = new Race();
         try {
             Session session = factory.openSession();
             Query SQLQuery = session.createQuery("FROM Race WHERE name = :param");
             SQLQuery.setParameter("param", name);
-            rase = (Race) SQLQuery.list().get(0);
+            race = (Race) SQLQuery.list().get(0);
             session.close();
         } catch (Exception ex) {
             abort();
         }
-        return rase;
+        return race;
     }
-    Profession getProfFromTable(int rase, int n) {
+
+    Profession getProfFromTable(int race, int n) {
         Profession prof = new Profession();
         try {
             Session session = factory.openSession();
             Query SQLQuery = session.createQuery("SELECT p FROM ProfTable t, Profession p WHERE t.IDprof = p.id AND t.index = :param1 AND t.IDrace= :param2");
             SQLQuery.setParameter("param1", n);
-            SQLQuery.setParameter("param2", rase);
+            SQLQuery.setParameter("param2", race);
             prof = (Profession) SQLQuery.list().get(0);
             session.close();
         } catch (Exception ex) {
@@ -83,7 +85,6 @@ public class Connection {
         }
         return prof;
     }
-
     Profession getProf(String clss, String profession, int level) {
         Profession prof = new Profession();
         try {

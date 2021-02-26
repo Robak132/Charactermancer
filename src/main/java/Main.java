@@ -1,5 +1,12 @@
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
+
 import javax.swing.*;
+import javax.swing.plaf.FontUIResource;
+import javax.swing.text.StyleContext;
 import java.awt.*;
+import java.util.Locale;
 
 public class Main {
     static JFrame frame;
@@ -23,7 +30,7 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-        frame.setMinimumSize(new Dimension(690, 400));
+        frame.setMinimumSize(new Dimension(700, 500));
     }
 
     Main() {
@@ -33,7 +40,7 @@ public class Main {
         comboBox1.addItem(new ImageIcon("src/main/resources/images/pl.gif"));
         comboBox1.addItem(new ImageIcon("src/main/resources/images/eng.gif"));
         createcharButton.addActionListener(e -> {
-            frame.setContentPane(new CharacterGenRace(frame, this, languagePack, connection, sheet).mainPanel);
+            frame.setContentPane(new CharacterGen(frame, this, languagePack, connection, sheet).mainPanel);
             frame.validate();
         });
         createsheetButton.addActionListener(e -> {
@@ -45,7 +52,10 @@ public class Main {
             repaint();
         });
     }
-    void update_data() { }
+
+    void update_data() {
+    }
+
     void repaint() {
         createcharButton.setText(languagePack.localise(createcharButton.getName()));
         createsheetButton.setText(languagePack.localise(createsheetButton.getName()));

@@ -1,3 +1,6 @@
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
 import mappings.Profession;
 import mappings.Race;
 import org.json.simple.JSONArray;
@@ -6,6 +9,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -141,6 +145,7 @@ public class CharacterSheet {
     public Race getRase() {
         return rase;
     }
+
     public void setRase(Race rase) {
         this.rase = rase;
     }
@@ -148,6 +153,7 @@ public class CharacterSheet {
     public Profession getProf() {
         return prof;
     }
+
     public void setProf(Profession prof) {
         this.prof = prof;
     }
@@ -155,16 +161,20 @@ public class CharacterSheet {
     public List<Integer> getBAtributes() {
         return base_atributes;
     }
+
     public void setBAtributes(List<Integer> base_atributes) {
         this.base_atributes = base_atributes;
+        System.out.println(base_atributes);
     }
 
     public int getExp() {
         return exp;
     }
+
     public void setExp(int exp) {
         this.exp = exp;
     }
+
     public void addExp(int exp) {
         this.exp += exp;
     }
