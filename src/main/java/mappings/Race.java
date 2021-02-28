@@ -147,6 +147,33 @@ public class Race {
     public void setM(int m) {
         this.m = m;
     }
+    public Integer getAttr(int number) {
+        switch (number) {
+            case 0:
+                return m;
+            case 1:
+                return ww;
+            case 2:
+                return us;
+            case 3:
+                return s;
+            case 4:
+                return wt;
+            case 5:
+                return i;
+            case 6:
+                return zw;
+            case 7:
+                return zr;
+            case 8:
+                return it;
+            case 9:
+                return sw;
+            case 10:
+                return ogd;
+        }
+        return null;
+    }
     public int getFate() {
         return fate;
     }

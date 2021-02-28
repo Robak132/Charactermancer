@@ -5,8 +5,6 @@ import mappings.Profession;
 import mappings.Race;
 
 import javax.swing.*;
-import javax.swing.plaf.FontUIResource;
-import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.event.MouseListener;
 import java.util.*;
@@ -47,14 +45,14 @@ public class CharacterGen {
     private JButton race_RollButton;
     private JButton race_OKButton;
     private JLabel imageLabel;
-    private JPanel Sheet;
     private JButton rollButton;
     private JButton okButton;
     private JLabel charcreation;
     private JTextField textField1;
     private JTextField textField2;
+    private JPanel attributesTable;
 
-    int rollResultNumeric, rollResultNumeric1, rollResultNumeric2;
+    int rollResultNumeric, rollResultNumeric1;
     Race rollRace;
     List<Profession> profList = new ArrayList<>();
     JTextField[][] prof_Options = {
@@ -66,17 +64,16 @@ public class CharacterGen {
             prof_Option1Button, prof_Option2Button, prof_Option3Button, prof_Option4Button
     };
 
-    List<JTextField> AAttr, BAttr, TAttr;
+    List<JTextField> BAttr = new ArrayList<>();
     List<JButton> PButtons, MButtons;
     List<Integer> AAttr_num, BAttr_num, TAttr_num;
-    int aattr_it = 0;
 
-    public CharacterGen(JFrame _frame, Main _screen, LanguagePack _languagepack, Connection _connection, CharacterSheet _sheet) {
+    public CharacterGen(JFrame _frame, Main _screen, LanguagePack _languagepack, Connection _connection) {
         frame = _frame;
         previous_screen = _screen;
         languagePack = _languagepack;
         connection = _connection;
-        sheet = _sheet;
+        sheet = new CharacterSheet();
 
         // Race //
         prepareRaces();
@@ -132,8 +129,8 @@ public class CharacterGen {
         });
         race_Option2Button.addActionListener(e -> {
             try {
-                race_Option1.setText(race_Option2Combo.getSelectedItem().toString());
-                sheet.setRase(connection.getRace(race_Option2Combo.getSelectedItem().toString()));
+                race_Option1.setText((String) race_Option2Combo.getSelectedItem());
+                sheet.setRase(connection.getRace((String) race_Option2Combo.getSelectedItem()));
                 updateExp();
 
                 race_Option1Button.setEnabled(false);
@@ -233,20 +230,20 @@ public class CharacterGen {
         });
 
         prof_Option4a.addActionListener(e -> {
-            if (prof_Option4a.getSelectedItem().toString().equals("---")) {
+            if (prof_Option4a.getSelectedItem() == "---") {
                 prof_Option4b.removeAllItems();
                 List list = connection.getProfs(sheet.getRase().getId());
                 prof_Option4b.addItem("---");
                 fillprofs(list);
             } else {
                 prof_Option4b.removeAllItems();
-                List list = connection.getProfs(sheet.getRase().getId(), prof_Option4a.getSelectedItem().toString());
+                List list = connection.getProfs(sheet.getRase().getId(), (String) prof_Option4a.getSelectedItem());
                 fillprofs(list);
             }
         });
         prof_Option4Button.addActionListener(e -> {
-            if (!prof_Option4b.getSelectedItem().toString().equals("---")) {
-                Profession prof = connection.getProf(prof_Option4b.getSelectedItem().toString(), 1);
+            if (prof_Option4b.getSelectedItem() != "---") {
+                Profession prof = connection.getProf((String) prof_Option4b.getSelectedItem(), 1);
                 sheet.setProf(prof);
 
                 for (JButton button : prof_Buttons)
@@ -260,70 +257,50 @@ public class CharacterGen {
 
         // Attributes
         String[] columns = {"M", "WW", "US", "S", "Wt", "I", "Zw", "Zr", "Int", "SW", "Ogd", "Żyw"};
-        List<JButton> buttonsUP = new ArrayList<>();
-        List<JTextField> textFields = new ArrayList<>();
-        List<JButton> buttonsDOWN = new ArrayList<>();
-        Sheet.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
+        attributesTable.setLayout(new GridLayoutManager(5, columns.length + 2, new Insets(0, 0, 0, 0), -1, -1));
+        Spacer spacer1 = new Spacer();
+        Spacer spacer2 = new Spacer();
+        attributesTable.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        attributesTable.add(spacer2, new GridConstraints(0, columns.length + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 
         for (int i = 0; i < columns.length; i++) {
-            c.gridx = i;
-            c.gridy = 0;
-            c.weightx = 1.0;
-            c.fill = GridBagConstraints.BOTH;
-            c.insets = new Insets(5, 5, 5, 5);
-            JLabel label = new JLabel(columns[i], SwingConstants.CENTER);
-            label.setSize(100, 10);
-            Sheet.add(label, c);
+            JButton button = new JButton("+");
+            button.setEnabled(false);
+            attributesTable.add(button, new GridConstraints(0, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
-            if (i != 0 && i != columns.length - 1) {
-                c.gridy = 1;
-                JButton temp = new JButton("+");
-                temp.setEnabled(false);
-                buttonsUP.add(temp);
-                Sheet.add(temp, c);
-
-                c.gridy = 2;
-                JTextField textField3 = new JTextField("");
-                textField3.setHorizontalAlignment(JTextField.CENTER);
-                textField3.setEditable(false);
-                textField3.setSize(50, 10);
-                textFields.add(textField3);
-                Sheet.add(textField3, c);
-
-                c.gridy = 3;
-                JTextField textField2 = new JTextField("");
-                textField2.setHorizontalAlignment(JTextField.CENTER);
-                textField2.setSize(50, 10);
-                textFields.add(textField2);
-                Sheet.add(textField2, c);
-
-                c.gridy = 4;
-                temp = new JButton("-");
-                temp.setEnabled(false);
-                buttonsDOWN.add(temp);
-                Sheet.add(temp, c);
-            }
+            JLabel charlabel = new JLabel();
+            charlabel.setHorizontalAlignment(0);
+            charlabel.setHorizontalTextPosition(0);
+            charlabel.setText(columns[i]);
+            attributesTable.add(charlabel, new GridConstraints(1, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         }
-        c.gridx = 0;
-        c.gridy = 2;
-        c.gridheight = 2;
 
-        JTextField textField = new JTextField("");
-        textField.setHorizontalAlignment(JTextField.CENTER);
-        textField.setSize(50, 10);
-        textFields.add(textField);
-        Sheet.add(textField, c);
+        JTextField baseattr = new JTextField();
+        baseattr.setHorizontalAlignment(0);
+        baseattr.setEditable(false);
+        BAttr.add(baseattr);
+        attributesTable.add(baseattr, new GridConstraints(2, 1, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null, 0, false));
+        for (int i = 1; i < columns.length-1; i++) {
+            baseattr = new JTextField();
+            baseattr.setHorizontalAlignment(0);
+            baseattr.setEditable(false);
+            BAttr.add(baseattr);
 
-        c.gridx = columns.length - 1;
-        c.gridy = 2;
-        c.gridheight = 2;
+            JTextField attr = new JTextField();
+            attr.setHorizontalAlignment(0);
 
-        textField = new JTextField("");
-        textField.setHorizontalAlignment(JTextField.CENTER);
-        textField.setSize(50, 10);
-        textFields.add(textField);
-        Sheet.add(textField, c);
+            JTextField sumattr = new JTextField();
+            sumattr.setHorizontalAlignment(0);
+            sumattr.setEditable(false);
+            attributesTable.add(baseattr, new GridConstraints(2, i+1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
+            attributesTable.add(attr, new GridConstraints(3, i+1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
+            attributesTable.add(sumattr, new GridConstraints(4, i+1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
+        }
+        baseattr = new JTextField();
+        baseattr.setHorizontalAlignment(0);
+        baseattr.setEditable(false);
+        BAttr.add(baseattr);
+        attributesTable.add(baseattr, new GridConstraints(2, columns.length, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null, 0, false));
 
         tabbedPane.addChangeListener(e -> {
             int tab = tabbedPane.getSelectedIndex();
@@ -349,7 +326,6 @@ public class CharacterGen {
                 prof_Option4b.addItem(temp.getProfession());
         }
     }
-
     void fillprofs(List list) {
         for (Object prof : list) {
             Profession temp = (Profession) prof;
@@ -357,7 +333,6 @@ public class CharacterGen {
                 prof_Option4b.addItem(temp.getProfession());
         }
     }
-
     void prepareRaces() {
         sheet.setExp(0);
         race_Option2Combo.addItem(languagePack.localise("human"));
@@ -367,7 +342,6 @@ public class CharacterGen {
         race_Option2Combo.addItem(languagePack.localise("highelf"));
         race_Option2Combo.addItem(languagePack.localise("woodelf"));
     }
-
     void moveToNextTab(int tab) {
         tabbedPane.setEnabledAt(tab + 1, true);
         tabbedPane.setSelectedIndex(tab + 1);
@@ -380,18 +354,16 @@ public class CharacterGen {
                 break;
         }
     }
-
     void updateExp() {
         expField.setText("" + sheet.getExp());
     }
-
     void setBaseValues() {
+        for (int i = 0; i< BAttr.size()-1;i++)
+            BAttr.get(i).setText(String.valueOf(sheet.getRase().getAttr(i)));
     }
-
     public int randomIntInRange(int min, int max) {
         return min + new Random().nextInt(max - min + 1);
     }
-
     private void setJComboBoxReadOnly(JComboBox jcb) {
         JTextField jtf = (JTextField) jcb.getEditor().getEditorComponent();
         jtf.setEditable(false);

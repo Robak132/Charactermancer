@@ -12,9 +12,7 @@ public class Main {
     static JFrame frame;
     static LanguagePack languagePack;
     static JPanel startPanel;
-    static Main screen1;
     final Connection connection;
-    CharacterSheet sheet;
 
     JComboBox<ImageIcon> comboBox1;
     JButton createcharButton;
@@ -39,11 +37,11 @@ public class Main {
         comboBox1.addItem(new ImageIcon("src/main/resources/images/pl.gif"));
         comboBox1.addItem(new ImageIcon("src/main/resources/images/eng.gif"));
         createcharButton.addActionListener(e -> {
-            frame.setContentPane(new CharacterGen(frame, this, languagePack, connection, sheet).mainPanel);
+            frame.setContentPane(new CharacterGen(frame, this, languagePack, connection).mainPanel);
             frame.validate();
         });
         createsheetButton.addActionListener(e -> {
-            frame.setContentPane(new CharacterSheet(frame, this, languagePack, connection, sheet).mainPanel);
+            frame.setContentPane(new CharacterSheet(frame, this, languagePack, connection).mainPanel);
             frame.validate();
         });
         comboBox1.addActionListener(e -> {
