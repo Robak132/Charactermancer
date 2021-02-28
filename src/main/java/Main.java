@@ -36,7 +36,6 @@ public class Main {
     Main() {
         repaint();
         connection = new Connection();
-        sheet = new CharacterSheet();
         comboBox1.addItem(new ImageIcon("src/main/resources/images/pl.gif"));
         comboBox1.addItem(new ImageIcon("src/main/resources/images/eng.gif"));
         createcharButton.addActionListener(e -> {
@@ -44,7 +43,7 @@ public class Main {
             frame.validate();
         });
         createsheetButton.addActionListener(e -> {
-            frame.setContentPane(new CharacterSheet().mainPanel);
+            frame.setContentPane(new CharacterSheet(frame, this, languagePack, connection, sheet).mainPanel);
             frame.validate();
         });
         comboBox1.addActionListener(e -> {
@@ -57,8 +56,8 @@ public class Main {
     }
 
     void repaint() {
-        createcharButton.setText(languagePack.localise(createcharButton.getName()));
-        createsheetButton.setText(languagePack.localise(createsheetButton.getName()));
+//        createcharButton.setText(languagePack.localise(createcharButton.getName()));
+//        createsheetButton.setText(languagePack.localise(createsheetButton.getName()));
     }
 
 }

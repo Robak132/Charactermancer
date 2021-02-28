@@ -9,137 +9,104 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
+import java.awt.event.*;
+import java.awt.event.WindowAdapter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class CharacterSheet {
-    private static JFrame frame;
-    private JComboBox<String> comboBox1;
-    static JPanel panel;
+    JFrame frame;
     JPanel mainPanel;
+    Main previous_screen;
+    LanguagePack languagePack;
+    Connection connection;
+    CharacterSheet sheet;
+
     private JButton createPlayerCharacterButton;
     private JButton makeCharacterSheetButton;
-    private JTextField Char0, Char1, Char2, Char3, Char4, Char5, Char10, Char11;
-    private JLabel Char0L, Char1L, Char2L, Char3L, Char4L, Char5L, Char6L, Char7L, Char8L, Char9L, Char10L, Char11L;
     private JButton saveButton;
-    private JLabel Char21L;
-    private JLabel Char22L;
-    private JLabel Char23L;
-    private JLabel Char24L;
-    private JLabel Char25L;
-    private JLabel Char26L;
-    private JLabel Char27L;
-    private JLabel Char28L;
-    private JLabel Char29L;
-    private JLabel Char210L;
-    private JTextField Char21;
-    private JTextField Char210;
-    private JTextField Char24;
-    private JTextField Char25;
-    private JTextField Char26;
-    private JTextField Char27;
-    private JTextField Char28;
-    private JTextField Char29;
-    private JTextField Char22;
-    private JTextField Char23;
     private JTextField nameField;
     private JComboBox<String> raseSelect;
+    private JPanel basePanel;
+    private JTextField raseSelectText;
 
     Race rase;
     Profession prof;
     List<Integer> base_atributes;
     int exp;
+    boolean lock = false;
 
-    public CharacterSheet() {
-//        comboBox1.addItem("II Edition");
-//        comboBox1.addItem("IV Edition");
-//        comboBox1.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                JComboBox cb = (JComboBox)e.getSource();
-//                if (((String) cb.getSelectedItem()).equals("II Edition")) {
-//                    Char0L.setText("");
-//                    Char0.setEnabled(false);
-//                    Char0.setVisible(false);
-//                    Char1L.setText("");
-//                    Char1.setEnabled(false);
-//                    Char1.setVisible(false);
-//                    Char2L.setText("WW");
-//                    Char3L.setText("US");
-//                    Char4L.setText("K");
-//                    Char5L.setText("Odp");
-//                    Char6L.setText("Zr");
-//                    Char7L.setText("Int");
-//                    Char8L.setText("SW");
-//                    Char9L.setText("Ogd");
-//                    Char10L.setText("");
-//                    Char10.setEnabled(false);
-//                    Char10.setVisible(false);
-//                    Char11L.setText("");
-//                    Char11.setEnabled(false);
-//                    Char11.setVisible(false);
-//                    Char21L.setText("");
-//                    Char21.setEnabled(false);
-//                    Char21.setVisible(false);
-//                    Char22L.setText("A");
-//                    Char23L.setText("Żyw");
-//                    Char24L.setText("S");
-//                    Char25L.setText("Wt");
-//                    Char26L.setText("Sz");
-//                    Char27L.setText("Mag");
-//                    Char28L.setText("PO");
-//                    Char29L.setText("PP");
-//                    Char210L.setText("");
-//                    Char210.setEnabled(false);
-//                    Char210.setVisible(false);
-//                }
-//                if (((String) cb.getSelectedItem()).equals("IV Edition")) {
-//                    Char0L.setText("M");
-//                    Char0.setEnabled(true);
-//                    Char0.setVisible(true);
-//                    Char1L.setText("WW");
-//                    Char1.setEnabled(true);
-//                    Char1.setVisible(true);
-//                    Char2L.setText("US");
-//                    Char3L.setText("S");
-//                    Char4L.setText("Wt");
-//                    Char5L.setText("I");
-//                    Char6L.setText("Zw");
-//                    Char7L.setText("Zr");
-//                    Char8L.setText("Int");
-//                    Char9L.setText("SW");
-//                    Char10L.setText("Ogd");
-//                    Char10.setEnabled(true);
-//                    Char10.setVisible(true);
-//                    Char11L.setText("Żyw");
-//                    Char11.setEnabled(true);
-//                    Char11.setVisible(true);
-//                    Char21L.setText("WSB");
-//                    Char21.setEnabled(true);
-//                    Char21.setVisible(true);
-//                    Char22L.setText("USB");
-//                    Char23L.setText("SB");
-//                    Char24L.setText("WtB");
-//                    Char25L.setText("IB");
-//                    Char26L.setText("ZwB");
-//                    Char27L.setText("ZrB");
-//                    Char28L.setText("IntB");
-//                    Char29L.setText("SWB");
-//                    Char210L.setText("OgdB");
-//                    Char210.setEnabled(true);
-//                    Char210.setVisible(true);
-//                }
-//            }
-//        });
-//        saveButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                //ReadJSONExample();
-//            }
-//        });
+    public CharacterSheet(JFrame _frame, Main _screen, LanguagePack _languagepack, Connection _connection, CharacterSheet _sheet) {
+        frame = _frame;
+        previous_screen = _screen;
+        languagePack = _languagepack;
+        connection = _connection;
+        sheet = _sheet;
+
+        fillRases("");
+        raseSelectText.getDocument().addDocumentListener(new DocumentAdapter() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                if (!lock) {
+                    SwingUtilities.invokeLater(() -> {
+                        lock = true;
+                        fillRases(raseSelectText.getText());
+                        lock = false;
+                    });
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                if (!lock) {
+                    SwingUtilities.invokeLater(() -> {
+                        lock = true;
+                        fillRases(raseSelectText.getText());
+                        lock = false;
+                    });
+                }
+            }
+        });
+        String[] columns = {"M", "WW", "US", "S", "Wt", "I", "Zw", "Zr", "Int", "SW", "Ogd", "Żyw"};
+        basePanel.setLayout(new GridLayoutManager(2, columns.length + 2, new Insets(0, 0, 0, 0), -1, -1));
+
+        Spacer spacer1 = new Spacer();
+        basePanel.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        Spacer spacer2 = new Spacer();
+        basePanel.add(spacer2, new GridConstraints(0, columns.length + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+
+        for (int i = 0; i < columns.length; i++) {
+            JLabel charlabel = new JLabel();
+            charlabel.setHorizontalAlignment(0);
+            charlabel.setHorizontalTextPosition(0);
+            charlabel.setText(columns[i]);
+            basePanel.add(charlabel, new GridConstraints(0, i+1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+            JTextField chartext = new JTextField();
+            chartext.setHorizontalAlignment(0);
+            basePanel.add(chartext, new GridConstraints(1, i+1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
+        }
+    }
+
+    public void fillRases(String text) {
+        raseSelectText = (JTextField) raseSelect.getEditor().getEditorComponent();
+        raseSelect.removeAllItems();
+        List races = connection.getRaces();
+        for (Object race : races) {
+            String name = ((Race) race).getName();
+            if (name.toUpperCase().contains(text.toUpperCase()))
+                raseSelect.addItem(name);
+//            if (name.equals(text))
+//                raseSelectText.setForeground(Color.black);
+//            else
+//                raseSelectText.setForeground(Color.red);
+        }
+        raseSelect.setSelectedItem(text);
     }
 
     public Race getRase() {

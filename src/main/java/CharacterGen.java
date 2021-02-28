@@ -266,7 +266,7 @@ public class CharacterGen {
         Sheet.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
-        for (int i=0;i<columns.length;i++) {
+        for (int i = 0; i < columns.length; i++) {
             c.gridx = i;
             c.gridy = 0;
             c.weightx = 1.0;
@@ -276,7 +276,7 @@ public class CharacterGen {
             label.setSize(100, 10);
             Sheet.add(label, c);
 
-            if (i!=0 && i!=columns.length-1) {
+            if (i != 0 && i != columns.length - 1) {
                 c.gridy = 1;
                 JButton temp = new JButton("+");
                 temp.setEnabled(false);

@@ -70,6 +70,18 @@ public class Connection {
         }
         return race;
     }
+    List getRaces() {
+        List races = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query SQLQuery = session.createQuery("FROM Race");
+            races = SQLQuery.list();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+        }
+        return races;
+    }
 
     Profession getProfFromTable(int race, int n) {
         Profession prof = new Profession();
