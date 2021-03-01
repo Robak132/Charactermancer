@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "SKILLS")
-public class Skill {
+@Table(name = "GROUPSKILLS")
+public class GroupSkill {
     @Id
     @Column(name = "ID")
     private int id;
@@ -15,8 +15,8 @@ public class Skill {
     @Column(name = "IDBASE")
     private int idbase;
 
-    public Skill() {}
-    public Skill(int id, String name, int idbase) {
+    public GroupSkill() {}
+    public GroupSkill(int id, String name, int idbase) {
         this.id = id;
         this.name = name;
         this.idbase = idbase;
