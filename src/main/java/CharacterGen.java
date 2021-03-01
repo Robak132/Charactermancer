@@ -502,17 +502,20 @@ public class CharacterGen {
             buttonup.setEnabled(false);
             buttonup.addActionListener(e -> {
                 if (fate_attrRemain_num > 0) {
-                    RAttr_num.set(finalI, RAttr_num.get(finalI)+1);
+                    RAttr_num.set(finalI, RAttr_num.get(finalI) + 1);
                     RAttr.get(finalI).setText(String.valueOf(RAttr_num.get(finalI)));
 
-                    TAttr_num.set(finalI, TAttr_num.get(finalI)+1);
+                    TAttr_num.set(finalI, TAttr_num.get(finalI) + 1);
                     TAttr.get(finalI).setText(String.valueOf(TAttr_num.get(finalI)));
 
                     fate_attrRemain_num--;
                     fate_attrRemain.setText(String.valueOf(fate_attrRemain_num));
                     fate_ButtonsDOWN.get(finalI).setEnabled(true);
+
+                    if ((sheet.getRace().getSize() == Race.SIZE_NORMAL && finalI == 2) || finalI == 3 || finalI == 8)
+                        calculateHP();
                 }
-                if (fate_attrRemain_num == 0)
+                else
                     buttonsSetEnable(fate_ButtonsUP, false);
             });
             fate_ButtonsUP.add(buttonup);
@@ -552,6 +555,9 @@ public class CharacterGen {
                     buttonsSetEnable(fate_ButtonsUP, true);
                     if (RAttr_num.get(finalI) == 0)
                         fate_ButtonsDOWN.get(finalI).setEnabled(false);
+
+                    if ((sheet.getRace().getSize() == Race.SIZE_NORMAL && finalI == 2) || finalI == 3 || finalI == 8)
+                        calculateHP();
                 }
                 if (fate_attrRemain_num == 5)
                     buttonsSetEnable(fate_ButtonsDOWN, false);
@@ -561,11 +567,19 @@ public class CharacterGen {
         }
     }
 
+    void calculateHP() {
+        int value = (TAttr_num.get(3) / 10) * 2 + TAttr_num.get(8) / 10;
+        if (sheet.getRace().getSize() == Race.SIZE_NORMAL)
+            value += TAttr_num.get(2) / 10;
+        attr_hp_num = value;
+        attr_hp.setText(String.valueOf(attr_hp_num));
+    }
     void moveToNextTab(int tab) {
         tabbedPane.setEnabledAt(tab + 1, true);
         tabbedPane.setSelectedIndex(tab + 1);
         switch (tab + 1) {
             case 1:
+                var abc= sheet.getRace().getProfList();
                 prof_Option4a.bindItems(connection.getProfsClasses(sheet.getRace().getId()));
                 prof_Option4b.bindItems(connection.getProfsNames(sheet.getRace().getId(), prof_Option4a.getFinalValue()));
                 break;
