@@ -490,7 +490,7 @@
                       <text value="SELECT"/>
                     </properties>
                   </component>
-                  <component id="7bf12" class="SearchableJComboBox" binding="prof_Option4a" custom-create="true">
+                  <component id="7bf12" class="SearchableJComboBox" binding="prof_Option4a">
                     <constraints>
                       <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="-1"/>
@@ -501,7 +501,7 @@
                       <enabled value="false"/>
                     </properties>
                   </component>
-                  <component id="90b4a" class="SearchableJComboBox" binding="prof_Option4b" custom-create="true">
+                  <component id="90b4a" class="SearchableJComboBox" binding="prof_Option4b">
                     <constraints>
                       <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="2" hsize-policy="2" anchor="0" fill="0" indent="0" use-parent-layout="false">
                         <preferred-size width="225" height="-1"/>

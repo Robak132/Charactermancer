@@ -267,6 +267,7 @@ public class CharacterGen {
         });
 
         prof_Option4a.addActionListener(e -> prof_Option4b.bindItems(connection.getProfsNames(sheet.getRace().getId(), prof_Option4a.getFinalValue())));
+
         // Attributes
         createAttrTable();
 
@@ -534,9 +535,5 @@ public class CharacterGen {
         fate_fate.setText(String.valueOf(sheet.getRace().getFate()));
         fate_resolve.setText(String.valueOf(sheet.getRace().getResilience()));
         fate_extra.setText(String.valueOf(sheet.getRace().getExtra()));
-    }
-    private void createUIComponents() {
-        prof_Option4a = new SearchableJComboBox();
-        prof_Option4b = new SearchableJComboBox();
     }
 }

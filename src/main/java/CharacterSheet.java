@@ -27,7 +27,7 @@ public class CharacterSheet {
     private JButton makeCharacterSheetButton;
     private JButton saveButton;
     private JTextField nameField;
-    private JComboBox<String> raseSelect;
+    private SearchableJComboBox raseSelect;
     private JPanel basePanel;
     private JButton exitButton;
     private JTextField raseSelectText;
@@ -54,16 +54,7 @@ public class CharacterSheet {
     }
 
     private void createAll() {
-        fillRaces("");
-        raseSelectText.getDocument().addDocumentListener((SimpleDocumentListener) e -> {
-            if (!lock) {
-                SwingUtilities.invokeLater(() -> {
-                    lock = true;
-                    fillRaces(raseSelectText.getText());
-                    lock = false;
-                });
-            }
-        });
+        raseSelect.bindItems(connection.getRacesNames());
 
         String[] columns = {"M", "WW", "US", "S", "Wt", "I", "Zw", "Zr", "Int", "SW", "Ogd", "Żyw"};
         basePanel.setLayout(new GridLayoutManager(2, columns.length + 2, new Insets(0, 0, 0, 0), -1, -1));
@@ -92,24 +83,6 @@ public class CharacterSheet {
     }
     private void checkCharValue() {
         System.out.println(rase.getName());
-    }
-    public void fillRaces(String text) {
-        raseSelectText = (JTextField) raseSelect.getEditor().getEditorComponent();
-        raseSelect.removeAllItems();
-        List races = connection.getRaces();
-        boolean changed = false;
-        for (Object race_itr : races) {
-            String name = ((Race) race_itr).getName();
-            if (name.toUpperCase().contains(text.toUpperCase()))
-                raseSelect.addItem(name);
-            if (name.equals(text)) {
-                rase = (Race) race_itr;
-                changed = true;
-            }
-        }
-        if (!changed)
-            rase = null;
-        raseSelect.setSelectedItem(text);
     }
     public static void ReadJSONExample() {
         JSONParser parser = new JSONParser();

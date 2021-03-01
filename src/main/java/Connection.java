@@ -162,4 +162,10 @@ public class Connection {
             result.add(((Profession) prof).getProfession());
         return result;
     }
+    public List<String> getRacesNames() {
+        List<String> result = new ArrayList<>();
+        for (Object prof : getRaces())
+            result.add(((Race) prof).getName());
+        return result;
+    }
 }

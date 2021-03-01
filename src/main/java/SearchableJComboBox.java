@@ -1,8 +1,7 @@
-import mappings.Profession;
-
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,4 +57,22 @@ public class SearchableJComboBox extends JComboBox<String> {
     public String getFinalValue() {
         return good_value;
     }
+}
+
+@FunctionalInterface
+interface SimpleDocumentListener extends DocumentListener {
+    void update(DocumentEvent e);
+
+    @Override
+    default void insertUpdate(DocumentEvent e) {
+        update(e);
+    }
+    @Override
+    default void removeUpdate(DocumentEvent e) {
+        update(e);
+    }
+    @Override
+    default void changedUpdate(DocumentEvent e) {
+            update(e);
+        }
 }
