@@ -15,10 +15,9 @@ public abstract class Toolbox {
         return sum;
     }
 
-    public static List setAll(List<Integer> list, int value) {
-        for (Integer i: list)
-            i = value;
-        return list;
+    public static void setAll(List<Integer> list, int value) {
+        for (int i=0;i<list.size();i++)
+            list.set(i, value);
     }
     public static void setJComboBoxReadOnly(JComboBox jcb) {
         JTextField jtf = (JTextField) jcb.getEditor().getEditorComponent();
