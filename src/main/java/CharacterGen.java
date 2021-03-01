@@ -18,15 +18,22 @@ public class CharacterGen {
     Connection connection;
     CharacterSheet sheet;
 
+    private JLabel imageLabel;
     private JTextField expField;
-    private JButton prof_Option1Button;
     private JTabbedPane tabbedPane;
+    private JButton exitButton;
+    private JLabel rollLabel;
+    private JLabel charcreation;
+
     private JTextField race_RollResult;
     private JButton race_Option2Button;
     private JComboBox<String> race_Option2Combo;
     private JButton race_Option1Button;
     private JTextField race_Option1;
-    private JButton exitButton;
+    private JButton race_RollButton;
+    private JButton race_OKButton;
+
+    private JButton prof_Option1Button;
     private JButton prof_OKButton;
     private JButton prof_RollButton;
     private JTextField prof_RollResult;
@@ -38,31 +45,10 @@ public class CharacterGen {
     private JTextField prof_Option3a;
     private JTextField prof_Option3b;
     private JButton prof_Option3Button;
-    private JLabel rollLabel;
-    private JComboBox<String> prof_Option4b;
-    private JComboBox<String> prof_Option4a;
+    private SearchableJComboBox prof_Option4a;
+    private SearchableJComboBox prof_Option4b;
+    private JTextField textField4a;
     private JButton prof_Option4Button;
-    private JButton race_RollButton;
-    private JButton race_OKButton;
-    private JLabel imageLabel;
-    private JButton attr_rollButton;
-    private JButton attr_okButton;
-    private JLabel charcreation;
-    private JPanel attributesTable;
-    private JTextField attr_sumField;
-    private JButton attr_rollAllButton;
-    private JButton a3PutOwnValuesButton;
-    private JButton attr_option1Button;
-    private JPanel fate_attributeTable;
-    private JTextField fate_attrRemain;
-    private JTextField textField1;
-    private JTextField textField2;
-    private JButton button1;
-
-    JTextField source = null;
-    boolean attr_locked = false;
-    int rollResultNumeric, rollResultNumeric1, attr_sum=0;
-    Race rollRace;
     List<Profession> profList = new ArrayList<>();
     JTextField[][] prof_Options = {
             {prof_Option1a, prof_Option1b},
@@ -72,6 +58,36 @@ public class CharacterGen {
     JButton[] prof_Buttons = {
             prof_Option1Button, prof_Option2Button, prof_Option3Button, prof_Option4Button
     };
+    boolean prof_lock4a = false;
+    boolean prof_lock4b = false;
+    int prof_maxexp = 50;
+
+    private JPanel attributesTable;
+    private JButton attr_rollButton;
+    private JButton attr_okButton;
+    private JTextField attr_sumField;
+    private JButton attr_rollAllButton;
+    private JButton a3PutOwnValuesButton;
+    private JButton attr_option1Button;
+    private JTextField attr_move;
+    private int attr_move_num;
+    private JTextField attr_hp;
+    private int attr_hp_num;
+
+    private JPanel fate_attributeTable;
+    private JTextField fate_attrRemain;
+    private JTextField fate_fate;
+    private JTextField fate_resolve;
+    private JButton fate_fateUP;
+    private JButton fate_fate_down;
+    private JTextField fate_extra;
+
+    private JTextField mouse_source = null;
+    Color mouse_color;
+    boolean attr_locked = false;
+
+    int rollResultNumeric, rollResultNumeric1, attr_sum=0;
+    Race rollRace;
 
     List<JTextField> BAttr = new ArrayList<>();
     List<Integer> BAttr_num = new ArrayList<>();
@@ -80,8 +96,6 @@ public class CharacterGen {
     List<JTextField> TAttr = new ArrayList<>();
     List<Integer> TAttr_num = new ArrayList<>();
 
-    List<JTextField> fate_Attributes = new ArrayList<>();
-    List<JTextField> fate_Adventages = new ArrayList<>();
     List<JButton> fate_ButtonsUP = new ArrayList<>();
     List<JButton> fate_ButtonsDOWN = new ArrayList<>();
 
@@ -172,7 +186,8 @@ public class CharacterGen {
             prof_Options[profList.size() - 1][0].setText(prof.getCareer());
             prof_Options[profList.size() - 1][1].setText(prof.getProfession());
             prof_Buttons[profList.size() - 1].setEnabled(true);
-
+            if (profList.size() > 1)
+                prof_maxexp = 25;
             if (profList.size() >= 3) {
                 prof_RollButton.setEnabled(false);
                 prof_RollResult.setEditable(false);
@@ -210,8 +225,7 @@ public class CharacterGen {
         });
         prof_Option1Button.addActionListener(e -> {
             sheet.setProf(profList.get(0));
-            sheet.addExp(50);
-            updateExp();
+            updateExp(prof_maxexp);
 
             prof_RollButton.setEnabled(false);
             prof_RollResult.setEditable(false);
@@ -225,8 +239,7 @@ public class CharacterGen {
         });
         prof_Option2Button.addActionListener(e -> {
             sheet.setProf(profList.get(1));
-            sheet.addExp(25);
-            updateExp();
+            updateExp(prof_maxexp);
 
             prof_RollButton.setEnabled(false);
             prof_RollResult.setEditable(false);
@@ -240,8 +253,7 @@ public class CharacterGen {
         });
         prof_Option3Button.addActionListener(e -> {
             sheet.setProf(profList.get(2));
-            sheet.addExp(25);
-            updateExp();
+            updateExp(prof_maxexp);
 
             prof_RollButton.setEnabled(false);
             prof_RollResult.setEditable(false);
@@ -254,35 +266,7 @@ public class CharacterGen {
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
 
-        prof_Option4a.addActionListener(e -> {
-            if (prof_Option4a.getSelectedItem() == "---") {
-                prof_Option4b.removeAllItems();
-                List list = connection.getProfs(sheet.getRace().getId());
-                prof_Option4b.addItem("---");
-                fillProfs(list);
-            } else {
-                prof_Option4b.removeAllItems();
-                List list = connection.getProfs(sheet.getRace().getId(), (String) prof_Option4a.getSelectedItem());
-                fillProfs(list);
-            }
-        });
-        prof_Option4Button.addActionListener(e -> {
-            if (prof_Option4b.getSelectedItem() != "---") {
-                Profession prof = connection.getProf((String) prof_Option4b.getSelectedItem(), 1);
-                sheet.setProf(prof);
-
-                prof_RollButton.setEnabled(false);
-                prof_RollResult.setEditable(false);
-                prof_OKButton.setEnabled(false);
-                for (JButton button : prof_Buttons)
-                    button.setEnabled(false);
-                Toolbox.setJComboBoxReadOnly(prof_Option4a);
-                Toolbox.setJComboBoxReadOnly(prof_Option4b);
-
-                moveToNextTab(tabbedPane.getSelectedIndex());
-            }
-        });
-
+        prof_Option4a.addActionListener(e -> prof_Option4b.bindItems(connection.getProfsNames(sheet.getRace().getId(), prof_Option4a.getFinalValue())));
         // Attributes
         createAttrTable();
 
@@ -324,6 +308,7 @@ public class CharacterGen {
             sheet.setMove(BAttr_num.get(0));
             attr_option1Button.setEnabled(false);
             attr_locked = true;
+            updateExp(50);
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
 
@@ -342,21 +327,19 @@ public class CharacterGen {
 
     void calculateTotal(int index) {
         RAttr_num.set(index, Integer.valueOf(RAttr.get(index).getText()));
-        TAttr.get(index).setText(String.valueOf(BAttr_num.get(index + 1) + RAttr_num.get(index)));
+        TAttr.get(index).setText(String.valueOf(BAttr_num.get(index) + RAttr_num.get(index)));
         if (TAttr_num.size() > index)
-            TAttr_num.set(index, BAttr_num.get(index + 1) + RAttr_num.get(index));
+            TAttr_num.set(index, BAttr_num.get(index) + RAttr_num.get(index));
         else
-            TAttr_num.add(BAttr_num.get(index + 1) + RAttr_num.get(index));
+            TAttr_num.add(BAttr_num.get(index) + RAttr_num.get(index));
 
-        if (TAttr_num.size()>=9) {
+        if (TAttr_num.size()==10) {
             int value = (TAttr_num.get(3) / 10) * 2 + TAttr_num.get(8) / 10;
             if (sheet.getRace().getSize() == Race.SIZE_NORMAL)
                 value += TAttr_num.get(2) / 10;
-            TAttr.get(10).setText(String.valueOf(value));
-            if (TAttr_num.size() > 10)
-                TAttr_num.set(10, value);
-            else
-                TAttr_num.add(value);
+
+            attr_hp.setText(String.valueOf(value));
+            attr_hp_num = value;
         }
     }
     void calculateTotal() {
@@ -383,14 +366,14 @@ public class CharacterGen {
             attributesTable.add(charlabel, new GridConstraints(1, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         }
 
-        JTextField baseattr = new JTextField();
-        baseattr.setHorizontalAlignment(0);
-        baseattr.setEditable(false);
-        baseattr.setFont(new Font(baseattr.getFont().getName(),Font.ITALIC+Font.BOLD,baseattr.getFont().getSize()+2));
-        BAttr.add(baseattr);
-        attributesTable.add(baseattr, new GridConstraints(2, 1, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null, 0, false));
+        attr_move = new JTextField();
+        attr_move.setHorizontalAlignment(0);
+        attr_move.setEditable(false);
+        attr_move.setFont(new Font(attr_move.getFont().getName(),Font.ITALIC+Font.BOLD,attr_move.getFont().getSize()+2));
+        attributesTable.add(attr_move, new GridConstraints(2, 1, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null, 0, false));
+
         for (int i = 1; i < columns.length-1; i++) {
-            baseattr = new JTextField();
+            JTextField baseattr = new JTextField();
             baseattr.setHorizontalAlignment(0);
             baseattr.setEditable(false);
             BAttr.add(baseattr);
@@ -403,19 +386,20 @@ public class CharacterGen {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (RAttr_num.size() == 10 && !attr_locked) {
-                        if (source == null) {
-                            source = (JTextField) e.getSource();
-                            source.setForeground(Color.red);
-                            source.setFont(new Font(source.getFont().getName(),Font.BOLD,source.getFont().getSize()));
+                        if (mouse_source == null) {
+                            mouse_source = (JTextField) e.getSource();
+                            mouse_color = mouse_source.getForeground();
+                            mouse_source.setForeground(Color.red);
+                            mouse_source.setFont(new Font(mouse_source.getFont().getName(),Font.BOLD, mouse_source.getFont().getSize()));
                         }
                         else {
                             JTextField target = (JTextField) e.getSource();
                             String temp = target.getText();
-                            target.setText(source.getText());
-                            source.setText(temp);
-                            source.setForeground(Color.black);
-                            source.setFont(new Font(source.getFont().getName(),Font.PLAIN,source.getFont().getSize()));
-                            source = null;
+                            target.setText(mouse_source.getText());
+                            mouse_source.setText(temp);
+                            mouse_source.setForeground(mouse_color);
+                            mouse_source.setFont(new Font(mouse_source.getFont().getName(),Font.PLAIN, mouse_source.getFont().getSize()));
+                            mouse_source = null;
                         }
                         calculateTotal();
                     }
@@ -432,19 +416,21 @@ public class CharacterGen {
             attributesTable.add(attr, new GridConstraints(3, i+1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
             attributesTable.add(sumattr, new GridConstraints(4, i+1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
         }
-        JTextField sumattr = new JTextField();
-        sumattr.setHorizontalAlignment(0);
-        sumattr.setEditable(false);
-        sumattr.setFont(new Font(sumattr.getFont().getName(),Font.ITALIC+Font.BOLD,sumattr.getFont().getSize()+2));
-        sumattr.setBackground(new Color(176, 224, 230));
-        TAttr.add(sumattr);
-        attributesTable.add(sumattr, new GridConstraints(2, columns.length, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null, 0, false));
+
+        attr_hp = new JTextField();
+        attr_hp.setHorizontalAlignment(0);
+        attr_hp.setEditable(false);
+        attr_hp.setFont(new Font(attr_hp.getFont().getName(),Font.ITALIC+Font.BOLD,attr_hp.getFont().getSize()+2));
+        attr_hp.setBackground(new Color(176, 224, 230));
+        attributesTable.add(attr_hp, new GridConstraints(2, columns.length, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null, 0, false));
     }
     void createFateTable() {
         BAttr.clear();
         BAttr_num = TAttr_num;
         RAttr.clear();
+        Toolbox.setAll(RAttr_num, 0);
         TAttr.clear();
+        Toolbox.setAll(TAttr_num, 0);
 
         String[] columns = {"M", "WW", "US", "S", "Wt", "I", "Zw", "Zr", "Int", "SW", "Ogd", "Żyw"};
         fate_attributeTable.setLayout(new GridLayoutManager(5, columns.length + 2, new Insets(0, 0, 0, 0), -1, -1));
@@ -459,49 +445,35 @@ public class CharacterGen {
             charlabel.setHorizontalTextPosition(0);
             charlabel.setText(columns[i]);
             fate_attributeTable.add(charlabel, new GridConstraints(1, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        }
 
+        attr_hp = new JTextField(String.valueOf(attr_hp_num));
+        attr_hp.setHorizontalAlignment(0);
+        attr_hp.setEditable(false);
+        fate_attributeTable.add(attr_hp, new GridConstraints(2, 12, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null, 0, false));
+
+        for (int i = 1; i < columns.length-1; i++) {
             JTextField attr = new JTextField();
             attr.setHorizontalAlignment(0);
             attr.setEditable(false);
             BAttr.add(attr);
             fate_attributeTable.add(attr, new GridConstraints(2, i+1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
 
-            if (i < columns.length-1) {
-                JTextField adv = new JTextField("0");
-                adv.setHorizontalAlignment(0);
-                adv.setEditable(false);
-                RAttr.add(adv);
-                fate_attributeTable.add(adv, new GridConstraints(3, i+1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
+            JTextField adv = new JTextField("0");
+            adv.setHorizontalAlignment(0);
+            adv.setEditable(false);
+            RAttr.add(adv);
+            fate_attributeTable.add(adv, new GridConstraints(3, i+1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
 
-                JButton buttonup = new JButton("+");
-                buttonup.setEnabled(false);
-                fate_ButtonsUP.add(buttonup);
-                fate_attributeTable.add(buttonup, new GridConstraints(0, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+            JButton buttonup = new JButton("+");
+            buttonup.setEnabled(false);
+            fate_ButtonsUP.add(buttonup);
+            fate_attributeTable.add(buttonup, new GridConstraints(0, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
-                JButton buttondown = new JButton("-");
-                buttondown.setEnabled(false);
-                fate_ButtonsDOWN.add(buttondown);
-                fate_attributeTable.add(buttondown, new GridConstraints(4, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-            }
-        }
-    }
-    void fillCombos() {
-        List list = connection.getProfs(sheet.getRace().getId());
-        prof_Option4a.addItem("---");
-        prof_Option4b.addItem("---");
-        for (Object prof : list) {
-            Profession temp = (Profession) prof;
-            if (((DefaultComboBoxModel) prof_Option4a.getModel()).getIndexOf(temp.getClss()) == -1)
-                prof_Option4a.addItem(temp.getClss());
-            if (((DefaultComboBoxModel) prof_Option4b.getModel()).getIndexOf(temp.getProfession()) == -1)
-                prof_Option4b.addItem(temp.getProfession());
-        }
-    }
-    void fillProfs(List list) {
-        for (Object prof : list) {
-            Profession temp = (Profession) prof;
-            if (((DefaultComboBoxModel) prof_Option4b.getModel()).getIndexOf(temp.getProfession()) == -1)
-                prof_Option4b.addItem(temp.getProfession());
+            JButton buttondown = new JButton("-");
+            buttondown.setEnabled(false);
+            fate_ButtonsDOWN.add(buttondown);
+            fate_attributeTable.add(buttondown, new GridConstraints(4, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         }
     }
 
@@ -510,7 +482,8 @@ public class CharacterGen {
         tabbedPane.setSelectedIndex(tab + 1);
         switch (tab + 1) {
             case 1:
-                fillCombos();
+                prof_Option4a.bindItems(connection.getProfsClasses(sheet.getRace().getId()));
+                prof_Option4b.bindItems(connection.getProfsNames(sheet.getRace().getId(), prof_Option4a.getFinalValue()));
                 break;
             case 2:
                 setBaseValues();
@@ -521,30 +494,49 @@ public class CharacterGen {
                 break;
         }
     }
+    void updateExp(int value) {
+        sheet.addExp(value);
+        expField.setText("" + sheet.getExp());
+    }
     void updateExp() {
         expField.setText("" + sheet.getExp());
     }
     void setBaseValues() {
+        attr_move_num = sheet.getRace().getM();
+        attr_move.setText(String.valueOf(attr_move_num));
+
         for (int i = 0; i<BAttr.size();i++) {
             Integer number = sheet.getRace().getAttr(i);
             BAttr.get(i).setText(String.valueOf(number));
             BAttr_num.add(number);
 
             if ((sheet.getRace().getSize()==Race.SIZE_NORMAL && i == 2) || i == 3 || i == 8) {
-                BAttr.get(i+1).setBackground(new Color(176, 224, 230));
+                BAttr.get(i).setBackground(new Color(176, 224, 230));
                 RAttr.get(i).setBackground(new Color(176, 224, 230));
                 TAttr.get(i).setBackground(new Color(176, 224, 230));
             }
         }
+        for (int i=0;i<RAttr.size();i++) {
+            if (sheet.getProf().getAttr(i) == 1) {
+                BAttr.get(i).setForeground(new Color(0,128,0));
+                RAttr.get(i).setForeground(new Color(0,128,0));
+                TAttr.get(i).setForeground(new Color(0,128,0));
+            }
+        }
     }
     void setTotalValues() {
-        for (int i=0;i<BAttr_num.size()-1;i++) {
+        for (int i=0;i<BAttr_num.size();i++) {
             BAttr.get(i).setText(String.valueOf(BAttr_num.get(i)));
             if (sheet.getProf().getAttr(i)==1) {
                 fate_ButtonsUP.get(i).setEnabled(true);
-                fate_ButtonsDOWN.get(i).setEnabled(true);
             }
         }
-        BAttr.get(10).setText(String.valueOf(BAttr_num.get(10)));
+        fate_fate.setText(String.valueOf(sheet.getRace().getFate()));
+        fate_resolve.setText(String.valueOf(sheet.getRace().getResilience()));
+        fate_extra.setText(String.valueOf(sheet.getRace().getExtra()));
+    }
+    private void createUIComponents() {
+        prof_Option4a = new SearchableJComboBox();
+        prof_Option4b = new SearchableJComboBox();
     }
 }

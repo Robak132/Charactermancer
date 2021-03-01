@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseListener;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.List;
 
 public abstract class Toolbox {
     public static int randomIntInRange(int min, int max) {
@@ -14,6 +15,11 @@ public abstract class Toolbox {
         return sum;
     }
 
+    public static List setAll(List<Integer> list, int value) {
+        for (Integer i: list)
+            i = value;
+        return list;
+    }
     public static void setJComboBoxReadOnly(JComboBox jcb) {
         JTextField jtf = (JTextField) jcb.getEditor().getEditorComponent();
         jtf.setEditable(false);

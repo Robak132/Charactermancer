@@ -134,11 +134,13 @@ public class Connection {
         return profs;
     }
     List getProfs(int race, String clss) {
+        if (clss == null)
+            return getProfs(race);
         List profs = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT p FROM ProfTable t, Profession p WHERE t.IDprof = p.id AND IDrace =:param1 AND p.clss =:param2");
-            SQLQuery.setParameter("param1", race);
+            Query SQLQuery = session.createQuery("SELECT p FROM ProfTable t, Profession p WHERE t.IDprof = p.id AND p.clss = :param2 AND IDrace =:param AND p.clss!='Zwierzęta'");
+            SQLQuery.setParameter("param", race);
             SQLQuery.setParameter("param2", clss);
             profs = SQLQuery.list();
             session.close();
@@ -146,5 +148,18 @@ public class Connection {
             abort();
         }
         return profs;
+    }
+
+    public List<String> getProfsClasses(int race) {
+        List<String> result = new ArrayList<>();
+        for (Object prof: getProfs(race))
+            result.add(((Profession) prof).getClss());
+        return result;
+    }
+    public List<String> getProfsNames(int race, String clss) {
+        List<String> result = new ArrayList<>();
+        for (Object prof : getProfs(race, clss))
+            result.add(((Profession) prof).getProfession());
+        return result;
     }
 }

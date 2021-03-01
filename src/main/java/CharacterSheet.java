@@ -9,15 +9,10 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.text.JTextComponent;
 import java.awt.*;
-import java.awt.event.*;
-import java.awt.event.WindowAdapter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,10 +36,7 @@ public class CharacterSheet {
     Profession prof;
     List<Integer> base_atributes;
     List<JTextField> attributesTextFields = new ArrayList<>();
-    int move;
-    int maxhp;
-    int hp;
-    int exp;
+    int move, maxhp, hp, exp;
     boolean lock = false;
     boolean warning = false;
 
@@ -62,12 +54,12 @@ public class CharacterSheet {
     }
 
     private void createAll() {
-        fillRases("");
+        fillRaces("");
         raseSelectText.getDocument().addDocumentListener((SimpleDocumentListener) e -> {
             if (!lock) {
                 SwingUtilities.invokeLater(() -> {
                     lock = true;
-                    fillRases(raseSelectText.getText());
+                    fillRaces(raseSelectText.getText());
                     lock = false;
                 });
             }
@@ -101,7 +93,7 @@ public class CharacterSheet {
     private void checkCharValue() {
         System.out.println(rase.getName());
     }
-    public void fillRases(String text) {
+    public void fillRaces(String text) {
         raseSelectText = (JTextField) raseSelect.getEditor().getEditorComponent();
         raseSelect.removeAllItems();
         List races = connection.getRaces();
@@ -114,8 +106,6 @@ public class CharacterSheet {
                 rase = (Race) race_itr;
                 changed = true;
             }
-//            else
-//                raseSelectText.setForeground(Color.red);
         }
         if (!changed)
             rase = null;
