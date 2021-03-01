@@ -2,7 +2,6 @@ package mappings;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -22,31 +21,28 @@ public class Profession {
     @Column(name = "LEVEL")
     private int level;
     @Column(name = "WW")
-    private boolean ww;
+    private int ww;
     @Column(name = "US")
-    private boolean us;
+    private int us;
     @Column(name = "S")
-    private boolean s;
+    private int s;
     @Column(name = "WT")
-    private boolean wt;
+    private int wt;
     @Column(name = "I")
-    private boolean i;
+    private int i;
     @Column(name = "ZW")
-    private boolean zw;
+    private int zw;
     @Column(name = "ZR")
-    private boolean zr;
+    private int zr;
     @Column(name = "IT")
-    private boolean it;
+    private int it;
     @Column(name = "SW")
-    private boolean sw;
+    private int sw;
     @Column(name = "OGD")
-    private boolean ogd;
-
-    @OneToMany
-    List<ProfTable> profList = new ArrayList<>();
+    private int ogd;
 
     public Profession() {}
-    public Profession(int id, String clss, String career, String profession, String professioneng, int level, boolean ww, boolean us, boolean s, boolean wt, boolean i, boolean zw, boolean zr, boolean it, boolean sw, boolean ogd) {
+    public Profession(int id, String clss, String career, String profession, String professioneng, int level, int ww, int us, int s, int wt, int i, int zw, int zr, int it, int sw, int ogd) {
         this.id = id;
         this.clss = clss;
         this.career = career;
@@ -101,76 +97,91 @@ public class Profession {
     public void setLevel(int level) {
         this.level = level;
     }
-    public List<Boolean> getAttributes() {
-        return Arrays.asList(ww, us, s, wt, i, zw, zr, it, sw, ogd);
-    }
-    public boolean getWw() {
+    public int getWw() {
         return ww;
     }
-    public void setWw(boolean ww) {
+    public void setWw(int ww) {
         this.ww = ww;
     }
-    public boolean getUs() {
+    public int getUs() {
         return us;
     }
-    public void setUs(boolean us) {
+    public void setUs(int us) {
         this.us = us;
     }
-    public boolean getS() {
+    public int getS() {
         return s;
     }
-    public void setS(boolean s) {
+    public void setS(int s) {
         this.s = s;
     }
-    public boolean getWt() {
+    public int getWt() {
         return wt;
     }
-    public void setWt(boolean wt) {
+    public void setWt(int wt) {
         this.wt = wt;
     }
-    public boolean getI() {
+    public int getI() {
         return i;
     }
-    public void setI(boolean i) {
+    public void setI(int i) {
         this.i = i;
     }
-    public boolean getZw() {
+    public int getZw() {
         return zw;
     }
-    public void setZw(boolean zw) {
+    public void setZw(int zw) {
         this.zw = zw;
     }
-    public boolean getZr() {
+    public int getZr() {
         return zr;
     }
-    public void setZr(boolean zr) {
+    public void setZr(int zr) {
         this.zr = zr;
     }
-    public boolean getIt() {
+    public int getIt() {
         return it;
     }
-    public void setIt(boolean it) {
+    public void setIt(int it) {
         this.it = it;
     }
-    public boolean getSw() {
+    public int getSw() {
         return sw;
     }
-    public void setSw(boolean sw) {
+    public void setSw(int sw) {
         this.sw = sw;
     }
-    public boolean getOgd() {
+    public int getOgd() {
         return ogd;
     }
-    public void setOgd(boolean ogd) {
+    public void setOgd(int ogd) {
         this.ogd = ogd;
     }
-    public List<ProfTable> getProfList() {
-        return profList;
+    public Integer getAttr(int number) {
+        switch (number) {
+            case 0:
+                return ww;
+            case 1:
+                return us;
+            case 2:
+                return s;
+            case 3:
+                return wt;
+            case 4:
+                return i;
+            case 5:
+                return zw;
+            case 6:
+                return zr;
+            case 7:
+                return it;
+            case 8:
+                return sw;
+            case 9:
+                return ogd;
+        }
+        return null;
     }
-    public void setProfList(List<ProfTable> profList) {
-        this.profList = profList;
-    }
-
 
     @Override
     public boolean equals(Object o) {

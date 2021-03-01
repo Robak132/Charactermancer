@@ -48,6 +48,14 @@ public class Race {
     @OneToMany
     List<ProfTable> profList = new ArrayList<>();
 
+    public static final int SIZE_TINY = 0;
+    public static final int SIZE_LITTLE = 1;
+    public static final int SIZE_SMALL = 2;
+    public static final int SIZE_NORMAL = 3;
+    public static final int SIZE_LARGE = 4;
+    public static final int SIZE_ENORMOUS = 5;
+    public static final int SIZE_MONSTROUS = 6;
+
     public Race() {}
     public Race(int id, String name, int ww, int us, int s, int wt, int i, int zw, int zr, int it, int sw, int ogd, int m, int fate, int resilience, int extra, int size) {
         this.id = id;

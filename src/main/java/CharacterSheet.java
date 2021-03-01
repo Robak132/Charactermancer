@@ -41,6 +41,9 @@ public class CharacterSheet {
     Profession prof;
     List<Integer> base_atributes;
     List<JTextField> attributesTextFields = new ArrayList<>();
+    int move;
+    int maxhp;
+    int hp;
     int exp;
     boolean lock = false;
     boolean warning = false;
@@ -50,10 +53,12 @@ public class CharacterSheet {
         previous_screen = _screen;
         languagePack = _languagepack;
         connection = _connection;
+        exp = 0;
 
         createAll();
     }
     public CharacterSheet() {
+        exp = 0;
     }
 
     private void createAll() {
@@ -141,10 +146,10 @@ public class CharacterSheet {
 
     }
 
-    public Race getRase() {
+    public Race getRace() {
         return rase;
     }
-    public void setRase(Race rase) {
+    public void setRace(Race rase) {
         this.rase = rase;
     }
     public Profession getProf() {
@@ -157,7 +162,13 @@ public class CharacterSheet {
         return base_atributes;
     }
     public void setBAtributes(List<Integer> base_atributes) {
-        this.base_atributes = base_atributes;
+        if (base_atributes.size()==10)
+            this.base_atributes = base_atributes;
+        else {
+            this.base_atributes = base_atributes.subList(0, 9);
+            this.maxhp = base_atributes.get(10);
+            this.hp = maxhp;
+        }
     }
     public int getExp() {
         return exp;
@@ -167,5 +178,26 @@ public class CharacterSheet {
     }
     public void addExp(int exp) {
         this.exp += exp;
+    }
+    public int getMove() {
+        return move;
+    }
+    public void setMove(int move) {
+        this.move = move;
+    }
+    public int getMaxHP() {
+        return maxhp;
+    }
+    public void setMaxHP(int maxhp) {
+        this.maxhp = maxhp;
+    }
+    public int getHP() {
+        return hp;
+    }
+    public void setHP(int hp) {
+        this.hp = hp;
+    }
+    public void setHP() {
+        this.hp = maxhp;
     }
 }
