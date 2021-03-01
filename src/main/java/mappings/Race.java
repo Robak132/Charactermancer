@@ -158,26 +158,24 @@ public class Race {
     public Integer getAttr(int number) {
         switch (number) {
             case 0:
-                return m;
-            case 1:
                 return ww;
-            case 2:
+            case 1:
                 return us;
-            case 3:
+            case 2:
                 return s;
-            case 4:
+            case 3:
                 return wt;
-            case 5:
+            case 4:
                 return i;
-            case 6:
+            case 5:
                 return zw;
-            case 7:
+            case 6:
                 return zr;
-            case 8:
+            case 7:
                 return it;
-            case 9:
+            case 8:
                 return sw;
-            case 10:
+            case 9:
                 return ogd;
         }
         return null;

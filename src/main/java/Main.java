@@ -50,9 +50,6 @@ public class Main {
         });
     }
 
-    void update_data() {
-    }
-
     void repaint() {
 //        createcharButton.setText(languagePack.localise(createcharButton.getName()));
 //        createsheetButton.setText(languagePack.localise(createsheetButton.getName()));

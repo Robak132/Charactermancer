@@ -27,17 +27,16 @@ public class CharacterSheet {
     private JButton makeCharacterSheetButton;
     private JButton saveButton;
     private JTextField nameField;
-    private SearchableJComboBox raseSelect;
+    private SearchableJComboBox raceSelect;
     private JPanel basePanel;
     private JButton exitButton;
-    private JTextField raseSelectText;
+    private JTextField raceSelectText;
 
-    Race rase;
+    Race race;
     Profession prof;
-    List<Integer> base_atributes;
+    Integer[] base_attributes = new Integer[10];
     List<JTextField> attributesTextFields = new ArrayList<>();
     int move, maxhp, hp, exp;
-    boolean lock = false;
     boolean warning = false;
 
     public CharacterSheet(JFrame _frame, Main _screen, LanguagePack _languagepack, Connection _connection) {
@@ -54,7 +53,7 @@ public class CharacterSheet {
     }
 
     private void createAll() {
-        raseSelect.bindItems(connection.getRacesNames());
+        raceSelect.bindItems(connection.getRacesNames());
 
         String[] columns = {"M", "WW", "US", "S", "Wt", "I", "Zw", "Zr", "Int", "SW", "Ogd", "Żyw"};
         basePanel.setLayout(new GridLayoutManager(2, columns.length + 2, new Insets(0, 0, 0, 0), -1, -1));
@@ -82,7 +81,7 @@ public class CharacterSheet {
         });
     }
     private void checkCharValue() {
-        System.out.println(rase.getName());
+        System.out.println(race.getName());
     }
     public static void ReadJSONExample() {
         JSONParser parser = new JSONParser();
@@ -110,10 +109,10 @@ public class CharacterSheet {
     }
 
     public Race getRace() {
-        return rase;
+        return race;
     }
-    public void setRace(Race rase) {
-        this.rase = rase;
+    public void setRace(Race race) {
+        this.race = race;
     }
     public Profession getProf() {
         return prof;
@@ -121,17 +120,14 @@ public class CharacterSheet {
     public void setProf(Profession prof) {
         this.prof = prof;
     }
-    public List<Integer> getBAtributes() {
-        return base_atributes;
+    public Integer[] getBAttributes() {
+        return base_attributes;
     }
-    public void setBAtributes(List<Integer> base_atributes) {
-        if (base_atributes.size()==10)
-            this.base_atributes = base_atributes;
-        else {
-            this.base_atributes = base_atributes.subList(0, 9);
-            this.maxhp = base_atributes.get(10);
-            this.hp = maxhp;
-        }
+    public void setBAttributes(List<Integer> base_attributes) {
+        this.base_attributes = base_attributes.toArray(Integer[]::new);
+    }
+    public void setBAttributes(Integer[] base_attributes) {
+        this.base_attributes = base_attributes;
     }
     public int getExp() {
         return exp;

@@ -265,7 +265,6 @@ public class CharacterGen {
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
-
         prof_Option4a.addActionListener(e -> prof_Option4b.bindItems(connection.getProfsNames(sheet.getRace().getId(), prof_Option4a.getFinalValue())));
 
         // Attributes
@@ -305,8 +304,10 @@ public class CharacterGen {
             attr_okButton.setEnabled(false);
         });
         attr_option1Button.addActionListener(e -> {
-            sheet.setBAtributes(TAttr_num);
-            sheet.setMove(BAttr_num.get(0));
+            sheet.setBAttributes(TAttr_num);
+            sheet.setMove(attr_move_num);
+            sheet.setMaxHP(attr_hp_num);
+            sheet.setHP();
             attr_option1Button.setEnabled(false);
             attr_locked = true;
             updateExp(50);
