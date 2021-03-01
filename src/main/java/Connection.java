@@ -20,12 +20,6 @@ public class Connection {
     private SessionFactory factory;
 
     Connection() {
-        try {
-            Files.copy(new File("./src/main/resources/db/database_backup.h2.db").toPath(), new File("./src/main/resources/db/database_backup_2.h2.db").toPath(), StandardCopyOption.REPLACE_EXISTING);            Files.copy(new File("./src/main/resources/db/database.h2.db").toPath(), new File("./src/main/resources/db/database_backup.h2.db").toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (Exception ignored) {}
-        try {
-            Files.copy(new File("./src/main/resources/db/database.h2.db").toPath(), new File("./src/main/resources/db/database_backup.h2.db").toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (Exception ignored) {}
         refresh();
     }
     private void refresh() {

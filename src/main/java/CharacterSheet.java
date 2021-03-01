@@ -34,6 +34,7 @@ public class CharacterSheet {
     private JTextField nameField;
     private JComboBox<String> raseSelect;
     private JPanel basePanel;
+    private JButton exitButton;
     private JTextField raseSelectText;
 
     Race rase;
@@ -86,6 +87,11 @@ public class CharacterSheet {
             chartext.getDocument().addDocumentListener((SimpleDocumentListener) e -> checkCharValue());
             basePanel.add(chartext, new GridConstraints(1, i+1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
         }
+
+        exitButton.addActionListener(e -> {
+            frame.setContentPane(previous_screen.mainPanel);
+            frame.validate();
+        });
     }
     private void checkCharValue() {
         System.out.println(rase.getName());

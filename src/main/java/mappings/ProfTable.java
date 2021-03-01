@@ -38,7 +38,7 @@ public class ProfTable {
         this.IDprof = IDprof;
     }
 
-    @Column(name = "INDEX")
+    @Column(name = "INDX")
     public int getIndex() {
         return index;
     }
