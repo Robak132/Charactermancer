@@ -1,3 +1,5 @@
+package components;
+
 import javax.swing.*;
 
 public class JIntegerField extends JTextField {

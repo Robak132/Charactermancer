@@ -1,6 +1,7 @@
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import components.SearchableJComboBox;
 import mappings.Profession;
 import mappings.Race;
 import org.json.simple.JSONArray;
@@ -73,7 +74,7 @@ public class CharacterSheet {
             JTextField chartext = new JTextField();
             chartext.setHorizontalAlignment(0);
             attributesTextFields.add(chartext);
-            chartext.getDocument().addDocumentListener((SimpleDocumentListener) e -> checkCharValue());
+//            chartext.getDocument().addDocumentListener((SimpleDocumentListener) e -> checkCharValue());
             basePanel.add(chartext, new GridConstraints(1, i+1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
         }
 
