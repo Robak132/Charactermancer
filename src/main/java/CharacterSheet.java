@@ -32,12 +32,14 @@ public class CharacterSheet {
     private JButton exitButton;
     private JTextField raceSelectText;
 
-    Race race;
-    Profession prof;
-    Integer[] base_attributes = new Integer[10];
-    List<JTextField> attributesTextFields = new ArrayList<>();
-    int move, maxhp, hp, exp;
-    boolean warning = false;
+    private Race race;
+    private Profession prof;
+    private Integer[] base_attributes = new Integer[10];
+    private Integer[] adv_attributes = new Integer[10];
+    private List<JTextField> attributesTextFields = new ArrayList<>();
+
+    private int move, maxhp, hp, exp;
+    private boolean warning = false;
 
     public CharacterSheet(JFrame _frame, Main _screen, LanguagePack _languagepack, Connection _connection) {
         frame = _frame;
@@ -123,8 +125,8 @@ public class CharacterSheet {
     public Integer[] getBAttributes() {
         return base_attributes;
     }
-    public void setBAttributes(List<Integer> base_attributes) {
-        this.base_attributes = base_attributes.toArray(Integer[]::new);
+    public void setBAttributes(int index, int attribute) {
+        this.base_attributes[index] = attribute;
     }
     public void setBAttributes(Integer[] base_attributes) {
         this.base_attributes = base_attributes;

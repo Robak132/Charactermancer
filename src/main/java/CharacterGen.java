@@ -295,10 +295,11 @@ public class CharacterGen {
             attr_okButton.setEnabled(false);
         });
         attr_option1Button.addActionListener(e -> {
-//            sheet.setBAttributes(TAttr_num);
-//            sheet.setMove(attr_move_num);
-//            sheet.setMaxHP(attr_hp_num);
-//            sheet.setHP();
+            for (int i=0;i<TAttr.size();i++)
+                sheet.setBAttributes(i, TAttr.get(i).getValue());
+            sheet.setMove(attr_move.getValue());
+            sheet.setMaxHP(attr_hp.getValue());
+            sheet.setHP();
 
             attr_option1Button.setEnabled(false);
             attr_locked = true;
