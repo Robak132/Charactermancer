@@ -9,24 +9,27 @@ import java.util.List;
 public class GroupSkill {
     @Id
     @Column(name = "ID")
-    private int id;
+    private int ID;
     @Column(name = "NAME")
     private String name;
     @Column(name = "IDBASE")
-    private int idbase;
+    private int IDbase;
+    @Column(name = "CUSTOM")
+    private int custom;
 
     public GroupSkill() {}
-    public GroupSkill(int id, String name, int idbase) {
-        this.id = id;
+    public GroupSkill(int ID, String name, int IDbase, int custom) {
+        this.ID = ID;
         this.name = name;
-        this.idbase = idbase;
+        this.IDbase = IDbase;
+        this.custom = custom;
     }
 
-    public int getId() {
-        return id;
+    public int getID() {
+        return ID;
     }
-    public void setId(int id) {
-        this.id = id;
+    public void setID(int ID) {
+        this.ID = ID;
     }
     public String getName() {
         return name;
@@ -34,10 +37,16 @@ public class GroupSkill {
     public void setName(String name) {
         this.name = name;
     }
-    public int getIdbase() {
-        return idbase;
+    public int getIDbase() {
+        return IDbase;
     }
-    public void setIdbase(int id) {
-        this.id = id;
+    public void setIDbase(int ID) {
+        this.ID = ID;
+    }
+    public int getCustom() {
+        return custom;
+    }
+    public void setCustom(int custom) {
+        this.custom = custom;
     }
 }

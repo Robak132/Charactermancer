@@ -150,6 +150,19 @@ public class Connection {
         return profs;
     }
 
+    List getSkillsByRace(int race) {
+        List skills = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query SQLQuery = session.createQuery("SELECT r FROM RaceSkill r, GroupSkill s WHERE r.IDRace = :param AND s.ID = r.IDSkill");
+            SQLQuery.setParameter("param", race);
+            skills = SQLQuery.list();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+        }
+        return skills;
+    }
     public List<String> getProfsClasses(int race) {
         List<String> result = new ArrayList<>();
         for (Object prof: getProfs(race))
