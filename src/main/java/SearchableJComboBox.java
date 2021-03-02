@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,9 +14,10 @@ public class SearchableJComboBox extends JComboBox<String> {
 
     public SearchableJComboBox() {
         super();
+        textfield = (JTextField) this.editor.getEditorComponent();
     }
     public SearchableJComboBox(List items) {
-        super();
+        this();
         bindItems(items);
     }
 
@@ -42,7 +44,6 @@ public class SearchableJComboBox extends JComboBox<String> {
     }
     public void bindItems(List items) {
         this.items = items;
-        textfield = (JTextField) this.editor.getEditorComponent();
         textfield.getDocument().addDocumentListener((SimpleDocumentListener) e -> {
             if (!lock) {
                 SwingUtilities.invokeLater(() -> {
@@ -54,8 +55,27 @@ public class SearchableJComboBox extends JComboBox<String> {
         });
         fill("");
     }
-    public String getFinalValue() {
+    public String getValue() {
         return good_value;
+    }
+
+    public void setNotEditable() {
+        textfield.setEditable(false);
+
+        MouseListener[] mls = this.getMouseListeners();
+        for (MouseListener listener : mls)
+            this.removeMouseListener(listener);
+
+        Component[] comps = this.getComponents();
+        for (Component c : comps) {
+            if (c instanceof AbstractButton) {
+                c.setEnabled(false);
+
+                MouseListener[] mls2 = c.getMouseListeners();
+                for (MouseListener listener : mls2)
+                    c.removeMouseListener(listener);
+            }
+        }
     }
 }
 
