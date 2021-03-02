@@ -82,9 +82,9 @@ public class CharacterGen {
 
     private JIntegerField mouse_source = null;
     Color mouse_color;
-    boolean attr_locked = false;
+    boolean attr_locked = true;
 
-    int rollResultNumeric, rollResultNumeric1;
+    int rollResultNumeric;
     Race rollRace;
 
     List<JIntegerField> BAttr = new ArrayList<>();
@@ -105,9 +105,11 @@ public class CharacterGen {
         prepareRaces();
 
         race_RollButton.addActionListener(e -> {
-            rollResultNumeric = Dice.randomDice(1, 100);
+            Object[] result = getRandomRace();
+            rollResultNumeric = (int) result[0];
+            rollRace = (Race) result[1];
+
             race_RollResult.setText("" + rollResultNumeric);
-            rollRace = connection.getRaceFromTable(rollResultNumeric);
             race_Option1.setText(rollRace.getName());
 
             race_RollButton.setEnabled(false);
@@ -171,15 +173,17 @@ public class CharacterGen {
 
         // Profession //
         prof_RollButton.addActionListener(e -> {
-            Profession prof;
+            Profession rollProf;
             do {
-                rollResultNumeric1 = Dice.randomDice(1, 100);
-                prof_RollResult.setText("" + rollResultNumeric1);
-                prof = connection.getProfFromTable(sheet.getRace().getId(), rollResultNumeric1);
-            } while (profList.contains(prof));
-            profList.add(prof);
-            prof_Options[profList.size() - 1][0].setText(prof.getCareer());
-            prof_Options[profList.size() - 1][1].setText(prof.getProfession());
+                Object[] result = getRandomProf(sheet.getRace());
+                rollResultNumeric = (int) result[0];
+                rollProf = (Profession) result[1];
+
+                prof_RollResult.setText("" + rollResultNumeric);
+            } while (profList.contains(rollProf));
+            profList.add(rollProf);
+            prof_Options[profList.size() - 1][0].setText(rollProf.getCareer());
+            prof_Options[profList.size() - 1][1].setText(rollProf.getProfession());
             prof_Buttons[profList.size() - 1].setEnabled(true);
             if (profList.size() > 1)
                 prof_maxexp = 25;
@@ -196,8 +200,8 @@ public class CharacterGen {
         prof_OKButton.addActionListener(e -> {
             try {
                 if (Integer.parseInt(prof_RollResult.getText()) > 0 && Integer.parseInt(prof_RollResult.getText()) <= 100) {
-                    rollResultNumeric1 = Integer.parseInt(prof_RollResult.getText());
-                    Profession prof = connection.getProfFromTable(sheet.getRace().getId(), rollResultNumeric1);
+                    rollResultNumeric = Integer.parseInt(prof_RollResult.getText());
+                    Profession prof = connection.getProfFromTable(sheet.getRace().getId(), rollResultNumeric);
                     if (profList.contains(prof)) {
                         rollLabel.setVisible(true);
                         throw new Exception();
@@ -262,34 +266,45 @@ public class CharacterGen {
         });
         prof_Option4a.addActionListener(e -> prof_Option4b.bindItems(connection.getProfsNames(sheet.getRace().getId(), prof_Option4a.getValue())));
 
-        // Attributes
+        // Attributes //
         createAttrTable();
 
         attr_rollButton.addActionListener(e -> {
-            int number = Dice.randomDice(2, 10);
-            RAttr.get(attr_itr).setValue(number);
-            RAttr.get(attr_itr).setEditable(false);
+            Object[] result = getOneRandomAttr(attr_itr, sheet.getRace());
+            int rollAttr = (int) result[0];
+            int sumAttr = (int) result[1];
 
-            attr_sumField.increment(number);
-            calculateTotal(attr_itr);
+            RAttr.get(attr_itr).setValue(rollAttr);
+            RAttr.get(attr_itr).setEditable(false);
+            TAttr.get(attr_itr).setValue(sumAttr);
+            attr_sumField.increment(rollAttr);
             attr_itr++;
 
+            if (attr_itr==9) {
+                calculateHP();
+            }
             if (attr_itr==10) {
+                calculateHP();
+                attr_locked = false;
                 attr_rollButton.setEnabled(false);
                 attr_rollAllButton.setEnabled(false);
                 attr_okButton.setEnabled(false);
             }
         });
         attr_rollAllButton.addActionListener(e -> {
-            while (attr_itr < 10) {
-                int number = Dice.randomDice(2, 10);
-                RAttr.get(attr_itr).setValue(number);
-                RAttr.get(attr_itr).setEditable(false);
+            Object[] result = getAllRandomAttr(sheet.getRace());
+            Integer[] rollAttr = (Integer[]) result[0];
+            Integer[] sumAttr = (Integer[]) result[1];
+            attr_sumField.setValue((int) result[2]);
 
-                attr_sumField.setValue(attr_sumField.getValue()+number);
-                calculateTotal(attr_itr);
-                attr_itr++;
+            for (int i=0;i<10;i++) {
+                RAttr.get(i).setValue(rollAttr[i]);
+                RAttr.get(i).setEditable(false);
+                TAttr.get(i).setValue(sumAttr[i]);
             }
+            calculateHP();
+
+            attr_locked = false;
             attr_rollButton.setEnabled(false);
             attr_rollAllButton.setEnabled(false);
             attr_okButton.setEnabled(false);
@@ -307,7 +322,7 @@ public class CharacterGen {
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
 
-        // Fate & Resolve
+        // Fate & Resolve //
         fate_fateUP.addActionListener(e -> {
             fate_extra.setText(String.valueOf(Integer.parseInt(fate_extra.getText()) - 1));
             fate_fate.setText(String.valueOf(Integer.parseInt(fate_fate.getText()) + 1));
@@ -357,19 +372,10 @@ public class CharacterGen {
         });
     }
 
-    void calculateTotal(int index) {
-        TAttr.get(index).setValue(BAttr.get(index).getValue() + RAttr.get(index).getValue());
-        if (attr_itr>=9) {
-            int value = (TAttr.get(3).getValue() / 10) * 2 + TAttr.get(8).getValue() / 10;
-            if (sheet.getRace().getSize() == Race.SIZE_NORMAL)
-                value += TAttr.get(2).getValue() / 10;
-
-            attr_hp.setValue(value);
-        }
-    }
     void calculateTotal() {
         for (int i=0;i<10;i++)
-            calculateTotal(i);
+            TAttr.get(i).setValue(BAttr.get(i).getValue() + RAttr.get(i).getValue());
+        calculateHP();
     }
     void prepareRaces() {
         for (Object race: connection.getRaces())
@@ -408,7 +414,7 @@ public class CharacterGen {
             attr.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    if (attr_itr == 10 && !attr_locked) {
+                    if (!attr_locked) {
                         if (mouse_source == null) {
                             mouse_source = (JIntegerField) e.getSource();
                             mouse_color = mouse_source.getForeground();
@@ -565,7 +571,7 @@ public class CharacterGen {
     void setBaseValues() {
         attr_move.setValue(sheet.getRace().getM());
 
-        for (int i = 0; i<BAttr.size();i++) {
+        for (int i=0; i<BAttr.size();i++) {
             Integer number = sheet.getRace().getAttr(i);
             BAttr.get(i).setValue(number);
 
@@ -594,9 +600,51 @@ public class CharacterGen {
         fate_extra.setText(String.valueOf(sheet.getRace().getExtra()));
     }
     void buttonsSetEnable(List<JButton> list, boolean bool) {
-        for (int i=0;i<10;i++) {
+        for (int i=0;i<list.size();i++) {
             if (sheet.getProf().getAttr(i)==1)
                 list.get(i).setEnabled(bool);
         }
+    }
+
+    // Base functions to use with GUI and text //
+    Object[] getRandomRace() {
+        Object[] returns = new Object[2];
+        int numeric = Dice.randomDice(1, 100);
+        returns[0] = numeric;
+        returns[1] = connection.getRaceFromTable(numeric);
+        return returns;
+    }
+    Object[] getRandomProf(Race race) {
+        Object[] returns = new Object[2];
+        int numeric = Dice.randomDice(1, 100);
+        returns[0] = numeric;
+        returns[1] = connection.getProfFromTable(race.getId(), numeric);
+        return returns;
+    }
+    Object[] getOneRandomAttr(int index, Race race) {
+        Object[] returns = new Object[2];
+        int raceAttr = race.getAttr(index);
+        int rollAttr = Dice.randomDice(2, 10);
+        int sumAttr = raceAttr + rollAttr;
+
+        returns[0] = rollAttr;
+        returns[1] = sumAttr;
+        return returns;
+    }
+    Object[] getAllRandomAttr(Race race) {
+        Integer[] rollAttr = new Integer[10];
+        Integer[] sumAttr = new Integer[10];
+        Object[] returns = new Object[3];
+        int sumRollAttr = 0;
+        for (int i=0;i<10;i++) {
+            Object[] attr = getOneRandomAttr(i, race);
+            rollAttr[i] = (Integer) attr[0];
+            sumAttr[i] = (Integer) attr[1];
+            sumRollAttr += (int) attr[0];
+        }
+        returns[0] = rollAttr;
+        returns[1] = sumAttr;
+        returns[2] = sumRollAttr;
+        return returns;
     }
 }

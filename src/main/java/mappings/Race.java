@@ -180,6 +180,9 @@ public class Race {
         }
         return null;
     }
+    public Integer[] getBaseAttr() {
+        return new Integer[] {ww, us, s, wt, i, zw, zr, it, sw, ogd};
+    }
     public int getFate() {
         return fate;
     }
