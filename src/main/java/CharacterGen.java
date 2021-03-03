@@ -360,7 +360,7 @@ public class CharacterGen {
             fate_resilienceUP.setEnabled(true);
             fate_resilienceDOWN.setEnabled(Integer.parseInt(fate_resilience.getText())!=sheet.getRace().getResilience());
         });
-        fate_OKButton.addActionListener(e -> {
+        fate_OKButton.addActionListener(e -> { //
             for (int i=0;i<TAttr.size();i++) {
                 sheet.setAdvAttributes(i, RAttr.get(i).getValue());
                 sheet.setSumAttributes(i, TAttr.get(i).getValue());
