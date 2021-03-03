@@ -81,7 +81,7 @@ public class CharacterGen {
     private JIntegerField fate_extra;
     private JButton fate_resilienceUP;
     private JButton fate_resilienceDOWN;
-    private JButton OKButton;
+    private JButton fate_OKButton;
 
     private JIntegerField mouse_source = null;
     Color mouse_color;
@@ -312,7 +312,7 @@ public class CharacterGen {
         });
         attr_option1Button.addActionListener(e -> {
             for (int i=0;i<TAttr.size();i++)
-                sheet.setBAttributes(i, TAttr.get(i).getValue());
+                sheet.setBaseAttributes(i, TAttr.get(i).getValue());
             sheet.setMove(attr_move.getValue());
             sheet.setMaxHP(attr_hp.getValue());
             sheet.setHP();
@@ -360,6 +360,15 @@ public class CharacterGen {
             fate_resilienceUP.setEnabled(true);
             fate_resilienceDOWN.setEnabled(Integer.parseInt(fate_resilience.getText())!=sheet.getRace().getResilience());
         });
+        fate_OKButton.addActionListener(e -> {
+            for (int i=0;i<TAttr.size();i++) {
+                sheet.setAdvAttributes(i, RAttr.get(i).getValue());
+                sheet.setSumAttributes(i, TAttr.get(i).getValue());
+            }
+            buttonsSetEnable(fate_ButtonsDOWN, false);
+
+            moveToNextTab(tabbedPane.getSelectedIndex());
+        });
 
         tabbedPane.addChangeListener(e -> {
             int tab = tabbedPane.getSelectedIndex();
@@ -371,6 +380,7 @@ public class CharacterGen {
             frame.setContentPane(previous_screen.mainPanel);
             frame.validate();
         });
+
     }
 
     void calculateTotal() {
@@ -560,6 +570,8 @@ public class CharacterGen {
             case 3:
                 createFateTable();
                 setTotalValues();
+                break;
+            case 4:
                 break;
         }
     }

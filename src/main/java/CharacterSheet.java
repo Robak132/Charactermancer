@@ -37,6 +37,7 @@ public class CharacterSheet {
     private Profession prof;
     private Integer[] base_attributes = new Integer[10];
     private Integer[] adv_attributes = new Integer[10];
+    private Integer[] sum_attributes = new Integer[10];
     private List<JTextField> attributesTextFields = new ArrayList<>();
 
     private int move, maxhp, hp, exp;
@@ -123,14 +124,23 @@ public class CharacterSheet {
     public void setProf(Profession prof) {
         this.prof = prof;
     }
-    public Integer[] getBAttributes() {
+    public Integer[] getBaseAttributes() {
         return base_attributes;
     }
-    public void setBAttributes(int index, int attribute) {
+    public Integer[] getAdv_attributes() {
+        return adv_attributes;
+    }
+    public Integer[] getSum_attributes() {
+        return sum_attributes;
+    }
+    public void setBaseAttributes(int index, int attribute) {
         this.base_attributes[index] = attribute;
     }
-    public void setBAttributes(Integer[] base_attributes) {
-        this.base_attributes = base_attributes;
+    public void setAdvAttributes(int index, int attribute) {
+        this.adv_attributes[index] = attribute;
+    }
+    public void setSumAttributes(int index, int attribute) {
+        this.sum_attributes[index] = attribute;
     }
     public int getExp() {
         return exp;
