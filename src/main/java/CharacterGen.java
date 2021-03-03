@@ -21,44 +21,45 @@ public class CharacterGen {
     CharacterSheet sheet;
 
     private JLabel imageLabel;
-    private JTextField expField;
+    private JIntegerField expField;
     private JTabbedPane tabbedPane;
     private JButton exitButton;
     private JLabel rollLabel;
 
-    private JTextField race_RollResult;
-    private JButton race_Option2Button;
-    private SearchableJComboBox race_Option2Combo;
-    private JButton race_Option1Button;
-    private JTextField race_Option1;
-    private JButton race_RollButton;
+    private JTextField race_rollResult;
+    private JButton race_option2Button;
+    private SearchableJComboBox race_option2Combo;
+    private JButton race_option1Button;
+    private JTextField race_option1;
+    private JButton race_rollButton;
     private JButton race_OKButton;
 
-    private JButton prof_Option1Button;
+    private JButton prof_option1Button;
     private JButton prof_OKButton;
-    private JButton prof_RollButton;
-    private JTextField prof_RollResult;
-    private JTextField prof_Option1a;
-    private JTextField prof_Option1b;
-    private JTextField prof_Option2a;
-    private JTextField prof_Option2b;
-    private JButton prof_Option2Button;
-    private JTextField prof_Option3a;
-    private JTextField prof_Option3b;
-    private JButton prof_Option3Button;
-    private SearchableJComboBox prof_Option4a;
-    private SearchableJComboBox prof_Option4b;
-    private JButton prof_Option4Button;
+    private JButton prof_rollButton;
+    private JTextField prof_rollResult;
+    private JTextField prof_option1a;
+    private JTextField prof_option1b;
+    private JTextField prof_option2a;
+    private JTextField prof_option2b;
+    private JButton prof_option2Button;
+    private JTextField prof_option3a;
+    private JTextField prof_option3b;
+    private JButton prof_option3Button;
+    private SearchableJComboBox prof_option4a;
+    private SearchableJComboBox prof_option4b;
+    private JButton prof_option4Button;
     List<Profession> profList = new ArrayList<>();
     JTextField[][] prof_Options = {
-            {prof_Option1a, prof_Option1b},
-            {prof_Option2a, prof_Option2b},
-            {prof_Option3a, prof_Option3b}
+            {prof_option1a, prof_option1b},
+            {prof_option2a, prof_option2b},
+            {prof_option3a, prof_option3b}
     };
-    JButton[] prof_Buttons = {
-            prof_Option1Button, prof_Option2Button, prof_Option3Button, prof_Option4Button
+    JButton[] prof_buttons = {
+            prof_option1Button, prof_option2Button, prof_option3Button, prof_option4Button
     };
-    int prof_maxexp = 50;
+    int prof_maxExp = 50;
+    int attr_maxExp = 50;
 
     private JPanel attributesTable;
     private JButton attr_rollButton;
@@ -106,67 +107,65 @@ public class CharacterGen {
         // Race //
         prepareRaces();
 
-        race_RollButton.addActionListener(e -> {
+        race_rollButton.addActionListener(e -> {
             Object[] result = getRandomRace();
             rollResultNumeric = (int) result[0];
             rollRace = (Race) result[1];
 
-            race_RollResult.setText("" + rollResultNumeric);
-            race_Option1.setText(rollRace.getName());
+            race_rollResult.setText("" + rollResultNumeric);
+            race_option1.setText(rollRace.getName());
 
-            race_RollButton.setEnabled(false);
-            race_RollResult.setEditable(false);
+            race_rollButton.setEnabled(false);
+            race_rollResult.setEditable(false);
             race_OKButton.setEnabled(false);
 
-            race_Option1.setEnabled(true);
-            race_Option1Button.setEnabled(true);
-            race_Option2Combo.setEnabled(true);
-            race_Option2Button.setEnabled(true);
+            race_option1.setEnabled(true);
+            race_option1Button.setEnabled(true);
+            race_option2Combo.setEnabled(true);
+            race_option2Button.setEnabled(true);
         });
         race_OKButton.addActionListener(e -> {
             try {
-                if (Integer.parseInt(race_RollResult.getText()) > 0 && Integer.parseInt(race_RollResult.getText()) <= 100) {
-                    rollResultNumeric = Integer.parseInt(race_RollResult.getText());
+                if (Integer.parseInt(race_rollResult.getText()) > 0 && Integer.parseInt(race_rollResult.getText()) <= 100) {
+                    rollResultNumeric = Integer.parseInt(race_rollResult.getText());
                     rollRace = connection.getRaceFromTable(rollResultNumeric);
-                    race_Option1.setText(rollRace.getName());
+                    race_option1.setText(rollRace.getName());
 
-                    race_RollButton.setEnabled(false);
-                    race_RollResult.setEditable(false);
+                    race_rollButton.setEnabled(false);
+                    race_rollResult.setEditable(false);
                     race_OKButton.setEnabled(false);
 
-                    race_Option1.setEnabled(true);
-                    race_Option1Button.setEnabled(true);
-                    race_Option2Combo.setEnabled(true);
-                    race_Option2Button.setEnabled(true);
+                    race_option1.setEnabled(true);
+                    race_option1Button.setEnabled(true);
+                    race_option2Combo.setEnabled(true);
+                    race_option2Button.setEnabled(true);
                 }
             } catch (Exception ex) {
-                race_RollResult.setText("");
+                race_rollResult.setText("");
             }
         });
 
-        race_Option1Button.addActionListener(e -> {
-            race_Option2Combo.setSelectedItem(race_Option1.getText());
+        race_option1Button.addActionListener(e -> {
+            race_option2Combo.setSelectedItem(race_option1.getText());
             sheet.setRace(rollRace);
-            sheet.addExp(20);
-            updateExp();
+            updateExp(20);
 
-            race_Option1Button.setEnabled(false);
-            race_Option1.setEditable(false);
-            race_Option2Button.setEnabled(false);
-            race_Option2Combo.setNotEditable();
+            race_option1Button.setEnabled(false);
+            race_option1.setEditable(false);
+            race_option2Button.setEnabled(false);
+            race_option2Combo.setNotEditable();
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
-        race_Option2Button.addActionListener(e -> {
+        race_option2Button.addActionListener(e -> {
             try {
-                race_Option1.setText((String) race_Option2Combo.getSelectedItem());
-                sheet.setRace(connection.getRace((String) race_Option2Combo.getSelectedItem()));
-                updateExp();
+                race_option1.setText((String) race_option2Combo.getSelectedItem());
+                sheet.setRace(connection.getRace((String) race_option2Combo.getSelectedItem()));
 
-                race_Option1Button.setEnabled(false);
-                race_Option1.setEditable(false);
-                race_Option2Button.setEnabled(false);
-                race_Option2Combo.setNotEditable();
+                race_option1Button.setEnabled(false);
+                race_option1.setEditable(false);
+                race_option2Button.setEnabled(false);
+                race_option2Combo.setNotEditable();
 
                 moveToNextTab(tabbedPane.getSelectedIndex());
             } catch (Exception ignored) {
@@ -174,35 +173,35 @@ public class CharacterGen {
         });
 
         // Profession //
-        prof_RollButton.addActionListener(e -> {
+        prof_rollButton.addActionListener(e -> {
             Profession rollProf;
             do {
                 Object[] result = getRandomProf(sheet.getRace());
                 rollResultNumeric = (int) result[0];
                 rollProf = (Profession) result[1];
 
-                prof_RollResult.setText("" + rollResultNumeric);
+                prof_rollResult.setText("" + rollResultNumeric);
             } while (profList.contains(rollProf));
             profList.add(rollProf);
             prof_Options[profList.size() - 1][0].setText(rollProf.getCareer());
             prof_Options[profList.size() - 1][1].setText(rollProf.getProfession());
-            prof_Buttons[profList.size() - 1].setEnabled(true);
+            prof_buttons[profList.size() - 1].setEnabled(true);
             if (profList.size() > 1)
-                prof_maxexp = 25;
+                prof_maxExp = 25;
             if (profList.size() >= 3) {
-                prof_RollButton.setEnabled(false);
-                prof_RollResult.setEditable(false);
+                prof_rollButton.setEnabled(false);
+                prof_rollResult.setEditable(false);
                 prof_OKButton.setEnabled(false);
 
-                prof_Option4Button.setEnabled(true);
-                prof_Option4a.setEnabled(true);
-                prof_Option4b.setEnabled(true);
+                prof_option4Button.setEnabled(true);
+                prof_option4a.setEnabled(true);
+                prof_option4b.setEnabled(true);
             }
         });
         prof_OKButton.addActionListener(e -> {
             try {
-                if (Integer.parseInt(prof_RollResult.getText()) > 0 && Integer.parseInt(prof_RollResult.getText()) <= 100) {
-                    rollResultNumeric = Integer.parseInt(prof_RollResult.getText());
+                if (Integer.parseInt(prof_rollResult.getText()) > 0 && Integer.parseInt(prof_rollResult.getText()) <= 100) {
+                    rollResultNumeric = Integer.parseInt(prof_rollResult.getText());
                     Profession prof = connection.getProfFromTable(sheet.getRace().getId(), rollResultNumeric);
                     if (profList.contains(prof)) {
                         rollLabel.setVisible(true);
@@ -212,61 +211,61 @@ public class CharacterGen {
                         profList.add(prof);
                         prof_Options[profList.size() - 1][0].setText(prof.getCareer());
                         prof_Options[profList.size() - 1][1].setText(prof.getProfession());
-                        prof_Buttons[profList.size() - 1].setEnabled(true);
+                        prof_buttons[profList.size() - 1].setEnabled(true);
                     }
                     if (profList.size() >= 3) {
-                        prof_RollButton.setEnabled(false);
-                        prof_RollResult.setEditable(false);
+                        prof_rollButton.setEnabled(false);
+                        prof_rollResult.setEditable(false);
                         prof_OKButton.setEnabled(false);
                     }
                 }
             } catch (Exception ex) {
-                prof_RollResult.setText("");
+                prof_rollResult.setText("");
             }
         });
-        prof_Option1Button.addActionListener(e -> {
+        prof_option1Button.addActionListener(e -> {
             sheet.setProf(profList.get(0));
-            updateExp(prof_maxexp);
+            updateExp(prof_maxExp);
 
-            prof_RollButton.setEnabled(false);
-            prof_RollResult.setEditable(false);
+            prof_rollButton.setEnabled(false);
+            prof_rollResult.setEditable(false);
             prof_OKButton.setEnabled(false);
-            for (JButton button : prof_Buttons)
+            for (JButton button : prof_buttons)
                 button.setEnabled(false);
-            prof_Option4a.setNotEditable();
-            prof_Option4b.setNotEditable();
+            prof_option4a.setNotEditable();
+            prof_option4b.setNotEditable();
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
-        prof_Option2Button.addActionListener(e -> {
+        prof_option2Button.addActionListener(e -> {
             sheet.setProf(profList.get(1));
-            updateExp(prof_maxexp);
+            updateExp(prof_maxExp);
 
-            prof_RollButton.setEnabled(false);
-            prof_RollResult.setEditable(false);
+            prof_rollButton.setEnabled(false);
+            prof_rollResult.setEditable(false);
             prof_OKButton.setEnabled(false);
-            for (JButton button : prof_Buttons)
+            for (JButton button : prof_buttons)
                 button.setEnabled(false);
-            prof_Option4a.setNotEditable();
-            prof_Option4b.setNotEditable();
+            prof_option4a.setNotEditable();
+            prof_option4b.setNotEditable();
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
-        prof_Option3Button.addActionListener(e -> {
+        prof_option3Button.addActionListener(e -> {
             sheet.setProf(profList.get(2));
-            updateExp(prof_maxexp);
+            updateExp(prof_maxExp);
 
-            prof_RollButton.setEnabled(false);
-            prof_RollResult.setEditable(false);
+            prof_rollButton.setEnabled(false);
+            prof_rollResult.setEditable(false);
             prof_OKButton.setEnabled(false);
-            for (JButton button : prof_Buttons)
+            for (JButton button : prof_buttons)
                 button.setEnabled(false);
-            prof_Option4a.setNotEditable();
-            prof_Option4b.setNotEditable();
+            prof_option4a.setNotEditable();
+            prof_option4b.setNotEditable();
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
-        prof_Option4a.addActionListener(e -> prof_Option4b.bindItems(connection.getProfsNames(sheet.getRace().getId(), prof_Option4a.getValue())));
+        prof_option4a.addActionListener(e -> prof_option4b.bindItems(connection.getProfsNames(sheet.getRace().getId(), prof_option4a.getValue())));
 
         // Attributes //
         createAttrTable();
@@ -320,7 +319,7 @@ public class CharacterGen {
 
             attr_option1Button.setEnabled(false);
             attr_locked = true;
-            updateExp(50);
+            updateExp(attr_maxExp);
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
 
@@ -381,7 +380,7 @@ public class CharacterGen {
     }
     void prepareRaces() {
         for (Object race: connection.getRaces())
-            race_Option2Combo.addItem(((Race) race).getName());
+            race_option2Combo.addItem(((Race) race).getName());
     }
     void createAttrTable() {
         String[] columns = {"M", "WW", "US", "S", "Wt", "I", "Zw", "Zr", "Int", "SW", "Ogd", "Żyw"};
@@ -432,6 +431,7 @@ public class CharacterGen {
                             mouse_source.setFont(new Font(mouse_source.getFont().getName(),Font.PLAIN, mouse_source.getFont().getSize()));
                             mouse_source = null;
                         }
+                        attr_maxExp = 25;
                         calculateTotal();
                     }
                 }
@@ -551,8 +551,8 @@ public class CharacterGen {
         tabbedPane.setSelectedIndex(tab + 1);
         switch (tab + 1) {
             case 1:
-                prof_Option4a.bindItems(connection.getProfsClasses(sheet.getRace().getId()));
-                prof_Option4b.bindItems(connection.getProfsNames(sheet.getRace().getId(), prof_Option4a.getValue()));
+                prof_option4a.bindItems(connection.getProfsClasses(sheet.getRace().getId()));
+                prof_option4b.bindItems(connection.getProfsNames(sheet.getRace().getId(), prof_option4a.getValue()));
                 break;
             case 2:
                 setBaseValues();
@@ -565,10 +565,7 @@ public class CharacterGen {
     }
     void updateExp(int value) {
         sheet.addExp(value);
-        expField.setText("" + sheet.getExp());
-    }
-    void updateExp() {
-        expField.setText("" + sheet.getExp());
+        expField.setValue(sheet.getExp());
     }
     void setBaseValues() {
         attr_move.setValue(sheet.getRace().getM());
@@ -597,9 +594,9 @@ public class CharacterGen {
             if (sheet.getProf().getAttr(i)==1)
                 fate_ButtonsUP.get(i).setEnabled(true);
         }
-        fate_fate.setText(String.valueOf(sheet.getRace().getFate()));
-        fate_resilience.setText(String.valueOf(sheet.getRace().getResilience()));
-        fate_extra.setText(String.valueOf(sheet.getRace().getExtra()));
+        fate_fate.setValue(sheet.getRace().getFate());
+        fate_resilience.setValue(sheet.getRace().getResilience());
+        fate_extra.setValue(sheet.getRace().getExtra());
     }
     void buttonsSetEnable(List<JButton> list, boolean bool) {
         for (int i=0;i<list.size();i++) {
