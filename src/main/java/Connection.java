@@ -6,12 +6,14 @@ import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Environment;
 import org.hibernate.query.Query;
+import org.junit.Test;
 
 import java.io.File;
+import java.lang.module.Configuration;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,11 +25,13 @@ public class Connection {
         refresh();
     }
     private void refresh() {
-        URL path = Connection.class.getResource("Connection.class");
-        if(path.toString().startsWith("jar:"))
-            registry = new StandardServiceRegistryBuilder().configure("hibernate_jar.cfg.xml").build();
-        else
-            registry = new StandardServiceRegistryBuilder().configure("hibernate.cfg.xml").build();
+        String path = this.getClass().getResource("/db/database.sqlite").toString();
+        StandardServiceRegistryBuilder tempRegistry = new StandardServiceRegistryBuilder().configure("hibernate.cfg.xml");
+        if(path.startsWith("jar:")) {
+            path = path.substring("jar:file:/".length());
+            tempRegistry.applySetting(Environment.URL, "jdbc:sqllite:zip:" + path);
+        }
+        registry = tempRegistry.build();
 
         Metadata meta = new MetadataSources(registry).getMetadataBuilder().build();
         factory = meta.getSessionFactoryBuilder().build();

@@ -27,32 +27,22 @@ public class JIntegerField extends JTypeField<Integer> {
         increment(1);
     }
 }
-class JTypeField<E> extends JTextField {
-    E value;
+class JTypeField<T> extends JTextField {
+    T value;
 
     public JTypeField() {
         super();
     }
-    public JTypeField(E value) {
+    public JTypeField(T value) {
         super(null, "" + value, 0);
         this.value = value;
     }
 
-    public void setValue(E value) {
+    public void setValue(T value) {
         this.setText("" + value);
         this.value = value;
     }
-    public E getValue() {
+    public T getValue() {
         return value;
-    }
-
-    @Override
-    public void setText(String t) {
-        try {
-            value = (E) t;
-            super.setText(t);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 }
