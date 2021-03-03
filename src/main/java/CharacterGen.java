@@ -105,7 +105,7 @@ public class CharacterGen {
         sheet = new CharacterSheet();
 
         // Race //
-        prepareRaces();
+        race_option2Combo.bindItems(connection.getRacesNames());
 
         race_rollButton.addActionListener(e -> {
             Object[] result = getRandomRace();
@@ -124,6 +124,7 @@ public class CharacterGen {
             race_option2Combo.setEnabled(true);
             race_option2Button.setEnabled(true);
         });
+        race_rollButton.setMnemonic(KeyEvent.VK_R);
         race_OKButton.addActionListener(e -> {
             try {
                 if (Integer.parseInt(race_rollResult.getText()) > 0 && Integer.parseInt(race_rollResult.getText()) <= 100) {
@@ -144,6 +145,7 @@ public class CharacterGen {
                 race_rollResult.setText("");
             }
         });
+        race_OKButton.setMnemonic(KeyEvent.VK_O);
 
         race_option1Button.addActionListener(e -> {
             race_option2Combo.setSelectedItem(race_option1.getText());
@@ -157,6 +159,7 @@ public class CharacterGen {
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
+        race_option1Button.setMnemonic(KeyEvent.VK_1);
         race_option2Button.addActionListener(e -> {
             try {
                 race_option1.setText((String) race_option2Combo.getSelectedItem());
@@ -168,9 +171,11 @@ public class CharacterGen {
                 race_option2Combo.setNotEditable();
 
                 moveToNextTab(tabbedPane.getSelectedIndex());
-            } catch (Exception ignored) {
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         });
+        race_option2Button.setMnemonic(KeyEvent.VK_2);
 
         // Profession //
         prof_rollButton.addActionListener(e -> {
@@ -380,17 +385,12 @@ public class CharacterGen {
             frame.setContentPane(previous_screen.mainPanel);
             frame.validate();
         });
-
     }
 
     void calculateTotal() {
         for (int i=0;i<10;i++)
             TAttr.get(i).setValue(BAttr.get(i).getValue() + RAttr.get(i).getValue());
         calculateHP();
-    }
-    void prepareRaces() {
-        for (Object race: connection.getRaces())
-            race_option2Combo.addItem(((Race) race).getName());
     }
     void createAttrTable() {
         String[] columns = {"M", "WW", "US", "S", "Wt", "I", "Zw", "Zr", "Int", "SW", "Ogd", "Żyw"};

@@ -39,7 +39,7 @@ public class Connection {
     }
 
     Race getRaceFromTable(int n) {
-        Race race = new Race();
+        Race race = null;
         try {
             Session session = factory.openSession();
             Query SQLQuery = session.createQuery("SELECT r FROM RaceTable t, Race r WHERE t.IDrase = r.id AND t.id = :param");
@@ -48,11 +48,12 @@ public class Connection {
             session.close();
         } catch (Exception ex) {
             abort();
+            ex.printStackTrace();
         }
         return race;
     }
     Race getRace(String name) {
-        Race race = new Race();
+        Race race = null;
         try {
             Session session = factory.openSession();
             Query SQLQuery = session.createQuery("FROM Race WHERE name = :param");
@@ -61,6 +62,7 @@ public class Connection {
             session.close();
         } catch (Exception ex) {
             abort();
+            ex.printStackTrace();
         }
         return race;
     }
@@ -73,12 +75,13 @@ public class Connection {
             session.close();
         } catch (Exception ex) {
             abort();
+            ex.printStackTrace();
         }
         return races;
     }
 
     Profession getProfFromTable(int race, int n) {
-        Profession prof = new Profession();
+        Profession prof = null
         try {
             Session session = factory.openSession();
             Query SQLQuery = session.createQuery("SELECT p FROM ProfTable t, Profession p WHERE t.IDprof = p.id AND t.index = :param1 AND t.IDrace= :param2");
@@ -88,11 +91,12 @@ public class Connection {
             session.close();
         } catch (Exception ex) {
             abort();
+            ex.printStackTrace();;
         }
         return prof;
     }
     Profession getProf(String clss, String profession, int level) {
-        Profession prof = new Profession();
+        Profession prof = null;
         try {
             Session session = factory.openSession();
             Query SQLQuery = session.createQuery("FROM Profession WHERE clss =:param1 AND profession =:param2 AND level =:param3");
@@ -103,11 +107,12 @@ public class Connection {
             session.close();
         } catch (Exception ex) {
             abort();
+            ex.printStackTrace();;
         }
         return prof;
     }
     Profession getProf(String profession, int level) {
-        Profession prof = new Profession();
+        Profession prof = null;
         try {
             Session session = factory.openSession();
             Query SQLQuery = session.createQuery("FROM Profession WHERE profession =:param2 AND level =:param3");
@@ -117,6 +122,7 @@ public class Connection {
             session.close();
         } catch (Exception ex) {
             abort();
+            ex.printStackTrace();;
         }
         return prof;
     }
@@ -130,6 +136,7 @@ public class Connection {
             session.close();
         } catch (Exception ex) {
             abort();
+            ex.printStackTrace();;
         }
         return profs;
     }
@@ -146,6 +153,7 @@ public class Connection {
             session.close();
         } catch (Exception ex) {
             abort();
+            ex.printStackTrace();;
         }
         return profs;
     }
@@ -160,9 +168,11 @@ public class Connection {
             session.close();
         } catch (Exception ex) {
             abort();
+            ex.printStackTrace();;
         }
         return skills;
     }
+
     public List<String> getProfsClasses(int race) {
         List<String> result = new ArrayList<>();
         for (Object prof: getProfs(race))
