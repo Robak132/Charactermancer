@@ -26,7 +26,7 @@ public class CharacterGen {
     private JButton exitButton;
     private JLabel rollLabel;
 
-    private JTextField race_rollResult;
+    private JIntegerField race_rollResult;
     private JButton race_option2Button;
     private SearchableJComboBox race_option2Combo;
     private JButton race_option1Button;
@@ -37,7 +37,7 @@ public class CharacterGen {
     private JButton prof_option1Button;
     private JButton prof_OKButton;
     private JButton prof_rollButton;
-    private JTextField prof_rollResult;
+    private JIntegerField prof_rollResult;
     private JTextField prof_option1a;
     private JTextField prof_option1b;
     private JTextField prof_option2a;
