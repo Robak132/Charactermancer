@@ -81,7 +81,7 @@ public class Connection {
     }
 
     Profession getProfFromTable(int race, int n) {
-        Profession prof = null
+        Profession prof = null;
         try {
             Session session = factory.openSession();
             Query SQLQuery = session.createQuery("SELECT p FROM ProfTable t, Profession p WHERE t.IDprof = p.id AND t.index = :param1 AND t.IDrace= :param2");
