@@ -41,7 +41,7 @@ public class Connection {
         Race race = null;
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT r FROM RaceTable t, Race r WHERE t.IDrase = r.id AND t.id = :param");
+            Query SQLQuery = session.createQuery("SELECT t.race FROM RaceTable t JOIN t.race WHERE t.id = :param");
             SQLQuery.setParameter("param", n);
             race = (Race) SQLQuery.list().get(0);
             session.close();
@@ -161,7 +161,7 @@ public class Connection {
         List<GroupSkill> skills = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT r.skill FROM RaceSkill r JOIN r.skill WHERE r.IDRace=:param AND r.skill.base.adv=0 ORDER BY r.skill.name");
+            Query SQLQuery = session.createQuery("SELECT r.skill FROM RaceSkill r JOIN r.skill WHERE r.race.id=:param AND r.skill.base.adv=0 ORDER BY r.skill.name");
             SQLQuery.setParameter("param", race);
             skills = SQLQuery.list();
             session.close();
@@ -175,7 +175,7 @@ public class Connection {
         List<GroupSkill> skills = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT r.skill FROM RaceSkill r JOIN r.skill WHERE r.IDRace=:param AND r.skill.base.adv=1 ORDER BY r.skill.name");
+            Query SQLQuery = session.createQuery("SELECT r.skill FROM RaceSkill r JOIN r.skill WHERE r.race.id=:param AND r.skill.base.adv=1 ORDER BY r.skill.name");
             SQLQuery.setParameter("param", race);
             skills = SQLQuery.list();
             session.close();

@@ -207,17 +207,4 @@ public class Race {
     public void setSize(int size) {
         this.size = size;
     }
-
-    public List<RaceTable> getRaseList() {
-        return raseList;
-    }
-    public void setRaseList(List<RaceTable> tableList) {
-        this.raseList = tableList;
-    }
-    public List<ProfTable> getProfList() {
-        return profList;
-    }
-    public void setProfList(List<ProfTable> profList) {
-        this.profList = profList;
-    }
 }

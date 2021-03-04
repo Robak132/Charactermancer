@@ -8,16 +8,18 @@ public class RaceSkill {
     @Id
     @Column(name = "ID")
     private int ID;
-    @Column(name = "IDRACE")
-    private int IDRace;
+    @ManyToOne
+    @JoinColumn(name = "IDRACE")
+    private Race race;
     @OneToOne
     @JoinColumn(name = "IDSKILL")
     private GroupSkill skill;
 
     public RaceSkill() {}
-    public RaceSkill(int ID, int IDRace) {
+    public RaceSkill(int ID, Race race, GroupSkill skill) {
         this.ID = ID;
-        this.IDRace = IDRace;
+        this.race = race;
+        this.skill = skill;
     }
 
     public int getID() {
@@ -26,11 +28,11 @@ public class RaceSkill {
     public void setID(int ID) {
         this.ID = ID;
     }
-    public int getIDRace() {
-        return IDRace;
+    public Race getRace() {
+        return race;
     }
-    public void setIDRace(int IDRace) {
-        this.IDRace = IDRace;
+    public void setRace(Race race) {
+        this.race = race;
     }
     public GroupSkill getSkill() {
         return skill;
