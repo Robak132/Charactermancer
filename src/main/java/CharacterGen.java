@@ -9,8 +9,6 @@ import mappings.Profession;
 import mappings.Race;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -565,36 +563,51 @@ public class CharacterGen {
     void createRaceSkillTable() {
         List<GroupSkill> baseSkills = connection.getBaseSkillsByRace(sheet.getRace().getId());
         List<GroupSkill> advSkills = connection.getAdvSkillsByRace(sheet.getRace().getId());
-        raceskill_table.setLayout(new GridLayoutManager(baseSkills.size()+1, 6, new Insets(0, 0, 0, 0), -1, -1));
+        raceskill_table.setLayout(new GridLayoutManager(baseSkills.size()+1, 8, new Insets(0, 0, 0, 0), -1, -1));
+        raceskill_table.add(new Spacer(), new GridConstraints(baseSkills.size(), 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0));
+        raceskill_table.add(new Spacer(), new GridConstraints(baseSkills.size(), 7, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0));
         raceskill_table.add(new Spacer(), new GridConstraints(baseSkills.size(), 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0));
 
         for (int i=0;i<baseSkills.size();i++) {
             JTextField textField = new JTextField(baseSkills.get(i).getName());
+            String tooltip = baseSkills.get(i).getBase().getDescr();
+            if (tooltip != null)
+                textField.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
             textField.setHorizontalAlignment(JTextField.LEFT);
+            textField.setFocusable(false);
             textField.setEditable(false);
-            raceskill_table.add(textField, new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0));
+            raceskill_table.add(textField, new GridConstraints(i, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0));
 
             JTextField attrField = new JTextField(baseSkills.get(i).getBase().getAttr());
             attrField.setHorizontalAlignment(JTextField.CENTER);
             attrField.setEditable(false);
-            raceskill_table.add(attrField, new GridConstraints(i, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0));
+            raceskill_table.add(attrField, new GridConstraints(i, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0));
 
             JSpinner jSpinner = new JSpinner(new CustomJSpinnerModel<>(new Integer[]{0, 3, 5}));
-            raceskill_table.add(jSpinner, new GridConstraints(i, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0));
+            ((JSpinner.DefaultEditor) jSpinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
+            raceskill_table.add(jSpinner, new GridConstraints(i, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(40,-1), null, 0));
         }
         for (int i=0;i<advSkills.size();i++) {
-            JTextField textField = new JTextField(advSkills.get(i).getName());
-            textField.setHorizontalAlignment(JTextField.LEFT);
-            textField.setEditable(false);
-            raceskill_table.add(textField, new GridConstraints(i, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0));
+            if (advSkills.get(i).getCustom()==0) {
+                JTextField textField = new JTextField(advSkills.get(i).getName());
+                textField.setEditable(false);
+                raceskill_table.add(textField, new GridConstraints(i, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0));
+            }
+            else {
+                SearchableJComboBox comboBox = new SearchableJComboBox();
+                connection.getGroupSkillsForCustom(advSkills.get(i).getBase().getID()).forEach(e->comboBox.addItem(e.getName()));
+                comboBox.setEditable(true);
+                raceskill_table.add(comboBox, new GridConstraints(i, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0));
+            }
 
             JTextField attrField = new JTextField(advSkills.get(i).getBase().getAttr());
             attrField.setHorizontalAlignment(JTextField.CENTER);
             attrField.setEditable(false);
-            raceskill_table.add(attrField, new GridConstraints(i, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0));
+            raceskill_table.add(attrField, new GridConstraints(i, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0));
 
             JSpinner jSpinner = new JSpinner(new CustomJSpinnerModel<>(new Integer[]{0, 3, 5}));
-            raceskill_table.add(jSpinner, new GridConstraints(i, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0));
+            ((JSpinner.DefaultEditor) jSpinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
+            raceskill_table.add(jSpinner, new GridConstraints(i, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(40,-1), null, 0));
         }
     }
 

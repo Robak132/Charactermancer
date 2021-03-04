@@ -185,6 +185,20 @@ public class Connection {
         }
         return skills;
     }
+    List<GroupSkill> getGroupSkillsForCustom(int custom) {
+        List<GroupSkill> skills = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query SQLQuery = session.createQuery("SELECT G FROM GroupSkill G JOIN G.base WHERE G.base.id=:param AND G.custom=0");
+            SQLQuery.setParameter("param", custom);
+            skills = SQLQuery.list();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return skills;
+    }
 
     public List<String> getProfsClasses(int race) {
         List<String> result = new ArrayList<>();
