@@ -15,14 +15,17 @@ public class Skill {
     private String name;
     @Column(name = "ATTR")
     private String attr;
+    @Column(name = "ADV")
+    private int adv;
     @Column(name = "DESCR")
     private String descr;
 
     public Skill() {}
-    public Skill(int ID, String name, String attr, String descr) {
+    public Skill(int ID, String name, String attr, int adv, String descr) {
         this.ID = ID;
         this.name = name;
         this.attr = attr;
+        this.adv = adv;
         this.descr = descr;
     }
 
@@ -49,5 +52,11 @@ public class Skill {
     }
     public void setDescr(String descr) {
         this.descr = descr;
+    }
+    public int getAdv() {
+        return adv;
+    }
+    public void setAdv(int adv) {
+        this.adv = adv;
     }
 }
