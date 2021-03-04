@@ -83,7 +83,7 @@ public class Connection {
         Profession prof = null;
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT p FROM ProfTable t, Profession p WHERE t.IDprof = p.id AND t.index = :param1 AND t.IDrace= :param2");
+            Query SQLQuery = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.index = :param1 AND t.race.id = :param2");
             SQLQuery.setParameter("param1", n);
             SQLQuery.setParameter("param2", race);
             prof = (Profession) SQLQuery.list().get(0);
@@ -129,7 +129,7 @@ public class Connection {
         List<Profession> profs = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT p FROM ProfTable t, Profession p WHERE t.IDprof = p.id AND IDrace =:param AND p.clss!='Zwierzęta'");
+            Query SQLQuery = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.race.id =:param AND t.prof.clss!='Zwierzęta'");
             SQLQuery.setParameter("param", race);
             profs = SQLQuery.list();
             session.close();
@@ -145,7 +145,7 @@ public class Connection {
         List<Profession> profs = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT p FROM ProfTable t, Profession p WHERE t.IDprof = p.id AND p.clss = :param2 AND IDrace =:param AND p.clss!='Zwierzęta'");
+            Query SQLQuery = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.prof.clss = :param2 AND t.race.id =:param AND t.prof.clss!='Zwierzęta'");
             SQLQuery.setParameter("param", race);
             SQLQuery.setParameter("param2", clss);
             profs = SQLQuery.list();

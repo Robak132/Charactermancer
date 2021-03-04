@@ -3,6 +3,7 @@ package mappings;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "PROFESSIONS")
@@ -40,6 +41,9 @@ public class Profession {
     private int sw;
     @Column(name = "OGD")
     private int ogd;
+
+    @OneToMany(mappedBy = "prof")
+    Set<ProfTable> profTable;
 
     public Profession() {}
     public Profession(int id, String clss, String career, String profession, String professioneng, int level, int ww, int us, int s, int wt, int i, int zw, int zr, int it, int sw, int ogd) {

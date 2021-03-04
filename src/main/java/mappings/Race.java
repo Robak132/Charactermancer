@@ -3,6 +3,7 @@ package mappings;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "RACES")
@@ -43,10 +44,8 @@ public class Race {
     @Column(name = "SIZE")
     private int size;
 
-    @OneToMany
-    List<RaceTable> raseList = new ArrayList<>();
-    @OneToMany
-    List<ProfTable> profList = new ArrayList<>();
+    @OneToMany(mappedBy = "race")
+    Set<ProfTable> profTable;
 
     public static final int SIZE_TINY = 0;
     public static final int SIZE_LITTLE = 1;
