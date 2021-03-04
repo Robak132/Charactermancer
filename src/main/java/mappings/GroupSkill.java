@@ -12,16 +12,16 @@ public class GroupSkill {
     private int ID;
     @Column(name = "NAME")
     private String name;
-    @Column(name = "IDBASE")
-    private int IDbase;
+    @ManyToOne
+    @JoinColumn(name = "IDBASE")
+    private Skill base;
     @Column(name = "CUSTOM")
     private int custom;
 
     public GroupSkill() {}
-    public GroupSkill(int ID, String name, int IDbase, int custom) {
+    public GroupSkill(int ID, String name, int custom) {
         this.ID = ID;
         this.name = name;
-        this.IDbase = IDbase;
         this.custom = custom;
     }
 
@@ -37,11 +37,11 @@ public class GroupSkill {
     public void setName(String name) {
         this.name = name;
     }
-    public int getIDbase() {
-        return IDbase;
+    public Skill getBase() {
+        return base;
     }
-    public void setIDbase(int ID) {
-        this.ID = ID;
+    public void setBase(Skill base) {
+        this.base = base;
     }
     public int getCustom() {
         return custom;
