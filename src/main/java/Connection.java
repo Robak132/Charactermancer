@@ -1,3 +1,4 @@
+import mappings.GroupSkill;
 import mappings.Profession;
 import mappings.Race;
 import org.hibernate.Session;
@@ -8,12 +9,6 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Environment;
 import org.hibernate.query.Query;
-import org.junit.Test;
-
-import java.io.File;
-import java.lang.module.Configuration;
-import java.net.URL;
-import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,8 +65,8 @@ public class Connection {
         }
         return race;
     }
-    List getRaces() {
-        List races = new ArrayList<>();
+    List<Race> getRaces() {
+        List<Race> races = new ArrayList<>();
         try {
             Session session = factory.openSession();
             Query SQLQuery = session.createQuery("FROM Race");
@@ -95,7 +90,7 @@ public class Connection {
             session.close();
         } catch (Exception ex) {
             abort();
-            ex.printStackTrace();;
+            ex.printStackTrace();
         }
         return prof;
     }
@@ -111,7 +106,7 @@ public class Connection {
             session.close();
         } catch (Exception ex) {
             abort();
-            ex.printStackTrace();;
+            ex.printStackTrace();
         }
         return prof;
     }
@@ -126,12 +121,12 @@ public class Connection {
             session.close();
         } catch (Exception ex) {
             abort();
-            ex.printStackTrace();;
+            ex.printStackTrace();
         }
         return prof;
     }
-    List getProfs(int race) {
-        List profs = new ArrayList<>();
+    List<Profession> getProfs(int race) {
+        List<Profession> profs = new ArrayList<>();
         try {
             Session session = factory.openSession();
             Query SQLQuery = session.createQuery("SELECT p FROM ProfTable t, Profession p WHERE t.IDprof = p.id AND IDrace =:param AND p.clss!='Zwierzęta'");
@@ -140,14 +135,14 @@ public class Connection {
             session.close();
         } catch (Exception ex) {
             abort();
-            ex.printStackTrace();;
+            ex.printStackTrace();
         }
         return profs;
     }
-    List getProfs(int race, String clss) {
+    List<Profession> getProfs(int race, String clss) {
         if (clss == null)
             return getProfs(race);
-        List profs = new ArrayList<>();
+        List<Profession> profs = new ArrayList<>();
         try {
             Session session = factory.openSession();
             Query SQLQuery = session.createQuery("SELECT p FROM ProfTable t, Profession p WHERE t.IDprof = p.id AND p.clss = :param2 AND IDrace =:param AND p.clss!='Zwierzęta'");
@@ -157,22 +152,36 @@ public class Connection {
             session.close();
         } catch (Exception ex) {
             abort();
-            ex.printStackTrace();;
+            ex.printStackTrace();
         }
         return profs;
     }
 
-    List getSkillsByRace(int race) {
-        List skills = new ArrayList<>();
+    List<GroupSkill> getBaseSkillsByRace(int race) {
+        List<GroupSkill> skills = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT r FROM RaceSkill r, GroupSkill s WHERE r.IDRace = :param AND s.ID = r.IDSkill");
+            Query SQLQuery = session.createQuery("SELECT s FROM RaceSkill r, GroupSkill s, Skill sk WHERE r.IDRace=:param AND s.ID=r.IDSkill AND s.IDbase=sk.ID AND sk.adv=0 ORDER BY s.name");
             SQLQuery.setParameter("param", race);
             skills = SQLQuery.list();
             session.close();
         } catch (Exception ex) {
             abort();
-            ex.printStackTrace();;
+            ex.printStackTrace();
+        }
+        return skills;
+    }
+    List<GroupSkill> getAdvSkillsByRace(int race) {
+        List<GroupSkill> skills = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query SQLQuery = session.createQuery("SELECT s FROM RaceSkill r, GroupSkill s, Skill sk WHERE r.IDRace=:param AND s.ID=r.IDSkill AND s.IDbase=sk.ID AND sk.adv=1 ORDER BY s.name");
+            SQLQuery.setParameter("param", race);
+            skills = SQLQuery.list();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
         }
         return skills;
     }
