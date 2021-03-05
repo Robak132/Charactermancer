@@ -1,3 +1,7 @@
+/*
+ *  Author: Jakub Robaczewski
+ *  Git: github.com/Robak132
+ */
 package components;
 
 import javax.swing.*;

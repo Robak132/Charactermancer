@@ -89,11 +89,10 @@ public class CharacterGen {
     private JIntegerField raceskill_number5;
 
     private JIntegerField mouse_source = null;
-    Color mouse_color;
-    boolean attr_locked = true;
-
-    int rollResultNumeric;
-    Race rollRace;
+    private Color mouse_color;
+    private boolean attr_locked = true;
+    private int rollResultNumeric;
+    private Race rollRace;
 
     List<JIntegerField> BAttr = new ArrayList<>();
     List<JIntegerField> RAttr = new ArrayList<>();
@@ -729,6 +728,11 @@ public class CharacterGen {
         }
     }
 
+    void createUIComponents() {
+        raceskill_number3 = new JIntegerField(3, "%d/3");
+        raceskill_number5 = new JIntegerField(3, "%d/3");
+    }
+
     // Base functions to use with GUI and text //
     Object[] getRandomRace() {
         Object[] returns = new Object[2];
@@ -773,10 +777,5 @@ public class CharacterGen {
     void getRaceSkills(Race race) {
         List<GroupSkill> baseSkills = connection.getBaseSkillsByRace(race.getID());
         List<GroupSkill> advSkills = connection.getAdvSkillsByRace(race.getID());
-    }
-
-    private void createUIComponents() {
-        raceskill_number3 = new JIntegerField(3, "%d/3");
-        raceskill_number5 = new JIntegerField(3, "%d/3");
     }
 }
