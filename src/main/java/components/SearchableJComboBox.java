@@ -5,64 +5,94 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 public class SearchableJComboBox extends JComboBox<String> {
-    private JTextField textfield;
+    private final JTextField textField;
     private boolean lock;
-    private List items;
-    private String good_value;
+    private TreeSet<String> items;
+    private String safe_value;
+    private String unsafe_value;
+    private int caret_position;
 
     public SearchableJComboBox() {
         super();
-        textfield = (JTextField) this.editor.getEditorComponent();
-    }
-    public SearchableJComboBox(List items) {
-        this();
-        bindItems(items);
-    }
-
-    private void fill(String text) {
-        this.removeAllItems();
-        List<String> duplicates = new ArrayList<>();
-        boolean changed = false;
-        textfield.setForeground(Color.red);
-        for (Object ptr : items) {
-            String name = (String) ptr;
-            if (name.toUpperCase().contains(text.toUpperCase()) && !duplicates.contains(name)) {
-                this.addItem(name);
-                duplicates.add(name);
-            }
-            if (name.equals(text)) {
-                textfield.setForeground(Color.black);
-                good_value = name;
-                changed = true;
-            }
-        }
-        if (!changed)
-            good_value = null;
-        this.setSelectedItem(text);
-    }
-    public void bindItems(List items) {
-        this.items = items;
-        textfield.getDocument().addDocumentListener((SimpleDocumentListener) e -> {
+        items = new TreeSet<>();
+        textField = (JTextField) this.editor.getEditorComponent();
+        textField.getDocument().addDocumentListener((SimpleDocumentListener) e -> {
             if (!lock) {
                 SwingUtilities.invokeLater(() -> {
                     lock = true;
-                    fill(textfield.getText());
+                    fill(textField.getText());
                     lock = false;
                 });
             }
         });
-        fill("");
     }
+    public SearchableJComboBox(List<String> items) {
+        this();
+        addItems(items);
+    }
+    public SearchableJComboBox(List<String> items, boolean startNull) {
+        this();
+        addItems(items, startNull);
+    }
+
+    public void refresh() {refresh(true);}
+    public void refresh(boolean startNull) {
+        if (startNull)
+            fill("");
+        else
+            fill(items.first());
+    }
+    private void fill(String text) {
+        if (items.contains(text)) {
+            fill("");
+            safe_value = text;
+            unsafe_value = text;
+            textField.setForeground(Color.black);
+        } else {
+            caret_position = textField.getCaretPosition();
+            this.removeAllItems();
+            textField.setForeground(Color.red);
+            for (String name : items) {
+                if (name.toUpperCase().contains(text.toUpperCase()))
+                    super.addItem(name);
+            }
+            unsafe_value = text;
+        }
+        this.setSelectedItem(text);
+        if (text.length() < caret_position)
+            caret_position = text.length();
+        textField.setCaretPosition(caret_position);
+    }
+
+    public void addItems(List<String> items, boolean startNull) {
+        this.items = new TreeSet<>(items);
+        if (startNull)
+            fill("");
+        else
+            fill(items.get(0));
+    }
+    public void addItems(List<String> items) {
+        addItems(items, true);
+    }
+
+    @Override
+    public void addItem(String item) {
+        items.add(item);
+    }
+
     public String getValue() {
-        return good_value;
+        return unsafe_value;
+    }
+    public String getSafeValue() {
+        return safe_value;
     }
 
     public void setNotEditable() {
-        textfield.setEditable(false);
+        textField.setEditable(false);
 
         MouseListener[] mls = this.getMouseListeners();
         for (MouseListener listener : mls)

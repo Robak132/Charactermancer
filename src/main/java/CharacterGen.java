@@ -110,7 +110,7 @@ public class CharacterGen {
         sheet = new CharacterSheet();
 
         // Race //
-        race_option2Combo.bindItems(connection.getRacesNames());
+        race_option2Combo.addItems(connection.getRacesNames(), false);
 
         race_rollButton.addActionListener(e -> {
             Object[] result = getRandomRace();
@@ -275,7 +275,7 @@ public class CharacterGen {
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
-        prof_option4a.addActionListener(e -> prof_option4b.bindItems(connection.getProfsNames(sheet.getRace().getId(), prof_option4a.getValue())));
+        prof_option4a.addActionListener(e -> prof_option4b.addItems(connection.getProfsNames(sheet.getRace().getId(), prof_option4a.getValue())));
 
         // Attributes //
         createAttrTable();
@@ -591,13 +591,16 @@ public class CharacterGen {
             if (advSkills.get(i).getCustom()==0) {
                 JTextField textField = new JTextField(advSkills.get(i).getName());
                 textField.setEditable(false);
-                raceskill_table.add(textField, new GridConstraints(i, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0));
+                raceskill_table.add(textField, new GridConstraints(i, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(225, -1), null, 0));
             }
             else {
                 SearchableJComboBox comboBox = new SearchableJComboBox();
-                connection.getGroupSkillsForCustom(advSkills.get(i).getBase().getID()).forEach(e->comboBox.addItem(e.getName()));
+                for (GroupSkill skill : connection.getGroupSkillsForCustom(advSkills.get(i).getBase().getID()))
+                    comboBox.addItem(skill.getName());
+                comboBox.addActionListener(e->System.out.println(comboBox.getSize().width));
+                comboBox.refresh(false);
                 comboBox.setEditable(true);
-                raceskill_table.add(comboBox, new GridConstraints(i, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0));
+                raceskill_table.add(comboBox, new GridConstraints(i, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(225, -1), null, 0));
             }
 
             JTextField attrField = new JTextField(advSkills.get(i).getBase().getAttr());
@@ -622,8 +625,8 @@ public class CharacterGen {
         tabbedPane.setSelectedIndex(tab + 1);
         switch (tab + 1) {
             case 1:
-                prof_option4a.bindItems(connection.getProfsClasses(sheet.getRace().getId()));
-                prof_option4b.bindItems(connection.getProfsNames(sheet.getRace().getId(), prof_option4a.getValue()));
+                prof_option4a.addItems(connection.getProfsClasses(sheet.getRace().getId()));
+                prof_option4b.addItems(connection.getProfsNames(sheet.getRace().getId(), prof_option4a.getValue()));
                 break;
             case 2:
                 setBaseValues();
