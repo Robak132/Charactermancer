@@ -45,10 +45,11 @@ public class SearchableJComboBox extends JComboBox<String> {
 
     public void refresh() {refresh(true);}
     public void refresh(boolean startNull) {
-        if (startNull)
-            fill("");
-        else
+        if (!startNull && items.size()!=0) {
             fill(items.first());
+        } else {
+            fill("");
+        }
     }
     private void fill(String text) {
         if (items.contains(text)) {
