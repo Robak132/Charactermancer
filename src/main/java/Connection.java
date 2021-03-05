@@ -145,7 +145,7 @@ public class Connection {
         List<Profession> profs = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.prof.clss = :param2 AND t.race.id =:param AND t.prof.clss!='Zwierzęta'");
+            Query SQLQuery = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.prof.clss = :param2 AND t.race.id =:param");
             SQLQuery.setParameter("param", race);
             SQLQuery.setParameter("param2", clss);
             profs = SQLQuery.list();
