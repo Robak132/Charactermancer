@@ -43,7 +43,7 @@ public class Connection {
             Session session = factory.openSession();
             Query SQLQuery = session.createQuery("SELECT t.race FROM RaceTable t JOIN t.race WHERE t.id = :param");
             SQLQuery.setParameter("param", n);
-            race = (Race) SQLQuery.list().get(0);
+            race = SQLQuery.list().size()==0 ? null : (Race) SQLQuery.list().get(0);
             session.close();
         } catch (Exception ex) {
             abort();
@@ -57,7 +57,7 @@ public class Connection {
             Session session = factory.openSession();
             Query SQLQuery = session.createQuery("FROM Race WHERE name = :param");
             SQLQuery.setParameter("param", name);
-            race = (Race) SQLQuery.list().get(0);
+            race = SQLQuery.list().size()==0 ? null : (Race) SQLQuery.list().get(0);
             session.close();
         } catch (Exception ex) {
             abort();
@@ -86,7 +86,7 @@ public class Connection {
             Query SQLQuery = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.index = :param1 AND t.race.id = :param2");
             SQLQuery.setParameter("param1", n);
             SQLQuery.setParameter("param2", race);
-            prof = (Profession) SQLQuery.list().get(0);
+            prof = SQLQuery.list().size()==0 ? null : (Profession) SQLQuery.list().get(0);
             session.close();
         } catch (Exception ex) {
             abort();
@@ -102,7 +102,7 @@ public class Connection {
             SQLQuery.setParameter("param1", clss);
             SQLQuery.setParameter("param2", profession);
             SQLQuery.setParameter("param3", level);
-            prof = (Profession) SQLQuery.list().get(0);
+            prof = SQLQuery.list().size()==0 ? null : (Profession) SQLQuery.list().get(0);
             session.close();
         } catch (Exception ex) {
             abort();
@@ -117,7 +117,7 @@ public class Connection {
             Query SQLQuery = session.createQuery("FROM Profession WHERE profession =:param2 AND level =:param3");
             SQLQuery.setParameter("param2", profession);
             SQLQuery.setParameter("param3", level);
-            prof = (Profession) SQLQuery.list().get(0);
+            prof = SQLQuery.list().size()==0 ? null : (Profession) SQLQuery.list().get(0);
             session.close();
         } catch (Exception ex) {
             abort();
