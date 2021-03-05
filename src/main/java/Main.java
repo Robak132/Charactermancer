@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class Main {
     static JFrame frame;
@@ -21,7 +22,7 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-        frame.setMinimumSize(new Dimension(700, 550));
+        frame.setMinimumSize(new Dimension(750, 600));
     }
 
     Main() {
@@ -33,10 +34,12 @@ public class Main {
             frame.setContentPane(new CharacterGen(frame, this, languagePack, connection).mainPanel);
             frame.validate();
         });
+        createcharButton.setMnemonic(KeyEvent.VK_1);
         createsheetButton.addActionListener(e -> {
             frame.setContentPane(new CharacterSheet(frame, this, languagePack, connection).mainPanel);
             frame.validate();
         });
+        createsheetButton.setMnemonic(KeyEvent.VK_2);
         comboBox1.addActionListener(e -> {
             languagePack.setCode(comboBox1.getSelectedIndex());
             repaint();

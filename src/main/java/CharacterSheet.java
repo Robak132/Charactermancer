@@ -115,23 +115,33 @@ public class CharacterSheet {
     public Race getRace() {
         return race;
     }
-    public void setRace(Race race) {
-        this.race = race;
-    }
     public Profession getProf() {
         return prof;
+    }
+    public void setRace(Race race) {
+        this.race = race;
     }
     public void setProf(Profession prof) {
         this.prof = prof;
     }
+
     public Integer[] getBaseAttributes() {
         return base_attributes;
     }
-    public Integer[] getAdv_attributes() {
+    public int getBaseAttribute(Race.Attributes attr) {
+        return base_attributes[attr.ordinal()];
+    }
+    public Integer[] getAdvAttributes() {
         return adv_attributes;
     }
-    public Integer[] getSum_attributes() {
+    public int getAdvAttribute(Race.Attributes attr) {
+        return adv_attributes[attr.ordinal()];
+    }
+    public Integer[] getSumAttributes() {
         return sum_attributes;
+    }
+    public int getSumAttribute(Race.Attributes attr) {
+        return sum_attributes[attr.ordinal()];
     }
     public void setBaseAttributes(int index, int attribute) {
         this.base_attributes[index] = attribute;
@@ -142,6 +152,7 @@ public class CharacterSheet {
     public void setSumAttributes(int index, int attribute) {
         this.sum_attributes[index] = attribute;
     }
+
     public int getExp() {
         return exp;
     }

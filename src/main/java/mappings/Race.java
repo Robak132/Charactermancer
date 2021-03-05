@@ -55,6 +55,10 @@ public class Race {
     public static final int SIZE_ENORMOUS = 5;
     public static final int SIZE_MONSTROUS = 6;
 
+    public enum Attributes {
+        WW, US, S, Wt, I, Zw, Zr, Int, SW, Ogd
+    }
+
     public Race() {}
     public Race(int id, String name, int ww, int us, int s, int wt, int i, int zw, int zr, int it, int sw, int ogd, int m, int fate, int resilience, int extra, int size) {
         this.id = id;
@@ -76,10 +80,10 @@ public class Race {
         this.size = size;
     }
 
-    public int getId() {
+    public int getID() {
         return id;
     }
-    public void setId(int id) {
+    public void setID(int id) {
         this.id = id;
     }
     public String getName() {
