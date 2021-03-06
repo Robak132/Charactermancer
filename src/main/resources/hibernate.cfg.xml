@@ -11,11 +11,13 @@
         <property name="hibernate.enable_lazy_load_no_trans">true</property>
 
         <mapping class="mappings.GroupSkill" />
+        <mapping class="mappings.GroupTalent" />
         <mapping class="mappings.Profession" />
         <mapping class="mappings.ProfTable" />
         <mapping class="mappings.Race" />
         <mapping class="mappings.RaceSkill" />
         <mapping class="mappings.RaceTable" />
+        <mapping class="mappings.RaceTalent" />
         <mapping class="mappings.Skill" />
     </session-factory>
 </hibernate-configuration>

@@ -1,8 +1,7 @@
-import mappings.GroupSkill;
-import mappings.Profession;
-import mappings.Race;
+import mappings.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
@@ -200,19 +199,34 @@ public class Connection {
         return skills;
     }
 
-    public List<String> getProfsClasses(int race) {
+    List<RaceTalent> getTalentsByRace(int race) {
+        List<RaceTalent> talents = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query SQLQuery = session.createQuery("SELECT r FROM RaceTalent r WHERE r.race.id=:param");
+            SQLQuery.setParameter("param", race);
+            talents = SQLQuery.list();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return talents;
+    }
+
+    List<String> getProfsClasses(int race) {
         List<String> result = new ArrayList<>();
         for (Object prof: getProfs(race))
             result.add(((Profession) prof).getClss());
         return result;
     }
-    public List<String> getProfsNames(int race, String clss) {
+    List<String> getProfsNames(int race, String clss) {
         List<String> result = new ArrayList<>();
         for (Object prof : getProfs(race, clss))
             result.add(((Profession) prof).getProfession());
         return result;
     }
-    public List<String> getRacesNames() {
+    List<String> getRacesNames() {
         List<String> result = new ArrayList<>();
         for (Object prof : getRaces())
             result.add(((Race) prof).getName());
