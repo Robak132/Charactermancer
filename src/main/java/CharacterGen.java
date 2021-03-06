@@ -18,7 +18,6 @@ public class CharacterGen {
     JFrame frame;
     JPanel mainPanel;
     Main previous_screen;
-    LanguagePack languagePack;
     Connection connection;
     CharacterSheet sheet;
 
@@ -101,10 +100,9 @@ public class CharacterGen {
     List<JButton> fate_ButtonsUP = new ArrayList<>();
     List<JButton> fate_ButtonsDOWN = new ArrayList<>();
 
-    public CharacterGen(JFrame _frame, Main _screen, LanguagePack _languagepack, Connection _connection) {
+    public CharacterGen(JFrame _frame, Main _screen, Connection _connection) {
         frame = _frame;
         previous_screen = _screen;
-        languagePack = _languagepack;
         connection = _connection;
         sheet = new CharacterSheet();
 
@@ -504,7 +502,6 @@ public class CharacterGen {
 
         for (int i = 1; i < columns.length-1; i++) {
             int finalI = i-1;
-            //FIXME Add limits to buttons
             JButton buttonup = new JButton("+");
             buttonup.setEnabled(false);
             buttonup.addActionListener(e -> {
@@ -729,6 +726,7 @@ public class CharacterGen {
     }
 
     void createUIComponents() {
+        fate_attrRemain = new JIntegerField(5);
         raceskill_number3 = new JIntegerField(3, "%d/3");
         raceskill_number5 = new JIntegerField(3, "%d/3");
     }

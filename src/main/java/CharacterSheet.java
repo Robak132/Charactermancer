@@ -21,7 +21,6 @@ public class CharacterSheet {
     JFrame frame;
     JPanel mainPanel;
     Main previous_screen;
-    LanguagePack languagePack;
     Connection connection;
 
     private JButton createPlayerCharacterButton;
@@ -43,10 +42,9 @@ public class CharacterSheet {
     private int move, maxhp, hp, exp;
     private boolean warning = false;
 
-    public CharacterSheet(JFrame _frame, Main _screen, LanguagePack _languagepack, Connection _connection) {
+    public CharacterSheet(JFrame _frame, Main _screen, Connection _connection) {
         frame = _frame;
         previous_screen = _screen;
-        languagePack = _languagepack;
         connection = _connection;
         exp = 0;
 

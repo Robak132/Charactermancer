@@ -1,10 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.Locale;
 
 public class Main {
     static JFrame frame;
-    static LanguagePack languagePack;
     static JPanel startPanel;
     final Connection connection;
 
@@ -14,7 +14,6 @@ public class Main {
     JPanel mainPanel;
 
     public static void main(String[] args) {
-        languagePack = new LanguagePack(0);
         frame = new JFrame("Charactermancer");
         startPanel = new Main().mainPanel;
         frame.setContentPane(startPanel);
@@ -26,28 +25,21 @@ public class Main {
     }
 
     Main() {
-        repaint();
+        Locale.setDefault(Locale.ENGLISH);
         connection = new Connection();
         comboBox1.addItem(new ImageIcon("src/main/resources/images/pl.gif"));
         comboBox1.addItem(new ImageIcon("src/main/resources/images/eng.gif"));
         createcharButton.addActionListener(e -> {
-            frame.setContentPane(new CharacterGen(frame, this, languagePack, connection).mainPanel);
+            frame.setContentPane(new CharacterGen(frame, this, connection).mainPanel);
             frame.validate();
         });
         createcharButton.setMnemonic(KeyEvent.VK_1);
         createsheetButton.addActionListener(e -> {
-            frame.setContentPane(new CharacterSheet(frame, this, languagePack, connection).mainPanel);
+            frame.setContentPane(new CharacterSheet(frame, this, connection).mainPanel);
             frame.validate();
         });
         createsheetButton.setMnemonic(KeyEvent.VK_2);
         comboBox1.addActionListener(e -> {
-            languagePack.setCode(comboBox1.getSelectedIndex());
-            repaint();
         });
-    }
-
-    void repaint() {
-//        createcharButton.setText(languagePack.localise(createcharButton.getName()));
-//        createsheetButton.setText(languagePack.localise(createsheetButton.getName()));
     }
 }
