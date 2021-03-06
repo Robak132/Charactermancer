@@ -86,6 +86,7 @@ public class CharacterGen {
     private JPanel raceskill_table;
     private JIntegerField raceskill_number3;
     private JIntegerField raceskill_number5;
+    private JPanel raceskill_talents;
 
     private JIntegerField mouse_source = null;
     private Color mouse_color;

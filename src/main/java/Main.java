@@ -12,6 +12,7 @@ public class Main {
     JButton createcharButton;
     JButton createsheetButton;
     JPanel mainPanel;
+    Locale[] languages = new Locale[] {Locale.ENGLISH, new Locale("pl", "PL")};
 
     public static void main(String[] args) {
         frame = new JFrame("Charactermancer");
@@ -27,8 +28,8 @@ public class Main {
     Main() {
         Locale.setDefault(Locale.ENGLISH);
         connection = new Connection();
-        comboBox1.addItem(new ImageIcon("src/main/resources/images/pl.gif"));
         comboBox1.addItem(new ImageIcon("src/main/resources/images/eng.gif"));
+        comboBox1.addItem(new ImageIcon("src/main/resources/images/pl.gif"));
         createcharButton.addActionListener(e -> {
             frame.setContentPane(new CharacterGen(frame, this, connection).mainPanel);
             frame.validate();
@@ -40,6 +41,7 @@ public class Main {
         });
         createsheetButton.setMnemonic(KeyEvent.VK_2);
         comboBox1.addActionListener(e -> {
+            Locale.setDefault(languages[comboBox1.getSelectedIndex()]);
         });
     }
 }
