@@ -398,10 +398,12 @@ public class CharacterGen {
         });
     }
 
-    void calculateTotal() {
-        for (int i=0;i<10;i++)
-            TAttr.get(i).setValue(BAttr.get(i).getValue() + RAttr.get(i).getValue());
-        calculateHP();
+    void initTable(JPanel panel, int rows, int columns) {
+        panel.setLayout(new GridLayoutManager(rows+2, columns+2, new Insets(0, 0, 0, 0), -1, -1));
+        panel.add(new Spacer(), new GridConstraints(0, 0, rows+1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
+        panel.add(new Spacer(), new GridConstraints(0, columns+1, rows+1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
+        panel.add(new Spacer(), new GridConstraints(rows+1, 0, 1, columns+1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null));
+
     }
     void createAttrTable() {
         String[] columns = {"M", "WW", "US", "S", "Wt", "I", "Zw", "Zr", "Int", "SW", "Ogd", "Żyw"};
@@ -558,13 +560,6 @@ public class CharacterGen {
             fate_attributeTable.add(buttondown, new GridConstraints(5, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
         }
     }
-    void initTable(JPanel panel, int rows, int columns) {
-        panel.setLayout(new GridLayoutManager(rows+2, columns+2, new Insets(0, 0, 0, 0), -1, -1));
-        panel.add(new Spacer(), new GridConstraints(0, 0, rows+1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
-        panel.add(new Spacer(), new GridConstraints(0, columns+1, rows+1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
-        panel.add(new Spacer(), new GridConstraints(rows+1, 0, 1, columns+1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null));
-
-    }
     void createRaceSkillTable() {
         List<GroupSkill> baseSkills = connection.getBaseSkillsByRace(sheet.getRace().getID());
         List<GroupSkill> advSkills = connection.getAdvSkillsByRace(sheet.getRace().getID());
@@ -691,25 +686,10 @@ public class CharacterGen {
             value += TAttr.get(2).getValue() / 10;
         attr_hp.setValue(value);
     }
-    void moveToNextTab(int tab) {
-        tabbedPane.setEnabledAt(tab + 1, true);
-        tabbedPane.setSelectedIndex(tab + 1);
-        switch (tab + 1) {
-            case 1:
-                prof_option4a.addItems(connection.getProfsClasses(sheet.getRace().getID()));
-                prof_option4b.addItems(connection.getProfsNames(sheet.getRace().getID(), prof_option4a.getValue()));
-                break;
-            case 2:
-                setBaseValues();
-                break;
-            case 3:
-                createFateTable();
-                setTotalValues();
-                break;
-            case 4:
-                createRaceSkillTable();
-                break;
-        }
+    void calculateTotal() {
+        for (int i=0;i<10;i++)
+            TAttr.get(i).setValue(BAttr.get(i).getValue() + RAttr.get(i).getValue());
+        calculateHP();
     }
     void updateExp(int value) {
         sheet.addExp(value);
@@ -750,6 +730,26 @@ public class CharacterGen {
         for (int i=0;i<list.size();i++) {
             if (sheet.getProf().getAttr(i)==1)
                 list.get(i).setEnabled(bool);
+        }
+    }
+    void moveToNextTab(int tab) {
+        tabbedPane.setEnabledAt(tab + 1, true);
+        tabbedPane.setSelectedIndex(tab + 1);
+        switch (tab + 1) {
+            case 1:
+                prof_option4a.addItems(connection.getProfsClasses(sheet.getRace().getID()));
+                prof_option4b.addItems(connection.getProfsNames(sheet.getRace().getID(), prof_option4a.getValue()));
+                break;
+            case 2:
+                setBaseValues();
+                break;
+            case 3:
+                createFateTable();
+                setTotalValues();
+                break;
+            case 4:
+                createRaceSkillTable();
+                break;
         }
     }
 
