@@ -1,8 +1,6 @@
 package mappings;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -44,7 +42,7 @@ public class Race {
     @Column(name = "SIZE")
     private int size;
     @Column(name = "RANDOM_TALENTS")
-    private int talents;
+    private int randomTalents;
 
     @OneToMany(mappedBy = "race")
     Set<ProfTable> profTable;
@@ -62,7 +60,7 @@ public class Race {
     }
 
     public Race() {}
-    public Race(int id, String name, int ww, int us, int s, int wt, int i, int zw, int zr, int it, int sw, int ogd, int m, int fate, int resilience, int extra, int size, int talents) {
+    public Race(int id, String name, int ww, int us, int s, int wt, int i, int zw, int zr, int it, int sw, int ogd, int m, int fate, int resilience, int extra, int size, int randomTalents) {
         this.id = id;
         this.name = name;
         this.ww = ww;
@@ -80,7 +78,7 @@ public class Race {
         this.resilience = resilience;
         this.extra = extra;
         this.size = size;
-        this.talents = talents;
+        this.randomTalents = this.randomTalents;
     }
 
     public int getID() {
@@ -213,10 +211,10 @@ public class Race {
     public void setSize(int size) {
         this.size = size;
     }
-    public int getTalents() {
-        return talents;
+    public int getRandomTalents() {
+        return randomTalents;
     }
-    public void setTalents(int talents) {
-        this.talents = talents;
+    public void setRandomTalents(int randomTalents) {
+        this.randomTalents = randomTalents;
     }
 }
