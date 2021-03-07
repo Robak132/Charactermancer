@@ -7,9 +7,11 @@ import javax.persistence.*;
 public class ProfTable {
     @Id
     @Column(name = "ID")
-    private int id;
-    @Column(name = "INDX")
-    private int index;
+    private int ID;
+    @Column(name = "IDXDOWN")
+    private int indexDOWN;
+    @Column(name = "IDXUP")
+    private int indexUP;
     @ManyToOne
     @JoinColumn(name = "IDPROF")
     private Profession prof;
@@ -18,24 +20,31 @@ public class ProfTable {
     private Race race;
 
     public ProfTable() {}
-    public ProfTable(int id, int index, Profession prof, Race race) {
-        this.id = id;
-        this.index = index;
+    public ProfTable(int ID, int indexDOWN, int indexUP, Profession prof, Race race) {
+        this.ID = ID;
+        this.indexDOWN = indexDOWN;
+        this.indexUP = indexUP;
         this.prof = prof;
         this.race = race;
     }
 
-    public int getId() {
-        return id;
+    public int getID() {
+        return ID;
     }
-    public void setId(int id) {
-        this.id = id;
+    public void setID(int ID) {
+        this.ID = ID;
     }
-    public int getIndex() {
-        return index;
+    public int getIndexDOWN() {
+        return indexDOWN;
     }
-    public void setIndex(int index) {
-        this.index = index;
+    public void setIndexDOWN(int indexDOWN) {
+        this.indexDOWN = indexDOWN;
+    }
+    public int getIndexUP() {
+        return indexUP;
+    }
+    public void setIndexUP(int indexUP) {
+        this.indexUP = indexUP;
     }
     public Profession getProf() {
         return prof;

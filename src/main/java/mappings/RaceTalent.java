@@ -15,15 +15,15 @@ public class RaceTalent {
     @JoinColumn(name = "IDTALENT")
     private GroupTalent talent;
     @ManyToOne
-    @JoinColumn(name = "IDEXC")
-    private GroupTalent exec;
+    @JoinColumn(name = "IDEXCL")
+    private GroupTalent talentExcl;
 
     public RaceTalent() {}
-    public RaceTalent(int ID, Race race, GroupTalent talent, GroupTalent exec) {
+    public RaceTalent(int ID, Race race, GroupTalent talent, GroupTalent talentExcl) {
         this.ID = ID;
         this.race = race;
         this.talent = talent;
-        this.exec = exec;
+        this.talentExcl = talentExcl;
     }
 
     public int getID() {
@@ -39,7 +39,7 @@ public class RaceTalent {
         this.race = race;
     }
     public GroupTalent[] getAllTalents() {
-        return new GroupTalent[] {talent, exec};
+        return new GroupTalent[] {talent, talentExcl};
     }
     public GroupTalent getTalent() {
         return talent;
@@ -47,10 +47,10 @@ public class RaceTalent {
     public void setTalent(GroupTalent talent) {
         this.talent = talent;
     }
-    public GroupTalent getExec() {
-        return exec;
+    public GroupTalent getTalentExcl() {
+        return talentExcl;
     }
-    public void setExec(GroupTalent exec) {
-        this.exec = exec;
+    public void setTalentExcl(GroupTalent talentExcl) {
+        this.talentExcl = talentExcl;
     }
 }

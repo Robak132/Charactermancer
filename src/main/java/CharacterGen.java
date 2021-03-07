@@ -658,14 +658,14 @@ public class CharacterGen {
             int finalI = i;
             Object[] talentArray = new Object[2];
 
-            if (talents.get(i).getExec() == null) {
+            if (talents.get(i).getTalentExcl() == null) {
                 JTextField nameField = new JTextField(talents.get(i).getTalent().getName());
                 nameField.setEditable(false);
                 raceskill_talentsPanel.addAuto(nameField, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null));
             } else {
                 JComboBox<String> comboField = new JComboBox<>();
                 comboField.addItem(talents.get(i).getTalent().getName());
-                comboField.addItem(talents.get(i).getExec().getName());
+                comboField.addItem(talents.get(i).getTalentExcl().getName());
                 comboField.addActionListener(e -> {
                     JTextField testField = (JTextField) raceskill_talentsPanel.getComponent(1, finalI+1);
                     testField.setText("" + talents.get(finalI).getAllTalents()[comboField.getSelectedIndex()].getBase());

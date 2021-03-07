@@ -40,7 +40,7 @@ public class Connection {
         Race race = null;
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT t.race FROM RaceTable t JOIN t.race WHERE t.id = :param");
+            Query SQLQuery = session.createQuery("SELECT t.race FROM RaceTable t WHERE t.indexDOWN <= :param AND :param <= t.indexUP");
             SQLQuery.setParameter("param", n);
             race = SQLQuery.list().size()==0 ? null : (Race) SQLQuery.list().get(0);
             session.close();
@@ -82,7 +82,7 @@ public class Connection {
         Profession prof = null;
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.index = :param1 AND t.race.id = :param2");
+            Query SQLQuery = session.createQuery("SELECT t.prof FROM ProfTable t WHERE t.indexDOWN <= :param1 AND :param1 <= t.indexUP AND t.race.id = :param2");
             SQLQuery.setParameter("param1", n);
             SQLQuery.setParameter("param2", race);
             prof = SQLQuery.list().size()==0 ? null : (Profession) SQLQuery.list().get(0);

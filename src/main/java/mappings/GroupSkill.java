@@ -17,17 +17,13 @@ public class GroupSkill {
     private Skill base;
     @Column(name = "CUSTOM")
     private int custom;
-    @OneToOne
-    @JoinColumn(name = "EXCLUSIVE")
-    private GroupSkill excSkill;
 
     public GroupSkill() {}
-    public GroupSkill(int ID, String name, Skill base, int custom, GroupSkill excSkill) {
+    public GroupSkill(int ID, String name, Skill base, int custom) {
         this.ID = ID;
         this.name = name;
         this.base = base;
         this.custom = custom;
-        this.excSkill = excSkill;
     }
 
     public int getID() {
@@ -53,11 +49,5 @@ public class GroupSkill {
     }
     public void setCustom(int custom) {
         this.custom = custom;
-    }
-    public GroupSkill getExcSkill() {
-        return excSkill;
-    }
-    public void setExcSkill(GroupSkill excSkill) {
-        this.excSkill = excSkill;
     }
 }
