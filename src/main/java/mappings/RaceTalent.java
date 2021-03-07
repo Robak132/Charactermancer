@@ -38,6 +38,9 @@ public class RaceTalent {
     public void setRace(Race race) {
         this.race = race;
     }
+    public GroupTalent[] getAllTalents() {
+        return new GroupTalent[] {talent, exec};
+    }
     public GroupTalent getTalent() {
         return talent;
     }
