@@ -6,6 +6,8 @@ import components.GridPanel;
 import components.JIntegerField;
 import components.SearchableJComboBox;
 import mappings.*;
+import tools.Dice;
+import tools.MultiLineTooltip;
 
 import javax.swing.*;
 import java.awt.*;

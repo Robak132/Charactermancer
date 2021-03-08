@@ -1,4 +1,4 @@
-package components;
+package tools;
 
 public class DynamicMatrix2D<T> {
     private T[][] matrix = (T[][]) new Object[1][1];

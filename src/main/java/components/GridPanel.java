@@ -2,7 +2,7 @@ package components;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import org.hibernate.event.spi.DirtyCheckEvent;
+import tools.DynamicMatrix2D;
 
 import javax.swing.*;
 import java.awt.*;
