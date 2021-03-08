@@ -78,7 +78,7 @@ public class Race {
         this.resilience = resilience;
         this.extra = extra;
         this.size = size;
-        this.randomTalents = this.randomTalents;
+        this.randomTalents = randomTalents;
     }
 
     public int getID() {

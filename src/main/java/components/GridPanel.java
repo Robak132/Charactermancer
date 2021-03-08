@@ -52,6 +52,12 @@ public class GridPanel extends JPanel {
         setLayout(new GridLayoutManager(rows+2, columns+2, new Insets(0, 0, 0, 0), -1, -1));
         addSpacers(alignment);
         for (Map.Entry<Component, GridConstraints> pair : items.entrySet()) {
+            if (pair.getValue().getColSpan() == -1) {
+                pair.getValue().setColSpan(columns);
+            }
+            if (pair.getValue().getRowSpan() == -1) {
+                pair.getValue().setRowSpan(rows);
+            }
             super.add(pair.getKey(), pair.getValue());
         }
     }

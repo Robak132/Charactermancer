@@ -85,6 +85,8 @@ public class CharacterGen {
 
     private GridPanel raceskill_skillsPanel;
     private GridPanel raceskill_talentsPanel;
+    private GridPanel raceskill_randomTalentsPanel;
+    private JPanel raceskill_rollPanel;
     private JIntegerField raceskill_number3;
     private JIntegerField raceskill_number5;
 
@@ -652,12 +654,10 @@ public class CharacterGen {
         raceskill_skillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
 
         // Talents - Header
-        raceskill_talentsPanel.addAuto(new JLabel("Talents", JLabel.CENTER), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
+        raceskill_talentsPanel.addAuto(new JLabel("Talents", JLabel.CENTER), new GridConstraints(0, 0, 1, -1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
         for (int i=0;i<talents.size();i++) {
             int column = 0;
             int finalI = i;
-            Object[] talentArray = new Object[2];
-
             if (talents.get(i).getTalentExcl() == null) {
                 JTextField nameField = new JTextField(talents.get(i).getTalent().getName());
                 nameField.setEditable(false);
@@ -676,16 +676,29 @@ public class CharacterGen {
             JTextField attrField = new JTextField("" + talents.get(i).getTalent().getBase());
             attrField.setEditable(false);
             attrField.setFocusable(false);
-            talentArray[1] = attrField;
             raceskill_talentsPanel.addAuto(attrField, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null));
         }
 
+        raceskill_talentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
+
         // Talents - Random Talents
         if (sheet.getRace().getRandomTalents() != 0) {
-            raceskill_talentsPanel.addAuto(new JLabel("Random Talents", JLabel.CENTER), new GridConstraints(talents.size()+1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
+            raceskill_rollPanel.setVisible(true);
+            for (int i=0;i<talents.size();i++) {
+                int column = 0;
+
+                JTextField nameField = new JTextField(talents.get(i).getTalent().getName());
+                nameField.setEditable(false);
+                raceskill_randomTalentsPanel.addAuto(nameField, new GridConstraints(talents.size()+3, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null));
+
+                JTextField attrField = new JTextField("" + talents.get(i).getTalent().getBase());
+                attrField.setEditable(false);
+                attrField.setFocusable(false);
+                raceskill_randomTalentsPanel.addAuto(attrField, new GridConstraints(talents.size()+3, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null));
+            }
         }
 
-        raceskill_talentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
+        raceskill_randomTalentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
 
     void calculateHP() {
