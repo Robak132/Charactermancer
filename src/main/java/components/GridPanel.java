@@ -7,6 +7,8 @@ import tools.DynamicMatrix2D;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GridPanel extends JPanel {
     private int columns=1;
@@ -22,7 +24,11 @@ public class GridPanel extends JPanel {
         super();
     }
 
-    public void addAuto(Component comp, Object constraints, boolean buildNow) {
+    @Override
+    public void add(Component comp, Object constraints) {
+        add(comp, constraints, true);
+    }
+    public void add(Component comp, Object constraints, boolean buildNow) {
         GridConstraints editConstr = (GridConstraints) constraints;
         int columnCount = editConstr.getColumn();
         editConstr.setColumn(columnCount+1);
@@ -41,14 +47,12 @@ public class GridPanel extends JPanel {
             build();
         }
     }
-    public void addAuto(Component comp, Object constraints) {
-        addAuto(comp, constraints, false);
-    }
 
     public void build() {
         build(GridPanel.ALIGNMENT_NOTOP);
     }
     public void build(int alignment) {
+        Logger.getLogger(getClass().getName()).log(Level.INFO, String.format("GridPanel built (col: %d, row: %d)", columns, rows));
         setLayout(new GridLayoutManager(rows+2, columns+2, new Insets(0, 0, 0, 0), -1, -1));
         addSpacers(alignment);
         for (Map.Entry<Component, GridConstraints> pair : items.entrySet()) {
