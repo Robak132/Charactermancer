@@ -63,7 +63,7 @@ public class CharacterGen {
 
     private JPanel attributesTable;
     private JButton attr_rollButton;
-    private JButton attr_okButton;
+    private JButton attr_OKButton;
     private JIntegerField attr_sumField;
     private JButton attr_rollAllButton;
     private JButton a3PutOwnValuesButton;
@@ -89,12 +89,18 @@ public class CharacterGen {
     private JPanel raceskill_rollPanel;
     private JIntegerField raceskill_number3;
     private JIntegerField raceskill_number5;
+    private JLabel raceskill_randomTalentsLabel;
+    private JButton raceskill_rollButton;
+    private JIntegerField raceskill_rollResult;
+    private JButton raceskill_OKButton;
+    private List<GroupTalent> raceskill_randomTalents = new ArrayList<>();
 
     private JIntegerField mouse_source = null;
     private Color mouse_color;
     private boolean attr_locked = true;
     private int rollResultNumeric;
     private Race rollRace;
+    private GroupTalent rollTalent;
 
     List<JIntegerField> BAttr = new ArrayList<>();
     List<JIntegerField> RAttr = new ArrayList<>();
@@ -299,7 +305,7 @@ public class CharacterGen {
                 attr_locked = false;
                 attr_rollButton.setEnabled(false);
                 attr_rollAllButton.setEnabled(false);
-                attr_okButton.setEnabled(false);
+                attr_OKButton.setEnabled(false);
                 attr_option1Button.setEnabled(true);
             }
         });
@@ -319,10 +325,10 @@ public class CharacterGen {
             attr_locked = false;
             attr_rollButton.setEnabled(false);
             attr_rollAllButton.setEnabled(false);
-            attr_okButton.setEnabled(false);
+            attr_OKButton.setEnabled(false);
             attr_option1Button.setEnabled(true);
         });
-        attr_okButton.addActionListener(e->{
+        attr_OKButton.addActionListener(e->{
             //TODO Add custom values given by user
         });
         attr_option1Button.addActionListener(e -> {
@@ -386,7 +392,29 @@ public class CharacterGen {
         });
 
         // Race skills & Talents //
+        raceskill_rollButton.addActionListener(e -> {
+            GroupTalent rollTalent;
+            do {
+                Object[] result = getRandomTalent();
+                rollResultNumeric = (int) result[0];
+                rollTalent = (GroupTalent) result[1];
 
+                raceskill_rollResult.setValue(rollResultNumeric);
+            } while (raceskill_randomTalents.contains(rollTalent));
+            raceskill_randomTalents.add(rollTalent);
+
+            JTextField activeField = (JTextField) raceskill_randomTalentsPanel.getComponent(0, raceskill_randomTalents.size()-1);
+            activeField.setText(rollTalent.getName());
+
+            activeField = (JTextField) raceskill_randomTalentsPanel.getComponent(1, raceskill_randomTalents.size()-1);
+            activeField.setText("" + rollTalent.getBase());
+
+            if (sheet.getRace().getRandomTalents() <= raceskill_randomTalents.size()) {
+                raceskill_rollButton.setEnabled(false);
+                raceskill_rollResult.setEnabled(false);
+                raceskill_OKButton.setEnabled(false);
+            }
+        });
 
         // Pane controls //
         tabbedPane.addChangeListener(e -> {
@@ -684,17 +712,17 @@ public class CharacterGen {
         // Talents - Random Talents
         if (sheet.getRace().getRandomTalents() != 0) {
             raceskill_rollPanel.setVisible(true);
-            for (int i=0;i<talents.size();i++) {
+            for (int i=0;i<sheet.getRace().getRandomTalents();i++) {
                 int column = 0;
 
-                JTextField nameField = new JTextField(talents.get(i).getTalent().getName());
+                JTextField nameField = new JTextField();
                 nameField.setEditable(false);
-                raceskill_randomTalentsPanel.addAuto(nameField, new GridConstraints(talents.size()+3, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null));
+                raceskill_randomTalentsPanel.addAuto(nameField, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null));
 
-                JTextField attrField = new JTextField("" + talents.get(i).getTalent().getBase());
+                JTextField attrField = new JTextField();
                 attrField.setEditable(false);
                 attrField.setFocusable(false);
-                raceskill_randomTalentsPanel.addAuto(attrField, new GridConstraints(talents.size()+3, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null));
+                raceskill_randomTalentsPanel.addAuto(attrField, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null));
             }
         }
 
@@ -819,6 +847,13 @@ public class CharacterGen {
         returns[0] = rollAttr;
         returns[1] = sumAttr;
         returns[2] = sumRollAttr;
+        return returns;
+    }
+    Object[] getRandomTalent() {
+        Object[] returns = new Object[2];
+        int numeric = Dice.randomDice(1, 100);
+        returns[0] = numeric;
+        returns[1] = connection.getRandomTalent(numeric);
         return returns;
     }
     void getRaceSkills(Race race) {

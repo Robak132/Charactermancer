@@ -8,7 +8,6 @@
         <property name="connection.url">jdbc:sqlite:./src/main/resources/db/database.sqlite</property>
         <property name="dialect">org.hibernate.dialect.SQLiteDialect</property>
         <property name="show_sql">true</property>
-        <property name="hibernate.enable_lazy_load_no_trans">true</property>
 
         <mapping class="mappings.GroupSkill" />
         <mapping class="mappings.GroupTalent" />
@@ -18,6 +17,7 @@
         <mapping class="mappings.RaceSkill" />
         <mapping class="mappings.RaceTable" />
         <mapping class="mappings.RaceTalent" />
+        <mapping class="mappings.RandomTalent" />
         <mapping class="mappings.Skill" />
     </session-factory>
 </hibernate-configuration>

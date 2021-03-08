@@ -213,6 +213,20 @@ public class Connection {
         }
         return talents;
     }
+    GroupTalent getRandomTalent(int n) {
+        GroupTalent talent = null;
+        try {
+            Session session = factory.openSession();
+            Query SQLQuery = session.createQuery("SELECT r.talent FROM RandomTalent r WHERE r.indexDOWN <= :param AND :param <= r.indexUP");
+            SQLQuery.setParameter("param", n);
+            talent = SQLQuery.list().size()==0 ? null : (GroupTalent) SQLQuery.list().get(0);
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return talent;
+    }
 
     List<String> getProfsClasses(int race) {
         List<String> result = new ArrayList<>();
