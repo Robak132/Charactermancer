@@ -66,6 +66,13 @@ public class GridPanel extends JPanel {
         }
     }
 
+    public int getColumns() {
+        return columns;
+    }
+    public int getRows() {
+        return rows;
+    }
+
     public Component getComponent(int col, int row) {
         return components.get(row, col);
     }

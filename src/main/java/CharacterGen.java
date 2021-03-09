@@ -1,15 +1,13 @@
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import components.CustomJSpinnerModel;
-import components.GridPanel;
-import components.JIntegerField;
-import components.SearchableJComboBox;
+import components.*;
 import mappings.*;
 import tools.Dice;
 import tools.MultiLineTooltip;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -91,6 +89,7 @@ public class CharacterGen {
     private JPanel raceskill_rollPanel;
     private JIntegerField raceskill_number3;
     private JIntegerField raceskill_number5;
+    private final JIntegerField[] control_numbers = new JIntegerField[] {raceskill_number3, raceskill_number5};
     private JLabel raceskill_randomTalentsLabel;
     private JButton raceskill_rollButton;
     private JIntegerField raceskill_rollResult;
@@ -629,9 +628,10 @@ public class CharacterGen {
             attrField.setFocusable(false);
             raceskill_skillsPanel.add(attrField, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35,-1), null), false);
 
-            JSpinner jSpinner = new JSpinner(new CustomJSpinnerModel<>(new Integer[]{0, 3, 5}));
-            ((JSpinner.DefaultEditor) jSpinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
-            ((JSpinner.DefaultEditor) jSpinner.getEditor()).getTextField().setEditable(false);
+            ListSpinner<Integer> jSpinner = new ListSpinner<>(new Integer[]{0, 3, 5});
+            jSpinner.setHorizontalAlignment(JTextField.CENTER);
+            jSpinner.setEditable(false);
+            jSpinner.addChangeListener(this::raceskill_updatePoints);
             raceskill_skillsPanel.add(jSpinner, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35,-1), null), false);
 
             JIntegerField sumField = new JIntegerField(sheet.getSumAttribute(Race.Attributes.valueOf(attr)));
@@ -672,9 +672,9 @@ public class CharacterGen {
             attrField.setFocusable(false);
             raceskill_skillsPanel.add(attrField, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35,-1), null), false);
 
-            JSpinner jSpinner = new JSpinner(new CustomJSpinnerModel<>(new Integer[]{0, 3, 5}));
-            ((JSpinner.DefaultEditor) jSpinner.getEditor()).getTextField().setHorizontalAlignment(JTextField.CENTER);
-            ((JSpinner.DefaultEditor) jSpinner.getEditor()).getTextField().setEditable(false);
+            ListSpinner<Integer> jSpinner = new ListSpinner<>(new Integer[]{0, 3, 5});
+            jSpinner.setHorizontalAlignment(JTextField.CENTER);
+            jSpinner.setEditable(false);
             raceskill_skillsPanel.add(jSpinner, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35,-1), null), false);
 
             JIntegerField sumField = new JIntegerField(0);
@@ -736,7 +736,25 @@ public class CharacterGen {
 
         raceskill_randomTalentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
+    void raceskill_updatePoints(ChangeEvent e) {
+        ListSpinner<?> spinner = ((ListSpinner<?>) e.getSource());
+        int last = spinner.getLastIndex();
+        int now = spinner.getIndex();
 
+        if (last != 0) {
+            control_numbers[last - 1].increment();
+        }
+        if (now != 0) {
+            control_numbers[now - 1].decrement();
+        }
+
+        if (control_numbers[0].getValue() == 0 && control_numbers[1].getValue() == 0) {
+            for (int j=1; j<raceskill_skillsPanel.getRows();j++) {
+                ListSpinner<?> listSpinner = (ListSpinner<?>) raceskill_skillsPanel.getComponent(2, j);
+                listSpinner.setEnabled(false);
+            }
+        }
+    }
     void calculateHP() {
         int value = (TAttr.get(3).getValue() / 10) * 2 + TAttr.get(8).getValue() / 10;
         if (sheet.getRace().getSize() == Race.SIZE_NORMAL)
