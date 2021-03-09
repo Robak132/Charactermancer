@@ -10,14 +10,15 @@ public class GroupTalent {
     private int ID;
     @Column(name = "NAME")
     private String name;
-    @Column(name = "IDBASE")
-    private int base;
+    @ManyToOne
+    @JoinColumn(name = "IDBASE")
+    private Talent baseTalent;
 
     public GroupTalent() {}
-    public GroupTalent(int ID, String name, int base) {
+    public GroupTalent(int ID, String name, Talent baseTalent) {
         this.ID = ID;
         this.name = name;
-        this.base = base;
+        this.baseTalent = baseTalent;
     }
 
     public int getID() {
@@ -32,10 +33,10 @@ public class GroupTalent {
     public void setName(String name) {
         this.name = name;
     }
-    public int getBase() {
-        return base;
+    public Talent getBaseTalent() {
+        return baseTalent;
     }
-    public void setBase(int base) {
-        this.base = base;
+    public void setBaseTalent(Talent baseTalent) {
+        this.baseTalent = baseTalent;
     }
 }

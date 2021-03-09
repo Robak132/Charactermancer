@@ -1,9 +1,10 @@
 package mappings;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
-@Table(name = "RACETABLE")
+@Table(name = "RACE_TABLE")
 public class RaceTable {
     @Id
     @Column(name = "ID")
@@ -47,5 +48,21 @@ public class RaceTable {
     }
     public void setRace(Race race) {
         this.race = race;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        RaceTable raceTable = (RaceTable) o;
+        return Objects.equals(race, raceTable.race);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(race);
     }
 }

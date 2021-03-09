@@ -2,6 +2,7 @@ package mappings;
 
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "RNG_TALENTS_TABLE")
@@ -48,5 +49,21 @@ public class RandomTalent {
     }
     public void setTalent(GroupTalent talent) {
         this.talent = talent;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        RandomTalent that = (RandomTalent) o;
+        return Objects.equals(talent, that.talent);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(talent);
     }
 }

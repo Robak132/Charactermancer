@@ -51,7 +51,7 @@ public class CharacterGen {
     private SearchableJComboBox prof_option4a;
     private SearchableJComboBox prof_option4b;
     private JButton prof_option4Button;
-    private List<Profession> profList = new ArrayList<>();
+    private final List<Profession> profList = new ArrayList<>();
     private JTextField[][] prof_options = {
             {prof_option1a, prof_option1b},
             {prof_option2a, prof_option2b},
@@ -283,6 +283,8 @@ public class CharacterGen {
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
+        //TODO: Make prof_option4Button works
+        //FIXME: Optimalise SearchableJComboBoxes
         prof_option4a.addActionListener(e -> prof_option4b.addItems(connection.getProfsNames(sheet.getRace().getID(), prof_option4a.getValue())));
 
         // Attributes //
@@ -343,8 +345,10 @@ public class CharacterGen {
             updateExp(attr_maxExp);
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
+        //TODO: Make a3PutOwnValuesButton work and probably change the name
 
         // Fate & Resolve //
+        //TODO: Maybe change all buttons to JSpinners :thinking:
         fate_fateUP.addActionListener(e -> {
             fate_extra.setText(String.valueOf(Integer.parseInt(fate_extra.getText()) - 1));
             fate_fate.setText(String.valueOf(Integer.parseInt(fate_fate.getText()) + 1));
@@ -393,6 +397,7 @@ public class CharacterGen {
 
         // Race skills & Talents //
         raceskill_rollButton.addActionListener(e -> {
+            //FIXME: Sometimes two talents are the same
             GroupTalent rollTalent;
             do {
                 Object[] result = getRandomTalent();
@@ -407,7 +412,7 @@ public class CharacterGen {
             activeField.setText(rollTalent.getName());
 
             activeField = (JTextField) raceskill_randomTalentsPanel.getComponent(1, raceskill_randomTalents.size()-1);
-            activeField.setText("" + rollTalent.getBase());
+            activeField.setText("" + rollTalent.getBaseTalent().getMaxLvl());
 
             if (sheet.getRace().getRandomTalents() <= raceskill_randomTalents.size()) {
                 raceskill_rollButton.setEnabled(false);
@@ -696,12 +701,12 @@ public class CharacterGen {
                 comboField.addItem(talents.get(i).getTalentExcl().getName());
                 comboField.addActionListener(e -> {
                     JTextField testField = (JTextField) raceskill_talentsPanel.getComponent(1, finalI+1);
-                    testField.setText("" + talents.get(finalI).getAllTalents()[comboField.getSelectedIndex()].getBase());
+                    testField.setText("" + talents.get(finalI).getAllTalents()[comboField.getSelectedIndex()].getBaseTalent().getMaxLvl());
                 });
                 raceskill_talentsPanel.add(comboField, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null), false);
             }
 
-            JTextField attrField = new JTextField("" + talents.get(i).getTalent().getBase());
+            JTextField attrField = new JTextField("" + talents.get(i).getTalent().getBaseTalent().getMaxLvl());
             attrField.setEditable(false);
             attrField.setFocusable(false);
             raceskill_talentsPanel.add(attrField, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null), false);
@@ -717,10 +722,12 @@ public class CharacterGen {
                 int column = 0;
 
                 JTextField nameField = new JTextField();
+                nameField.setHorizontalAlignment(JTextField.CENTER);
                 nameField.setEditable(false);
                 raceskill_randomTalentsPanel.add(nameField, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null), false);
 
                 JTextField attrField = new JTextField();
+                attrField.setHorizontalAlignment(JTextField.CENTER);
                 attrField.setEditable(false);
                 attrField.setFocusable(false);
                 raceskill_randomTalentsPanel.add(attrField, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null), false);

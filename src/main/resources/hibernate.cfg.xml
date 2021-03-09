@@ -19,5 +19,6 @@
         <mapping class="mappings.RaceTalent" />
         <mapping class="mappings.RandomTalent" />
         <mapping class="mappings.Skill" />
+        <mapping class="mappings.Talent" />
     </session-factory>
 </hibernate-configuration>
