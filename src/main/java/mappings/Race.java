@@ -1,6 +1,8 @@
 package mappings;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -47,16 +49,49 @@ public class Race {
     @OneToMany(mappedBy = "race")
     Set<ProfTable> profTable;
 
-    public static final int SIZE_TINY = 0;
-    public static final int SIZE_LITTLE = 1;
-    public static final int SIZE_SMALL = 2;
-    public static final int SIZE_NORMAL = 3;
-    public static final int SIZE_LARGE = 4;
-    public static final int SIZE_ENORMOUS = 5;
-    public static final int SIZE_MONSTROUS = 6;
+    public enum Size {
+        TINY(0),
+        LITTLE(1),
+        SMALL(2),
+        NORMAL(3),
+        LARGE(4),
+        ENORMOUS(5),
+        MONSTROUS(6);
 
+        private final int value;
+        private static final Map<Integer, Size> map = new HashMap<>();
+
+        Size(int value) {
+            this.value = value;
+        }
+        static {
+            for (Size size : Size.values()) {
+                map.put(size.value, size);
+            }
+        }
+
+        public static Size valueOf(int value) {
+            return map.get(value);
+        }
+    }
     public enum Attributes {
-        WW, US, S, Wt, I, Zw, Zr, Int, SW, Ogd
+        WW(0), US(1), S(2), Wt(3), I(4), Zw(5), Zr(6), Int(7), SW(8), Ogd(9);
+
+        private final int index;
+        private static final Map<Integer, Attributes> map = new HashMap<>();
+
+        Attributes(int index) {
+            this.index = index;
+        }
+        static {
+            for (Attributes attributes : Attributes.values()) {
+                map.put(attributes.index, attributes);
+            }
+        }
+
+        public static Attributes valueOf(int index) {
+            return map.get(index);
+        }
     }
 
     public Race() {}
@@ -160,29 +195,8 @@ public class Race {
         this.m = m;
     }
     public Integer getAttr(int number) {
-        switch (number) {
-            case 0:
-                return ww;
-            case 1:
-                return us;
-            case 2:
-                return s;
-            case 3:
-                return wt;
-            case 4:
-                return i;
-            case 5:
-                return zw;
-            case 6:
-                return zr;
-            case 7:
-                return it;
-            case 8:
-                return sw;
-            case 9:
-                return ogd;
-        }
-        return null;
+        Integer[] table = new Integer[]{ww, us, s, wt, i, zw, zr, it, sw, ogd};
+        return table[number];
     }
     public Integer[] getBaseAttr() {
         return new Integer[] {ww, us, s, wt, i, zw, zr, it, sw, ogd};
@@ -205,11 +219,11 @@ public class Race {
     public void setExtra(int extra) {
         this.extra = extra;
     }
-    public int getSize() {
-        return size;
+    public Size getSize() {
+        return Size.valueOf(size);
     }
-    public void setSize(int size) {
-        this.size = size;
+    public void setSize(Size size) {
+        this.size = size.ordinal();
     }
     public int getRandomTalents() {
         return randomTalents;

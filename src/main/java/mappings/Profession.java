@@ -1,8 +1,6 @@
 package mappings;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -88,12 +86,6 @@ public class Profession {
     }
     public void setProfession(String profession) {
         this.profession = profession;
-    }
-    public String getProfessioneng() {
-        return professioneng;
-    }
-    public void setProfessioneng(String professioneng) {
-        this.professioneng = professioneng;
     }
     public int getLevel() {
         return level;
@@ -185,6 +177,13 @@ public class Profession {
                 return ogd;
         }
         return null;
+    }
+    public boolean[] getAttrBool() {
+        boolean[] attrBool = new boolean[10];
+        for (int i=0;i<10;i++) {
+            attrBool[i] = (getAttr(i) == 1);
+        }
+        return attrBool;
     }
 
     @Override
