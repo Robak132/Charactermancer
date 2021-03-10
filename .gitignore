@@ -9,6 +9,7 @@
 /.mvn
 /target
 /out
+Charactermancer.iml
 ./database_backup.h2.db
 ./database_backup_2.h2.db
 ./database.trace.db
