@@ -20,31 +20,31 @@ public class Profession {
     @Column(name = "LEVEL")
     private int level;
     @Column(name = "WW")
-    private int ww;
+    private boolean ww;
     @Column(name = "US")
-    private int us;
+    private boolean us;
     @Column(name = "S")
-    private int s;
+    private boolean s;
     @Column(name = "WT")
-    private int wt;
+    private boolean wt;
     @Column(name = "I")
-    private int i;
+    private boolean i;
     @Column(name = "ZW")
-    private int zw;
+    private boolean zw;
     @Column(name = "ZR")
-    private int zr;
+    private boolean zr;
     @Column(name = "IT")
-    private int it;
+    private boolean it;
     @Column(name = "SW")
-    private int sw;
+    private boolean sw;
     @Column(name = "OGD")
-    private int ogd;
+    private boolean ogd;
 
     @OneToMany(mappedBy = "prof")
     Set<ProfTable> profTable;
 
     public Profession() {}
-    public Profession(int id, String clss, String career, String profession, String professioneng, int level, int ww, int us, int s, int wt, int i, int zw, int zr, int it, int sw, int ogd) {
+    public Profession(int id, String clss, String career, String profession, String professioneng, int level, boolean ww, boolean us, boolean s, boolean wt, boolean i, boolean zw, boolean zr, boolean it, boolean sw, boolean ogd) {
         this.id = id;
         this.clss = clss;
         this.career = career;
@@ -93,97 +93,72 @@ public class Profession {
     public void setLevel(int level) {
         this.level = level;
     }
-    public int getWw() {
+    public boolean getWw() {
         return ww;
     }
-    public void setWw(int ww) {
+    public void setWw(boolean ww) {
         this.ww = ww;
     }
-    public int getUs() {
+    public boolean getUs() {
         return us;
     }
-    public void setUs(int us) {
+    public void setUs(boolean us) {
         this.us = us;
     }
-    public int getS() {
+    public boolean getS() {
         return s;
     }
-    public void setS(int s) {
+    public void setS(boolean s) {
         this.s = s;
     }
-    public int getWt() {
+    public boolean getWt() {
         return wt;
     }
-    public void setWt(int wt) {
+    public void setWt(boolean wt) {
         this.wt = wt;
     }
-    public int getI() {
+    public boolean getI() {
         return i;
     }
-    public void setI(int i) {
+    public void setI(boolean i) {
         this.i = i;
     }
-    public int getZw() {
+    public boolean getZw() {
         return zw;
     }
-    public void setZw(int zw) {
+    public void setZw(boolean zw) {
         this.zw = zw;
     }
-    public int getZr() {
+    public boolean getZr() {
         return zr;
     }
-    public void setZr(int zr) {
+    public void setZr(boolean zr) {
         this.zr = zr;
     }
-    public int getIt() {
+    public boolean getIt() {
         return it;
     }
-    public void setIt(int it) {
+    public void setIt(boolean it) {
         this.it = it;
     }
-    public int getSw() {
+    public boolean getSw() {
         return sw;
     }
-    public void setSw(int sw) {
+    public void setSw(boolean sw) {
         this.sw = sw;
     }
-    public int getOgd() {
+    public boolean getOgd() {
         return ogd;
     }
-    public void setOgd(int ogd) {
+    public void setOgd(boolean ogd) {
         this.ogd = ogd;
     }
-    public Integer getAttr(int number) {
-        switch (number) {
-            case 0:
-                return ww;
-            case 1:
-                return us;
-            case 2:
-                return s;
-            case 3:
-                return wt;
-            case 4:
-                return i;
-            case 5:
-                return zw;
-            case 6:
-                return zr;
-            case 7:
-                return it;
-            case 8:
-                return sw;
-            case 9:
-                return ogd;
-        }
-        return null;
+    public boolean getAttr(int number) {
+        boolean[] attributes = new boolean[] {ww, us, s, wt, i, zw, zr, it, sw, ogd};
+        return attributes[number];
     }
-    public boolean[] getAttrBool() {
-        boolean[] attrBool = new boolean[10];
-        for (int i=0;i<10;i++) {
-            attrBool[i] = (getAttr(i) == 1);
-        }
-        return attrBool;
+    public boolean[] getAllAttr() {
+        return new boolean[] {ww, us, s, wt, i, zw, zr, it, sw, ogd};
     }
 
     @Override

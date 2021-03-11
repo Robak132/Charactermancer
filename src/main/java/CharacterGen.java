@@ -389,7 +389,7 @@ public class CharacterGen {
                 sheet.setAdvAttributes(i, RAttr.get(i).getValue());
                 sheet.setSumAttributes(i, TAttr.get(i).getValue());
             }
-            fate_ButtonsDOWN.setEnabled(sheet.getProf().getAttrBool(), false);
+            fate_ButtonsDOWN.setEnabled(sheet.getProf().getAllAttr(), false);
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
@@ -519,7 +519,7 @@ public class CharacterGen {
             }
         }
         for (int i=0;i<RAttr.size();i++) {
-            if (sheet.getProf().getAttr(i) == 1) {
+            if (sheet.getProf().getAttr(i)) {
                 BAttr.get(i).setForeground(new Color(0,128,0));
                 RAttr.get(i).setForeground(new Color(0,128,0));
                 TAttr.get(i).setForeground(new Color(0,128,0));
@@ -583,7 +583,7 @@ public class CharacterGen {
     void fate_fillTable() {
         for (int i=0;i<10;i++) {
             ((JIntegerField) fate_attributeTable.getComponent(i,4)).setValue(BAttr.get(i).getValue());
-            if (sheet.getProf().getAttr(i)==1) {
+            if (sheet.getProf().getAttr(i)) {
                 fate_attributeTable.getComponent(i,0).setEnabled(true);
             }
         }
@@ -601,21 +601,21 @@ public class CharacterGen {
             calculateHP();
 
         if (fate_attrRemain.getValue() == 0)
-            fate_ButtonsUP.setEnabled(sheet.getProf().getAttrBool(), false);
+            fate_ButtonsUP.setEnabled(sheet.getProf().getAllAttr(), false);
     }
     void fate_clickDOWN(int i) {
         ((JIntegerField) fate_attributeTable.getComponent(i,3)).decrement();
         ((JIntegerField) fate_attributeTable.getComponent(i,4)).decrement();
 
         fate_attrRemain.increment();
-        fate_ButtonsUP.setEnabled(sheet.getProf().getAttrBool(), true);
+        fate_ButtonsUP.setEnabled(sheet.getProf().getAllAttr(), true);
         if (RAttr.get(i).getValue() == 0)
             fate_ButtonsDOWN.get(i).setEnabled(false);
 
         if ((sheet.getRace().getSize() == Race.Size.NORMAL && i == 2) || i == 3 || i == 8)
             calculateHP();
         if (fate_attrRemain.getValue() == 5)
-            fate_ButtonsDOWN.setEnabled(sheet.getProf().getAttrBool(), false);
+            fate_ButtonsDOWN.setEnabled(sheet.getProf().getAllAttr(), false);
     }
 
     void raceskill_createTable() {
