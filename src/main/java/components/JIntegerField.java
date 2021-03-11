@@ -4,16 +4,18 @@ import javax.swing.*;
 
 public class JIntegerField extends JTypeField<Integer> {
     public JIntegerField() {
-        super("%d");
-        this.value = 0;
+        this(0);
     }
     public JIntegerField(int value) {
-        super("%d");
-        setValue(value);
+        this(value,"%d");
     }
     public JIntegerField(int value, String format) {
+        this(value, format, JTextField.LEFT);
+    }
+    public JIntegerField(int value, String format, int alignment) {
         super(format);
         setValue(value);
+        setHorizontalAlignment(alignment);
     }
 
     public void decrement(int number) {

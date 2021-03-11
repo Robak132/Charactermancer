@@ -16,13 +16,12 @@ public class Main {
 
     public static void main(String[] args) {
         frame = new JFrame("Charactermancer");
-        startPanel = new Main().mainPanel;
-        frame.setContentPane(startPanel);
-        frame.setLocationRelativeTo(null);
+        frame.setContentPane(new Main().mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setMinimumSize(new Dimension(850, 700));
         frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        frame.setMinimumSize(new Dimension(800, 650));
     }
 
     Main() {

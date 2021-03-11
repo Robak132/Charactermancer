@@ -75,7 +75,7 @@ public class Race {
         }
     }
     public enum Attributes {
-        WW(0), US(1), S(2), Wt(3), I(4), Zw(5), Zr(6), Int(7), SW(8), Ogd(9);
+        WW(0), US(1), S(2), WT(3), I(4), ZW(5), ZR(6), INT(7), SW(8), OGD(9);
 
         private final int index;
         private static final Map<Integer, Attributes> map = new HashMap<>();
@@ -91,6 +91,10 @@ public class Race {
 
         public static Attributes valueOf(int index) {
             return map.get(index);
+        }
+        public static Attributes find(String name) {
+            String nameFormatted = name.toUpperCase();
+            return valueOf(nameFormatted);
         }
     }
 

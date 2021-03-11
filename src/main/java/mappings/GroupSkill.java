@@ -1,8 +1,6 @@
 package mappings;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "GROUPSKILLS")
@@ -12,18 +10,18 @@ public class GroupSkill {
     private int ID;
     @Column(name = "NAME")
     private String name;
+    @Column(name = "GRP")
+    private boolean group;
     @ManyToOne
     @JoinColumn(name = "IDBASE")
     private Skill base;
-    @Column(name = "CUSTOM")
-    private int custom;
 
     public GroupSkill() {}
-    public GroupSkill(int ID, String name, Skill base, int custom) {
+    public GroupSkill(int ID, String name, Skill base, boolean group) {
         this.ID = ID;
         this.name = name;
         this.base = base;
-        this.custom = custom;
+        this.group = group;
     }
 
     public int getID() {
@@ -44,10 +42,10 @@ public class GroupSkill {
     public void setBase(Skill base) {
         this.base = base;
     }
-    public int getCustom() {
-        return custom;
+    public boolean isGroup() {
+        return group;
     }
-    public void setCustom(int custom) {
-        this.custom = custom;
+    public void setGroup(boolean group) {
+        this.group = group;
     }
 }

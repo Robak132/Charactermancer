@@ -184,11 +184,11 @@ public class Connection {
         }
         return skills;
     }
-    List<GroupSkill> getGroupSkillsForCustom(int custom) {
+    List<GroupSkill> getAlternateSkillsForGroup(int custom) {
         List<GroupSkill> skills = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT G FROM GroupSkill G JOIN G.base WHERE G.base.id=:param AND G.custom=0");
+            Query SQLQuery = session.createQuery("SELECT G FROM GroupSkill G JOIN G.base WHERE G.base.id=:param AND G.group=0");
             SQLQuery.setParameter("param", custom);
             skills = SQLQuery.list();
             session.close();
@@ -198,6 +198,7 @@ public class Connection {
         }
         return skills;
     }
+
 
     List<RaceTalent> getTalentsByRace(int race) {
         List<RaceTalent> talents = new ArrayList<>();
@@ -212,6 +213,20 @@ public class Connection {
             ex.printStackTrace();
         }
         return talents;
+    }
+    List<GroupTalent> getAlternateTalentsForGroup(int custom) {
+        List<GroupTalent> skills = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query SQLQuery = session.createQuery("SELECT G FROM GroupTalent G WHERE G.baseTalent.id=:param AND G.group=0");
+            SQLQuery.setParameter("param", custom);
+            skills = SQLQuery.list();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return skills;
     }
     GroupTalent getRandomTalent(int n) {
         GroupTalent talent = null;
