@@ -12,6 +12,12 @@ public class GroupSkill {
     private String name;
     @Column(name = "GRP")
     private boolean group;
+    @Transient
+    private int startValue=0;
+    @Transient
+    private int advValue=0;
+    @Transient
+    private int totalValue=0;
     @ManyToOne
     @JoinColumn(name = "IDBASE")
     private Skill base;
@@ -47,5 +53,35 @@ public class GroupSkill {
     }
     public void setGroup(boolean group) {
         this.group = group;
+    }
+
+    public int getStartValue() {
+        return startValue;
+    }
+    public void setStartValue(int startValue) {
+        this.startValue = startValue;
+        setTotalValue();
+    }
+    public int getAdvValue() {
+        return advValue;
+    }
+    public void setAdvValue(int advValue) {
+        this.advValue = advValue;
+        setTotalValue();
+    }
+    public int getTotalValue() {
+        return totalValue;
+    }
+
+    private void setTotalValue() {
+        if (base.getAdv() != 1) {
+            this.totalValue = startValue + advValue;
+        } else {
+            if (advValue != 0) {
+                this.totalValue = startValue + advValue;
+            } else {
+                this.totalValue = 0;
+            }
+        }
     }
 }

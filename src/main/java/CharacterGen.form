@@ -1005,7 +1005,7 @@
                   <visible value="false"/>
                 </properties>
               </component>
-              <component id="78c76" class="javax.swing.JButton" binding="OKButton" default-binding="true">
+              <component id="78c76" class="javax.swing.JButton" binding="raceskill_option1">
                 <constraints>
                   <grid row="7" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="2" indent="1" use-parent-layout="false">
                     <preferred-size width="400" height="-1"/>

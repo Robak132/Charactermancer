@@ -188,7 +188,7 @@ public class Connection {
         List<GroupSkill> skills = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT G FROM GroupSkill G JOIN G.base WHERE G.base.id=:param AND G.group=0");
+            Query SQLQuery = session.createQuery("SELECT G FROM GroupSkill G JOIN G.base WHERE G.base.id=:param AND G.group=false");
             SQLQuery.setParameter("param", custom);
             skills = SQLQuery.list();
             session.close();
@@ -198,7 +198,6 @@ public class Connection {
         }
         return skills;
     }
-
 
     List<RaceTalent> getTalentsByRace(int race) {
         List<RaceTalent> talents = new ArrayList<>();
@@ -218,7 +217,7 @@ public class Connection {
         List<GroupTalent> skills = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT G FROM GroupTalent G WHERE G.baseTalent.id=:param AND G.group=0");
+            Query SQLQuery = session.createQuery("SELECT G FROM GroupTalent G WHERE G.baseTalent.id=:param AND G.group=false");
             SQLQuery.setParameter("param", custom);
             skills = SQLQuery.list();
             session.close();
