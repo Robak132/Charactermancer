@@ -1,7 +1,6 @@
 import mappings.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
@@ -160,7 +159,7 @@ public class Connection {
         List<GroupSkill> skills = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT r.skill FROM RaceSkill r WHERE r.race.id=:param ORDER BY r.skill.name");
+            Query SQLQuery = session.createQuery("SELECT r.skill FROM RaceSkill r WHERE r.race.id=:param ORDER BY r.skill.base.adv, r.skill.name");
             SQLQuery.setParameter("param", race.getID());
             skills = SQLQuery.list();
             session.close();
@@ -174,7 +173,7 @@ public class Connection {
         List<GroupSkill> skills = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT r.skill FROM RaceSkill r JOIN r.skill WHERE r.race.id=:param AND r.skill.base.adv=0 ORDER BY r.skill.name");
+            Query SQLQuery = session.createQuery("SELECT r.skill FROM RaceSkill r JOIN r.skill WHERE r.race.id=:param AND NOT r.skill.base.adv ORDER BY r.skill.name");
             SQLQuery.setParameter("param", race);
             skills = SQLQuery.list();
             session.close();
@@ -188,7 +187,7 @@ public class Connection {
         List<GroupSkill> skills = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT r.skill FROM RaceSkill r JOIN r.skill WHERE r.race.id=:param AND r.skill.base.adv=1 ORDER BY r.skill.name");
+            Query SQLQuery = session.createQuery("SELECT r.skill FROM RaceSkill r JOIN r.skill WHERE r.race.id=:param AND r.skill.base.adv ORDER BY r.skill.name");
             SQLQuery.setParameter("param", race);
             skills = SQLQuery.list();
             session.close();

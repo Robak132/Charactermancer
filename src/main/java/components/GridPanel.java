@@ -14,7 +14,7 @@ public class GridPanel extends JPanel {
     private int columns=1;
     private int rows=1;
     private final DynamicMatrix2D<Component> components = new DynamicMatrix2D<>();
-    private final Map<Component, GridConstraints> items = new HashMap<>();
+    private final Map<Component, GridConstraints> items = new LinkedHashMap<>();
 
     public static final int ALIGNMENT_HORIZONTAL = 0;
     public static final int ALIGNMENT_NOTOP = 1;
