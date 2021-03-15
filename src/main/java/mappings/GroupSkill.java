@@ -55,6 +55,13 @@ public class GroupSkill {
         this.group = group;
     }
 
+    public boolean isAdv() {
+        return base.isAdv();
+    }
+    public String getAttr() {
+        return base.getAttr();
+    }
+
     public int getStartValue() {
         return startValue;
     }
