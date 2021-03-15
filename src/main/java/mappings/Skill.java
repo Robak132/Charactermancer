@@ -16,12 +16,12 @@ public class Skill {
     @Column(name = "ATTR")
     private String attr;
     @Column(name = "ADV")
-    private int adv;
+    private boolean adv;
     @Column(name = "DESCR")
     private String descr;
 
     public Skill() {}
-    public Skill(int ID, String name, String attr, int adv, String descr) {
+    public Skill(int ID, String name, String attr, boolean adv, String descr) {
         this.ID = ID;
         this.name = name;
         this.attr = attr;
@@ -53,10 +53,10 @@ public class Skill {
     public void setDescr(String descr) {
         this.descr = descr;
     }
-    public int getAdv() {
+    public boolean isAdv() {
         return adv;
     }
-    public void setAdv(int adv) {
+    public void setAdv(boolean adv) {
         this.adv = adv;
     }
 }

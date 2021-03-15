@@ -620,17 +620,25 @@ public class CharacterGen {
     void raceskill_createTable() {
         baseSkills = connection.getBaseSkillsByRace(sheet.getRace().getID());
         advSkills = connection.getAdvSkillsByRace(sheet.getRace().getID());
+        List<GroupSkill> skills = connection.getSkillsByRace(sheet.getRace());
 
         // Skills - Headers
         raceskill_skillsPanel.add(new JLabel("Basic skills", JLabel.CENTER), new GridConstraints(0, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
         raceskill_skillsPanel.add(new JLabel("Advanced skills", JLabel.CENTER), new GridConstraints(0, 5, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
 
-        // Skills - Left side
-        for (int i = 0; i < baseSkills.size(); i++) {
-            int column = 0;
-            int finalI = i;
+        int base_itr = 0;
+        int adv_itr = 0;
+        int column, i;
+        for (GroupSkill skill : skills) {
+            if (skill.getBase().isAdv()) {
+                column = 5;
+                i = adv_itr++;
+            } else {
+                column = 0;
+                i = base_itr++;
+            }
 
-            raceskill_createComboIfNeeded(baseSkills.get(i), i, column);
+            raceskill_createComboIfNeeded(skill, i, column);
             column++;
 
             String attr = baseSkills.get(i).getBase().getAttr();
@@ -651,38 +659,8 @@ public class CharacterGen {
             sumField.setFocusable(false);
             raceskill_skillsPanel.add(sumField, new GridConstraints(i + 1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            jSpinner.addChangeListener(e -> raceskill_updatePoints(jSpinner, sumField, baseSkills.get(finalI)));
-            baseSkills.get(i).setStartValue(value);
-        }
-        // Skills - Right side
-        for (int i = 0; i < advSkills.size(); i++) {
-            int column = 5;
-            int finalI = i;
-
-            raceskill_createComboIfNeeded(advSkills.get(i), i, column);
-            column++;
-
-            String attr = advSkills.get(i).getBase().getAttr();
-            JTextField attrField = new JTextField(attr);
-            attrField.setHorizontalAlignment(JTextField.CENTER);
-            attrField.setEditable(false);
-            attrField.setFocusable(false);
-            raceskill_skillsPanel.add(attrField, new GridConstraints(i + 1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
-
-            ListSpinner<Integer> jSpinner = new ListSpinner<>(new Integer[] {0, 3, 5});
-            jSpinner.setHorizontalAlignment(JTextField.CENTER);
-            jSpinner.setEditable(false);
-            raceskill_skillsPanel.add(jSpinner, new GridConstraints(i + 1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
-
-            int value = sheet.getSumAttribute(Race.Attributes.find(attr));
-            JIntegerField sumField = new JIntegerField(0);
-            sumField.setHorizontalAlignment(JTextField.CENTER);
-            sumField.setEditable(false);
-            sumField.setFocusable(false);
-            raceskill_skillsPanel.add(sumField, new GridConstraints(i + 1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
-
-            jSpinner.addChangeListener(e -> raceskill_updatePoints(jSpinner, sumField, advSkills.get(finalI)));
-            advSkills.get(i).setStartValue(value);
+            jSpinner.addChangeListener(e -> raceskill_updatePoints(jSpinner, sumField, skill));
+            skill.setStartValue(value);
         }
 
         raceskill_skillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
@@ -726,29 +704,29 @@ public class CharacterGen {
         }
 
         for (int number : new int[] {3, 5}) {
-            if (control_numbers.get(number).getValue() < 0) {
-                for (int i=0;i<baseSkills.size();i++) {
-                    JSpinner active = (JSpinner) raceskill_skillsPanel.getComponent(2, i+1);
-                    if ((int) active.getValue()==number) {
+            for (int i=0;i<baseSkills.size();i++) {
+                if (control_numbers.get(number).getValue() < 0) {
+                    JSpinner active = (JSpinner) raceskill_skillsPanel.getComponent(2, i + 1);
+                    if ((int) active.getValue() == number) {
                         ((JSpinner.DefaultEditor) active.getEditor()).getTextField().setForeground(Color.RED);
                     }
+                } else {
+                    JSpinner active = (JSpinner) raceskill_skillsPanel.getComponent(2, i + 1);
+                    if ((int) active.getValue() == number || (int) active.getValue() == 0) {
+                        ((JSpinner.DefaultEditor) active.getEditor()).getTextField()
+                                .setForeground(Color.black);
+                    }
                 }
-                for (int i=0;i<advSkills.size();i++) {
-                    JSpinner active = (JSpinner) raceskill_skillsPanel.getComponent(7, i+1);
-                    if ((int) active.getValue()==number) {
+            }
+            for (int i=0;i<advSkills.size();i++) {
+                if (control_numbers.get(number).getValue() < 0) {
+                    JSpinner active = (JSpinner) raceskill_skillsPanel.getComponent(7, i + 1);
+                    if ((int) active.getValue() == number) {
                         ((JSpinner.DefaultEditor) active.getEditor()).getTextField().setForeground(Color.RED);
                     }
-                }
-            } else {
-                for (int i=0;i<baseSkills.size();i++) {
-                    JSpinner active = (JSpinner) raceskill_skillsPanel.getComponent(2, i+1);
-                    if ((int) active.getValue()==number || (int) active.getValue()==0) {
-                        ((JSpinner.DefaultEditor) active.getEditor()).getTextField().setForeground(Color.black);
-                    }
-                }
-                for (int i=0;i<advSkills.size();i++) {
-                    JSpinner active = (JSpinner) raceskill_skillsPanel.getComponent(7, i+1);
-                    if ((int) active.getValue()==number || (int) active.getValue()==0) {
+                } else {
+                    JSpinner active = (JSpinner) raceskill_skillsPanel.getComponent(7, i + 1);
+                    if ((int) active.getValue() == number || (int) active.getValue() == 0) {
                         ((JSpinner.DefaultEditor) active.getEditor()).getTextField().setForeground(Color.black);
                     }
                 }

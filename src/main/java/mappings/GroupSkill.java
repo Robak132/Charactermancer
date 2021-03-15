@@ -74,14 +74,10 @@ public class GroupSkill {
     }
 
     private void setTotalValue() {
-        if (base.getAdv() != 1) {
+        if (!base.isAdv() || advValue != 0) {
             this.totalValue = startValue + advValue;
         } else {
-            if (advValue != 0) {
-                this.totalValue = startValue + advValue;
-            } else {
-                this.totalValue = 0;
-            }
+            this.totalValue = 0;
         }
     }
 }

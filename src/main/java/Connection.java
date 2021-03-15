@@ -156,6 +156,20 @@ public class Connection {
         return profs;
     }
 
+    List<GroupSkill> getSkillsByRace(Race race) {
+        List<GroupSkill> skills = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query SQLQuery = session.createQuery("SELECT r.skill FROM RaceSkill r WHERE r.race.id=:param ORDER BY r.skill.name");
+            SQLQuery.setParameter("param", race.getID());
+            skills = SQLQuery.list();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return skills;
+    }
     List<GroupSkill> getBaseSkillsByRace(int race) {
         List<GroupSkill> skills = new ArrayList<>();
         try {
