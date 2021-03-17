@@ -2,6 +2,7 @@ package components;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import tools.Runnable;
 import tools.DynamicMatrix2D;
 
 import javax.swing.*;
@@ -80,6 +81,19 @@ public class GridPanel extends JPanel {
         return components.get(row);
     }
 
+    public void iterateThroughColumns(int col, int rowStart, int rowEnd, Runnable runnable) {
+        for (int i = rowStart; i < rowEnd; i++) {
+            Component active = getComponent(col, i);
+            runnable.run(active);
+        }
+    }
+    public void iterateThroughRows(int row, int columnStart, int columnEnd, Runnable runnable) {
+        for (int i = columnStart; i < columnEnd; i++) {
+            Component active = getComponent(i, row);
+            runnable.run(active);
+        }
+    }
+
     private void addSpacers(int alignment) {
         super.add(new Spacer(), new GridConstraints(0, 0, rows, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
         super.add(new Spacer(), new GridConstraints(0, columns+1, rows, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
@@ -92,3 +106,4 @@ public class GridPanel extends JPanel {
         }
     }
 }
+

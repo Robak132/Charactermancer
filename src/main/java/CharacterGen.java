@@ -697,17 +697,15 @@ public class CharacterGen {
             raceskill_points.put(last, raceskill_points.get(last)-1);
             raceskill_points.put(now, raceskill_points.get(now)+1);
         }
-        raceskill_changeColorInColumn(2, 1, baseSkills.size()+1);
-        raceskill_changeColorInColumn(6, 1, advSkills.size()+1);
+        raceskill_skillsPanel.iterateThroughColumns(2, 1, baseSkills.size() + 1, this::raceskill_changeColor);
+        raceskill_skillsPanel.iterateThroughColumns(6, 1, advSkills.size() + 1, this::raceskill_changeColor);
     }
-    void raceskill_changeColorInColumn(int col, int rowStart, int rowEnd) {
-        for (int i = rowStart; i < rowEnd; i++) {
-            JSpinner active = (JSpinner) raceskill_skillsPanel.getComponent(col, i);
-            if (raceskill_points.get((int) active.getValue()) > 3) {
-                ((JSpinner.DefaultEditor) active.getEditor()).getTextField().setForeground(Color.RED);
-            } else {
-                ((JSpinner.DefaultEditor) active.getEditor()).getTextField().setForeground(Color.BLACK);
-            }
+    void raceskill_changeColor(Object object) {
+        JSpinner active = (JSpinner) object;
+        if (raceskill_points.get((int) active.getValue()) > 3) {
+            ((JSpinner.DefaultEditor) active.getEditor()).getTextField().setForeground(Color.RED);
+        } else {
+            ((JSpinner.DefaultEditor) active.getEditor()).getTextField().setForeground(Color.BLACK);
         }
     }
 
@@ -727,7 +725,7 @@ public class CharacterGen {
         for (int i=0;i<talents.size();i++) {
             int column = 0;
 
-            racetalent_createComboIfNeeded(talents.get(i), i + 1, column, columnDimensions);
+            racetalent_createComboIfNeeded(talents.get(i), i + 1, column, columnDimensions[column]);
             column++;
 
             JTextField attrField = new JTextField();
@@ -775,17 +773,17 @@ public class CharacterGen {
 
         raceskill_randomTalentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
-    void racetalent_createComboIfNeeded(RaceTalent talent, int row, int column, Dimension[] columnDimensions) {
+    void racetalent_createComboIfNeeded(RaceTalent talent, int row, int column, Dimension columnDimensions) {
         if (talent.getTalentExcl() == null) {
             JTextField nameField = new JTextField(talent.getTalent().getName());
             nameField.setEditable(false);
-            raceskill_talentsPanel.add(nameField, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[0], null), false);
+            raceskill_talentsPanel.add(nameField, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions, null), false);
         } else {
             JComboBox<String> comboField = new JComboBox<>();
             comboField.addItem(talent.getTalent().getName());
             comboField.addItem(talent.getTalentExcl().getName());
             comboField.addActionListener(e -> racetalent_updateTalent(talent, row, comboField.getSelectedIndex()));
-            raceskill_talentsPanel.add(comboField, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[0], null), false);
+            raceskill_talentsPanel.add(comboField, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions, null), false);
         }
     }
     void racetalent_updateMax(GroupTalent talent, JTextField testField) {
