@@ -713,11 +713,10 @@ public class CharacterGen {
         List<RaceTalent> talents = connection.getTalentsByRace(sheet.getRace().getID());
 
         // Constants
-        Dimension[] columnDimensions = new Dimension[]{
+        final Dimension[] columnDimensions = new Dimension[]{
                 new Dimension(200, -1),
                 new Dimension(30, -1),
-                new Dimension(200, -1),
-                new Dimension(250, -1)
+                new Dimension(200, -1)
         };
 
         // Talents - Header
@@ -742,12 +741,10 @@ public class CharacterGen {
             testArea.setEditable(false);
             raceskill_talentsPanel.add(testArea, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
 
-            JTextArea descArea = new JTextArea(talents.get(i).getTalent().getBaseTalent().getDesc());
-            descArea.setFont(new Font(testArea.getFont().getName(), testArea.getFont().getStyle(), 10));
-            descArea.setLineWrap(true);
-            descArea.setWrapStyleWord(true);
-            descArea.setEditable(false);
-            raceskill_talentsPanel.add(descArea, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, columnDimensions[column-1], null), false);
+            String tooltip = talents.get(i).getTalent().getBaseTalent().getDesc();
+            JLabel desc = new JLabel(new ImageIcon("src/main/resources/images/info.png"));
+            desc.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
+            raceskill_talentsPanel.add(desc, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null), false);
         }
 
         raceskill_talentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
@@ -801,8 +798,8 @@ public class CharacterGen {
         racetalent_updateMax(talent.getAllTalents()[index], testField);
         JTextArea textArea = (JTextArea) raceskill_talentsPanel.getComponent(2, row);
         textArea.setText(talent.getAllTalents()[index].getBaseTalent().getTest());
-        JTextArea descArea = (JTextArea) raceskill_talentsPanel.getComponent(3, row);
-        descArea.setText(talent.getAllTalents()[index].getBaseTalent().getDesc());
+        JLabel desc = (JLabel) raceskill_talentsPanel.getComponent(3, row);
+        desc.setToolTipText(MultiLineTooltip.splitToolTip(talent.getAllTalents()[index].getBaseTalent().getDesc()));
     }
 
     void calculateHP() {
