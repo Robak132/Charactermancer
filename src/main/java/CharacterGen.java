@@ -743,7 +743,7 @@ public class CharacterGen {
 
             String tooltip = talents.get(i).getTalent().getBaseTalent().getDesc();
             JLabel desc = new JLabel(new ImageIcon("src/main/resources/images/info.png"));
-            desc.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
+            desc.setToolTipText(MultiLineTooltip.splitToolTip(tooltip, 75, 10, desc.getFont()));
             raceskill_talentsPanel.add(desc, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null), false);
         }
 
