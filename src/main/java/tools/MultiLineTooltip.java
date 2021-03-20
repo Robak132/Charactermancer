@@ -24,7 +24,7 @@ public abstract class MultiLineTooltip {
         return splitToolTip(toolTip, desiredLength, 0);
     }
     public static String splitToolTip(final String toolTip, int desiredLength, int threshold) {
-        return splitToolTip(toolTip, desiredLength, 0, null);
+        return splitToolTip(toolTip, desiredLength, threshold, new Font("Verdana", Font.PLAIN, 10));
 
     }
     public static String splitToolTip(final String toolTip, int desiredLength, int threshold, Font font) {
@@ -54,7 +54,7 @@ public abstract class MultiLineTooltip {
         for (int i = desiredLength - threshold; i <= desiredLength + threshold; i++) {
             Object[] result = getParts(i, font, words, lengths);
             List<String> activeParts = (List<String>) result[0];
-            double diagnosticValue = Toolbox.avgFloat((List<Float>) result[1]);
+            double diagnosticValue = Toolbox.varFloat((List<Float>) result[1]);
             diagnosticValue += Math.abs(i-desiredLength);
 
             if (parts == null) {
@@ -69,12 +69,12 @@ public abstract class MultiLineTooltip {
         }
 
 
-        StringBuilder  sb = new StringBuilder("<html>");
+        StringBuilder  sb = new StringBuilder("<html><p><font face=\\\"Verdana\\\">");
         for (int i = 0; i < parts.size() - 1; i++) {
             sb.append(parts.get(i)).append("<br>");
         }
         sb.append(parts.get(parts.size() - 1));
-        sb.append(("</html>"));
+        sb.append(("</font></p></html>"));
         return sb.toString();
     }
 
@@ -93,18 +93,20 @@ public abstract class MultiLineTooltip {
         float activeLineLength = desiredLength * lineLenghtMultiplier;
         String line = "";
         for (int i = 0; i < words.size(); i++) {
-            if (activeLineLength - lengths.get(i)[index] >= 0) {
+            if (activeLineLength - lengths.get(i)[index] >= -0.04 * desiredLength * lineLenghtMultiplier) {
                 activeLineLength -= lengths.get(i)[index];
-                line = line + " " + words.get(i);
+                line += words.get(i) + " ";
             }
             else {
-                diagnostics.add(activeLineLength);
+                System.out.printf("%s\t\t%f (%d)\n", line.strip(), activeLineLength, -lengths.get(i)[index]);
                 activeLineLength = desiredLength * lineLenghtMultiplier;
+                diagnostics.add(activeLineLength);
                 parts.add(line.strip());
-                line = words.get(i);
+                line = words.get(i) + " ";
             }
         }
         parts.add(line.strip());
+        System.out.printf("%s\n\n", line.strip());
 
         Object[] returns = new Object[2];
         returns[0] = parts;
