@@ -91,22 +91,22 @@ public abstract class MultiLineTooltip {
         }
 
         float activeLineLength = desiredLength * lineLenghtMultiplier;
-        String line = "";
+        StringBuilder line = new StringBuilder();
         for (int i = 0; i < words.size(); i++) {
             if (activeLineLength - lengths.get(i)[index] >= -0.04 * desiredLength * lineLenghtMultiplier) {
                 activeLineLength -= lengths.get(i)[index];
-                line += words.get(i) + " ";
+                line.append(words.get(i)).append(" ");
             }
             else {
-                System.out.printf("%s\t\t%f (%d)\n", line.strip(), activeLineLength, -lengths.get(i)[index]);
+//                System.out.printf("%s\t\t%f (%d)\n", line.strip(), activeLineLength, -lengths.get(i)[index]);
                 activeLineLength = desiredLength * lineLenghtMultiplier;
                 diagnostics.add(activeLineLength);
-                parts.add(line.strip());
-                line = words.get(i) + " ";
+                parts.add(line.toString().strip());
+                line = new StringBuilder(words.get(i) + " ");
             }
         }
-        parts.add(line.strip());
-        System.out.printf("%s\n\n", line.strip());
+        parts.add(line.toString().strip());
+//        System.out.printf("%s\n\n", line.strip());
 
         Object[] returns = new Object[2];
         returns[0] = parts;

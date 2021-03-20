@@ -419,7 +419,7 @@ public class CharacterGen {
         // Pane controls //
         tabbedPane.addChangeListener(e -> {
             int tab = tabbedPane.getSelectedIndex();
-            String iconPath = String.format("src/main/resources/images/round%d.png", tab + 1);
+            String iconPath = String.format("src/resources/images/round%d.png", tab + 1);
             ImageIcon icon = new ImageIcon(iconPath);
             imageLabel.setIcon(icon);
         });
@@ -742,7 +742,7 @@ public class CharacterGen {
             raceskill_talentsPanel.add(testArea, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
 
             String tooltip = talents.get(i).getTalent().getBaseTalent().getDesc();
-            JLabel desc = new JLabel(new ImageIcon("src/main/resources/images/info.png"));
+            JLabel desc = new JLabel(new ImageIcon("src/resources/images/info.png"));
             desc.setToolTipText(MultiLineTooltip.splitToolTip(tooltip, 75, 10));
             raceskill_talentsPanel.add(desc, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null), false);
         }
