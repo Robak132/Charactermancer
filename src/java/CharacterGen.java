@@ -409,6 +409,13 @@ public class CharacterGen {
 
             activeField = (JTextField) raceskill_randomTalentsPanel.getComponent(1, raceskill_randomTalents.size() - 1);
             racetalent_updateMax(rollTalent, activeField);
+
+            JTextArea activeArea = (JTextArea) raceskill_randomTalentsPanel.getComponent(2, raceskill_randomTalents.size() - 1);
+            activeArea.setText(rollTalent.getBaseTalent().getTest());
+
+            JLabel activeLabel = (JLabel) raceskill_randomTalentsPanel.getComponent(3, raceskill_randomTalents.size() - 1);
+            activeLabel.setToolTipText(MultiLineTooltip.splitToolTip(rollTalent.getBaseTalent().getDesc(), 75, 10));
+
             if (sheet.getRace().getRandomTalents() <= raceskill_randomTalents.size()) {
                 raceskill_rollButton.setEnabled(false);
                 raceskill_rollResult.setEditable(false);
@@ -758,13 +765,23 @@ public class CharacterGen {
 
                 JTextField nameField = new JTextField();
                 nameField.setEditable(false);
-                raceskill_randomTalentsPanel.add(nameField, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[0], null), false);
+                raceskill_randomTalentsPanel.add(nameField, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
 
                 JTextField attrField = new JTextField();
                 attrField.setHorizontalAlignment(JTextField.CENTER);
                 attrField.setEditable(false);
                 attrField.setFocusable(false);
-                raceskill_randomTalentsPanel.add(attrField, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[1], null), false);
+                raceskill_randomTalentsPanel.add(attrField, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
+
+                JTextArea testArea = new JTextArea();
+                testArea.setFont(new Font(testArea.getFont().getName(), testArea.getFont().getStyle(), 10));
+                testArea.setLineWrap(true);
+                testArea.setWrapStyleWord(true);
+                testArea.setEditable(false);
+                raceskill_randomTalentsPanel.add(testArea, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
+
+                JLabel desc = new JLabel(new ImageIcon("src/resources/images/info.png"));
+                raceskill_randomTalentsPanel.add(desc, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null), false);
             }
         }
 
