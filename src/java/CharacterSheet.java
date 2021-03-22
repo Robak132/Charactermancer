@@ -34,9 +34,9 @@ public class CharacterSheet {
 
     private Race race;
     private Profession prof;
-    private Integer[] base_attributes = new Integer[10];
-    private Integer[] adv_attributes = new Integer[10];
-    private Integer[] sum_attributes = new Integer[10];
+    private int[] base_attributes = new int[10];
+    private int[] adv_attributes = new int[10];
+    private int[] sum_attributes = new int[10];
     private List<JTextField> attributesTextFields = new ArrayList<>();
 
     private int move, maxhp, hp, exp;
@@ -123,19 +123,19 @@ public class CharacterSheet {
         this.prof = prof;
     }
 
-    public Integer[] getBaseAttributes() {
+    public int[] getBaseAttributes() {
         return base_attributes;
     }
     public int getBaseAttribute(Race.Attributes attr) {
         return base_attributes[attr.ordinal()];
     }
-    public Integer[] getAdvAttributes() {
+    public int[] getAdvAttributes() {
         return adv_attributes;
     }
     public int getAdvAttribute(Race.Attributes attr) {
         return adv_attributes[attr.ordinal()];
     }
-    public Integer[] getSumAttributes() {
+    public int[] getSumAttributes() {
         return sum_attributes;
     }
     public int getSumAttribute(Race.Attributes attr) {
@@ -147,8 +147,14 @@ public class CharacterSheet {
     public void setAdvAttributes(int index, int attribute) {
         this.adv_attributes[index] = attribute;
     }
+    public void setAdvAttributes(int[] attributes) {
+        this.adv_attributes = attributes;
+    }
     public void setSumAttributes(int index, int attribute) {
         this.sum_attributes[index] = attribute;
+    }
+    public void setSumAttributes(int[] attributes) {
+        this.sum_attributes = attributes;
     }
 
     public int getExp() {

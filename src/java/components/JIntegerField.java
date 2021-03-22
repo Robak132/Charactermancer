@@ -18,19 +18,15 @@ public class JIntegerField extends JTypeField<Integer> {
         setHorizontalAlignment(alignment);
     }
 
-    public void decrement(int number) {
-        this.value-=number;
-        this.setText(String.format(format, value));
-    }
     public void decrement() {
-        decrement(1);
+        changeValue(-1);
     }
-    public void increment(int number) {
+    public void changeValue(int number) {
         this.value+=number;
         this.setText(String.format(format, value));
     }
     public void increment() {
-        increment(1);
+        changeValue(1);
     }
 }
 class JTypeField<T> extends JTextField {
