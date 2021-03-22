@@ -1,3 +1,5 @@
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -13,12 +15,13 @@ public class Main {
     JButton createsheetButton;
     JPanel mainPanel;
     Locale[] languages = new Locale[] {Locale.ENGLISH, new Locale("pl", "PL")};
+    Dimension activeDimension = null;
 
     public static void main(String[] args) {
         frame = new JFrame("Charactermancer");
         frame.setContentPane(new Main().mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setMinimumSize(new Dimension(850, 700));
+        frame.setMinimumSize(new Dimension(900, 775));
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -41,6 +44,14 @@ public class Main {
         createsheetButton.setMnemonic(KeyEvent.VK_2);
         comboBox1.addActionListener(e -> {
             Locale.setDefault(languages[comboBox1.getSelectedIndex()]);
+        });
+        frame.addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent componentEvent) {
+                if (activeDimension == null || !activeDimension.equals(new Dimension(frame.getWidth(), frame.getHeight()))) {
+                    activeDimension = new Dimension(frame.getWidth(), frame.getHeight());
+                    System.out.printf("%d, %d\n", frame.getWidth(), frame.getHeight());
+                }
+            }
         });
     }
 }
