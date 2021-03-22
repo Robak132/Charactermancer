@@ -211,6 +211,34 @@ public class Connection {
         }
         return skills;
     }
+    List<GroupSkill> getProfessionSkills(Profession prof) {
+        List<GroupSkill> skills = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query SQLQuery = session.createQuery("SELECT p.skill FROM ProfSkill p WHERE p.profession.id =:param");
+            SQLQuery.setParameter("param", prof.getId());
+            skills = SQLQuery.list();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return skills;
+    }
+    List<Skill> getProfessionBaseSkills(Profession prof) {
+        List<Skill> skills = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query SQLQuery = session.createQuery("SELECT p.skill.base FROM ProfSkill p WHERE p.profession.id =:param");
+            SQLQuery.setParameter("param", prof.getId());
+            skills = SQLQuery.list();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return skills;
+    }
 
     List<RaceTalent> getTalentsByRace(int race) {
         List<RaceTalent> talents = new ArrayList<>();

@@ -58,6 +58,7 @@ public class CharacterGen {
     private final JButton[] prof_buttons = {
             prof_option1Button, prof_option2Button, prof_option3Button, prof_option4Button
     };
+    private List<GroupSkill> professionSkills;
     private int prof_maxExp = 50;
 
     private JPanel attributesTable;
@@ -624,6 +625,7 @@ public class CharacterGen {
     void raceskill_createTable() {
         List<GroupSkill> skills = connection.getSkillsByRace(sheet.getRace());
         List<Component> tabOrder = new ArrayList<>();
+        professionSkills = connection.getProfessionSkills(sheet.getProf());
 
         // Skills - Headers
         raceskill_skillsPanel.add(new JLabel("Basic skills", JLabel.CENTER), new GridConstraints(0, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
@@ -633,17 +635,24 @@ public class CharacterGen {
         int adv_itr = 1;
         int column, row;
         for (GroupSkill skill : skills) {
+            Color color = Color.black;
+
             if (skill.isAdv()) {
                 column = 4;
                 row = adv_itr++;
                 advSkills.add(skill);
+                color = Color.red;
             } else {
                 column = 0;
                 row = base_itr++;
                 baseSkills.add(skill);
             }
 
-            raceskill_createComboIfNeeded(skill, row, column);
+            if (professionSkills.contains(skill)) {
+                color = new Color(0,128,0);
+            }
+
+            Container nameContainer = raceskill_createComboIfNeeded(skill, row, column, color);
             column++;
 
             String attr = skill.getAttr();
@@ -656,6 +665,7 @@ public class CharacterGen {
             ListSpinner<Integer> jSpinner = new ListSpinner<>(new Integer[]{0, 3, 5});
             jSpinner.setHorizontalAlignment(JTextField.CENTER);
             jSpinner.setEditable(false);
+            jSpinner.addChangeListener(e -> raceskill_updatePoints(nameContainer, jSpinner, skill));
             raceskill_skillsPanel.add(jSpinner, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
             int value = sheet.getSumAttribute(Race.Attributes.find(attr));
@@ -664,7 +674,6 @@ public class CharacterGen {
             sumField.setFocusable(false);
             raceskill_skillsPanel.add(sumField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            jSpinner.addChangeListener(e -> raceskill_updatePoints(jSpinner, skill));
             skill.setStartValue(value);
             tabOrder.add(((JSpinner.DefaultEditor) jSpinner.getEditor()).getTextField());
         }
@@ -672,15 +681,17 @@ public class CharacterGen {
         raceskill_skillsPanel.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
         raceskill_skillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
-    void raceskill_createComboIfNeeded(GroupSkill skill, int row, int column) {
+    Container raceskill_createComboIfNeeded(GroupSkill skill, int row, int column, Color color) {
         if (!skill.isGroup()) {
             JTextField textField = new JTextField(skill.getName());
             String tooltip = skill.getBase().getDescr();
             if (tooltip != null)
                 textField.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
+            textField.setForeground(color);
             textField.setFocusable(false);
             textField.setEditable(false);
             raceskill_skillsPanel.add(textField, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
+            return textField;
         } else {
             SearchableJComboBox comboBox = new SearchableJComboBox();
             String tooltip = skill.getBase().getDescr();
@@ -692,9 +703,10 @@ public class CharacterGen {
             comboBox.refresh(false);
             comboBox.setEditable(true);
             raceskill_skillsPanel.add(comboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
+            return comboBox;
         }
     }
-    void raceskill_updatePoints(ListSpinner<Integer> spinner, GroupSkill skill) {
+    void raceskill_updatePoints(Container container, ListSpinner<Integer> spinner, GroupSkill skill) {
         int now = (int) spinner.getValue();
         int last = (int) spinner.getLastValue();
 
@@ -704,6 +716,13 @@ public class CharacterGen {
             raceskill_points.put(last, raceskill_points.get(last)-1);
             raceskill_points.put(now, raceskill_points.get(now)+1);
         }
+
+        if (now == 0 && skill.getBase().isAdv()) {
+            container.setForeground(Color.red);
+        } else {
+            container.setForeground(Color.black);
+        }
+
         raceskill_skillsPanel.iterateThroughColumns(2, 1, baseSkills.size() + 1, this::raceskill_changeColor);
         raceskill_skillsPanel.iterateThroughColumns(6, 1, advSkills.size() + 1, this::raceskill_changeColor);
     }
