@@ -1,5 +1,6 @@
 package mappings;
 
+import java.util.Objects;
 import javax.persistence.*;
 
 @Entity
@@ -86,5 +87,17 @@ public class GroupSkill {
         } else {
             this.totalValue = 0;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        GroupSkill skill = (GroupSkill) o;
+        return ID == skill.ID;
     }
 }
