@@ -81,18 +81,25 @@ public class GridPanel extends JPanel {
         return components.get(row);
     }
 
-    public void iterateThroughColumns(int col, int rowStart, int rowEnd, Runnable runnable) {
+    public void iterateThroughRows(int col, Runnable runnable) {
+        for (int i = 0; i < components.getYSize(); i++) {
+            Component active = getComponent(col, i);
+            runnable.run(active);
+        }
+    }
+    public void iterateThroughRows(int col, int rowStart, int rowEnd, Runnable runnable) {
         for (int i = rowStart; i < rowEnd; i++) {
             Component active = getComponent(col, i);
             runnable.run(active);
         }
     }
-    public void iterateThroughRows(int row, Runnable runnable) {
-        for (Component active : getComponents(row)) {
+    public void iterateThroughColumns(int row, Runnable runnable) {
+        for (int i = 0; i < components.getXSize(row); i++) {
+            Component active = getComponent(i, row);
             runnable.run(active);
         }
     }
-    public void iterateThroughRows(int row, int columnStart, int columnEnd, Runnable runnable) {
+    public void iterateThroughColumns(int row, int columnStart, int columnEnd, Runnable runnable) {
         for (int i = columnStart; i < columnEnd; i++) {
             Component active = getComponent(i, row);
             runnable.run(active);

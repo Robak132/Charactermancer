@@ -27,4 +27,11 @@ public class DynamicMatrix2D<T> {
     public T[] get(int x) {
         return x >= matrix.length ? null : matrix[x];
     }
+
+    public int getYSize() {
+        return matrix.length;
+    }
+    public int getXSize(int y) {
+        return matrix[y].length;
+    }
 }

@@ -2,20 +2,14 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import components.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import mappings.*;
-import tools.ColorPalette;
-import tools.ComponentList;
-import tools.Dice;
-import tools.MultiLineTooltip;
+import tools.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
-import tools.Runnable;
 
 public class CharacterGen {
     public JPanel mainPanel;
@@ -601,7 +595,7 @@ public class CharacterGen {
             advValues[finalI] = now;
             calculateHP();
 
-            fate_attributeTable.iterateThroughRows(3, 0, 10, o -> {
+            fate_attributeTable.iterateThroughColumns(3, o -> {
                 JSpinner spinner = (JSpinner) o;
                 if (activeSpinner != o) {
                     SpinnerNumberModel model = (SpinnerNumberModel) spinner.getModel();
@@ -712,8 +706,8 @@ public class CharacterGen {
             container.setForeground(Color.black);
         }
 
-        raceskill_skillsPanel.iterateThroughColumns(2, 1, baseSkills.size() + 1, this::raceskill_changeColor);
-        raceskill_skillsPanel.iterateThroughColumns(6, 1, advSkills.size() + 1, this::raceskill_changeColor);
+        raceskill_skillsPanel.iterateThroughRows(2, 1, baseSkills.size() + 1, this::raceskill_changeColor);
+        raceskill_skillsPanel.iterateThroughRows(6, 1, advSkills.size() + 1, this::raceskill_changeColor);
     }
     void raceskill_changeColor(Object object) {
         JSpinner active = (JSpinner) object;
