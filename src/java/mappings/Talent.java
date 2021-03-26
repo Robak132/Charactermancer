@@ -15,7 +15,7 @@ public class Talent {
     private String name;
     @Column(name = "NAMEENG")
     private String nameEng;
-    @Column(name = "MAXLVL")
+    @Column(name = "MAX_LVL")
     private String maxLvl;
     @Column(name = "TEST")
     private String test;

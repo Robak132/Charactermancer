@@ -3,7 +3,7 @@ package mappings;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "RACES_TALENTS")
+@Table(name = "RACE_TALENTS")
 public class RaceTalent {
     @Id
     @Column(name = "ID")

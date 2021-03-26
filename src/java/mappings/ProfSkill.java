@@ -11,7 +11,7 @@ public class ProfSkill {
     @Column(name = "S")
     private boolean S;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "IDPROF")
     private Profession profession;
     @ManyToOne

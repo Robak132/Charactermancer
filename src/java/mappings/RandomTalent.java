@@ -5,7 +5,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "RNG_TALENTS_TABLE")
+@Table(name = "TALENTS_RND_TABLE")
 public class RandomTalent {
     @Id
     @Column(name = "ID")

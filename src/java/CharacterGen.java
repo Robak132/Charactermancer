@@ -3,6 +3,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import components.*;
 import mappings.*;
+import org.hibernate.Hibernate;
 import tools.*;
 
 import javax.swing.*;
@@ -638,8 +639,11 @@ public class CharacterGen {
             Container nameContainer = raceskill_createComboIfNeeded(skill, row, column, color);
             column++;
 
-            String attr = skill.getAttr();
-            JTextField attrField = new JTextField(attr);
+            List<Attribute> list = sheet.getRace().getAttributes();
+            for (Attribute attribute : list) {
+                System.out.println(attribute.getBaseValue());
+            }
+            JTextField attrField = new JTextField("attr");
             attrField.setHorizontalAlignment(JTextField.CENTER);
             attrField.setEditable(false);
             attrField.setFocusable(false);
@@ -651,7 +655,7 @@ public class CharacterGen {
             jSpinner.addChangeListener(e -> raceskill_updatePoints(nameContainer, jSpinner, skill));
             raceskill_skillsPanel.add(jSpinner, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            int value = sheet.getSumAttribute(Race.Attributes.find(attr));
+            int value = sheet.getSumAttribute(Race.Attributes.find("attr"));
             JIntegerField sumField = new JIntegerField(value, "%d", JTextField.CENTER);
             sumField.setEditable(false);
             sumField.setFocusable(false);
@@ -704,6 +708,10 @@ public class CharacterGen {
             container.setForeground(Color.red);
         } else {
             container.setForeground(Color.black);
+        }
+
+        if (professionSkills.contains(skill)) {
+            container.setForeground(ColorPalette.CustomGreen);
         }
 
         raceskill_skillsPanel.iterateThroughRows(2, 1, baseSkills.size() + 1, this::raceskill_changeColor);

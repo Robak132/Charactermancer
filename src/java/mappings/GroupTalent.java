@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "GROUPTALENTS")
+@Table(name = "TALENTS_GROUPED")
 public class GroupTalent {
     @Id
     @Column(name = "ID")

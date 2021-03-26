@@ -1,9 +1,13 @@
 package mappings;
 
+import java.util.LinkedHashSet;
+import java.util.List;
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name = "RACES")
@@ -48,6 +52,11 @@ public class Race {
 
     @OneToMany(mappedBy = "race")
     Set<ProfTable> profTable;
+
+    @Fetch(FetchMode.JOIN)
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name= "IDRACE")
+    List<Attribute> attributes;
 
     public enum Size {
         TINY(0),
@@ -234,5 +243,12 @@ public class Race {
     }
     public void setRandomTalents(int randomTalents) {
         this.randomTalents = randomTalents;
+    }
+
+    public List<Attribute> getAttributes() {
+        return attributes;
+    }
+    public void setAttributes(List<Attribute> attributes) {
+        this.attributes = attributes;
     }
 }

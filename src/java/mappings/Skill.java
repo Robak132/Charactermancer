@@ -3,6 +3,8 @@ package mappings;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -13,18 +15,19 @@ public class Skill {
     private int ID;
     @Column(name = "NAME")
     private String name;
-    @Column(name = "ATTR")
-    private String attr;
     @Column(name = "ADV")
     private boolean adv;
     @Column(name = "DESCR")
     private String descr;
 
+    @ManyToOne
+    @JoinColumn(name = "ATTR")
+    private BaseAttribute attr;
+
     public Skill() {}
-    public Skill(int ID, String name, String attr, boolean adv, String descr) {
+    public Skill(int ID, String name, boolean adv, String descr) {
         this.ID = ID;
         this.name = name;
-        this.attr = attr;
         this.adv = adv;
         this.descr = descr;
     }
@@ -41,10 +44,10 @@ public class Skill {
     public void setName(String name) {
         this.name = name;
     }
-    public String getAttr() {
+    public BaseAttribute getAttr() {
         return attr;
     }
-    public void setAttr(String attr) {
+    public void setAttr(BaseAttribute attr) {
         this.attr = attr;
     }
     public String getDescr() {

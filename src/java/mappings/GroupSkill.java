@@ -1,10 +1,9 @@
 package mappings;
 
-import java.util.Objects;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "GROUPSKILLS")
+@Table(name = "SKILLS_GROUPED")
 public class GroupSkill {
     @Id
     @Column(name = "ID")
@@ -59,7 +58,7 @@ public class GroupSkill {
     public boolean isAdv() {
         return base.isAdv();
     }
-    public String getAttr() {
+    public BaseAttribute getAttr() {
         return base.getAttr();
     }
 
