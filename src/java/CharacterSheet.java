@@ -126,20 +126,8 @@ public class CharacterSheet {
     public int[] getBaseAttributes() {
         return base_attributes;
     }
-    public int getBaseAttribute(Race.Attributes attr) {
-        return base_attributes[attr.ordinal()];
-    }
-    public int[] getAdvAttributes() {
-        return adv_attributes;
-    }
-    public int getAdvAttribute(Race.Attributes attr) {
-        return adv_attributes[attr.ordinal()];
-    }
     public int[] getSumAttributes() {
         return sum_attributes;
-    }
-    public int getSumAttribute(Race.Attributes attr) {
-        return sum_attributes[attr.ordinal()];
     }
     public void setBaseAttributes(int index, int attribute) {
         this.base_attributes[index] = attribute;

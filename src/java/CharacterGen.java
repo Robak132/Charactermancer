@@ -814,16 +814,16 @@ public class CharacterGen {
             raceskill_talentsPanel.add(comboField, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions, null), false);
         }
     }
-    void racetalent_updateMax(GroupTalent talent, JTextField testField) {
-        int max;
-        try {
-            Race.Attributes attr = Race.Attributes.find(talent.getBaseTalent().getMaxLvl());
-            max = sheet.getSumAttribute(attr) / 10;
-        } catch (Exception ex) {
-            max = Integer.parseInt(talent.getBaseTalent().getMaxLvl());
-        }
-        testField.setText(String.format("%d/%d", talent.getCurrentLvl(), max));
-    }
+//    void racetalent_updateMax(GroupTalent talent, JTextField testField) {
+//        int max;
+//        try {
+//            Race.Attributes attr = Race.Attributes.find(talent.getBaseTalent().getMaxLvl());
+//            max = sheet.getSumAttribute(attr) / 10;
+//        } catch (Exception ex) {
+//            max = Integer.parseInt(talent.getBaseTalent().getMaxLvl());
+//        }
+//        testField.setText(String.format("%d/%d", talent.getCurrentLvl(), max));
+//    }
     void racetalent_updateTalent(RaceTalent talent, int row, int index) {
         JTextField testField = (JTextField) raceskill_talentsPanel.getComponent(1, row);
 //        racetalent_updateMax(talent.getAllTalents()[index], testField);
@@ -895,7 +895,7 @@ public class CharacterGen {
     }
     Object[] getOneRandomAttr(int index, Race race) {
         Object[] returns = new Object[2];
-        int raceAttr = race.getAttr(index);
+        int raceAttr = race.getAttribute(index+1).getValue();
         int rollAttr = Dice.randomDice(2, 10);
         int sumAttr = raceAttr + rollAttr;
 

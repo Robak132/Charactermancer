@@ -16,26 +16,6 @@ public class Race {
     private int id;
     @Column(name = "NAME")
     private String name;
-    @Column(name = "WW")
-    private int ww;
-    @Column(name = "US")
-    private int us;
-    @Column(name = "S")
-    private int s;
-    @Column(name = "WT")
-    private int wt;
-    @Column(name = "I")
-    private int i;
-    @Column(name = "ZW")
-    private int zw;
-    @Column(name = "ZR")
-    private int zr;
-    @Column(name = "IT")
-    private int it;
-    @Column(name = "SW")
-    private int sw;
-    @Column(name = "OGD")
-    private int ogd;
     @Column(name = "M")
     private int m;
     @Column(name = "FATE")
@@ -82,44 +62,11 @@ public class Race {
             return map.get(value);
         }
     }
-    public enum Attributes {
-        WW(0), US(1), S(2), WT(3), I(4), ZW(5), ZR(6), INT(7), SW(8), OGD(9);
-
-        private final int index;
-        private static final Map<Integer, Attributes> map = new HashMap<>();
-
-        Attributes(int index) {
-            this.index = index;
-        }
-        static {
-            for (Attributes attributes : Attributes.values()) {
-                map.put(attributes.index, attributes);
-            }
-        }
-
-        public static Attributes valueOf(int index) {
-            return map.get(index);
-        }
-        public static Attributes find(String name) {
-            String nameFormatted = name.toUpperCase();
-            return valueOf(nameFormatted);
-        }
-    }
 
     public Race() {}
-    public Race(int id, String name, int ww, int us, int s, int wt, int i, int zw, int zr, int it, int sw, int ogd, int m, int fate, int resilience, int extra, int size, int randomTalents) {
+    public Race(int id, String name, int m, int fate, int resilience, int extra, int size, int randomTalents) {
         this.id = id;
         this.name = name;
-        this.ww = ww;
-        this.us = us;
-        this.s = s;
-        this.wt = wt;
-        this.i = i;
-        this.zw = zw;
-        this.zr = zr;
-        this.it = it;
-        this.sw = sw;
-        this.ogd = ogd;
         this.m = m;
         this.fate = fate;
         this.resilience = resilience;
@@ -140,78 +87,11 @@ public class Race {
     public void setName(String name) {
         this.name = name;
     }
-    public int getWw() {
-        return ww;
-    }
-    public void setWw(int ww) {
-        this.ww = ww;
-    }
-    public int getUs() {
-        return us;
-    }
-    public void setUs(int us) {
-        this.us = us;
-    }
-    public int getS() {
-        return s;
-    }
-    public void setS(int s) {
-        this.s = s;
-    }
-    public int getWt() {
-        return wt;
-    }
-    public void setWt(int wt) {
-        this.wt = wt;
-    }
-    public int getI() {
-        return i;
-    }
-    public void setI(int i) {
-        this.i = i;
-    }
-    public int getZw() {
-        return zw;
-    }
-    public void setZw(int zw) {
-        this.zw = zw;
-    }
-    public int getZr() {
-        return zr;
-    }
-    public void setZr(int zr) {
-        this.zr = zr;
-    }
-    public int getIt() {
-        return it;
-    }
-    public void setIt(int it) {
-        this.it = it;
-    }
-    public int getSw() {
-        return sw;
-    }
-    public void setSw(int sw) {
-        this.sw = sw;
-    }
-    public int getOgd() {
-        return ogd;
-    }
-    public void setOgd(int ogd) {
-        this.ogd = ogd;
-    }
     public int getM() {
         return m;
     }
     public void setM(int m) {
         this.m = m;
-    }
-    public Integer getAttr(int number) {
-        Integer[] table = new Integer[]{ww, us, s, wt, i, zw, zr, it, sw, ogd};
-        return table[number];
-    }
-    public Integer[] getBaseAttr() {
-        return new Integer[] {ww, us, s, wt, i, zw, zr, it, sw, ogd};
     }
     public int getFate() {
         return fate;
@@ -249,5 +129,13 @@ public class Race {
     }
     public void setAttributes(List<RaceAttribute> raceAttributes) {
         this.raceAttributes = raceAttributes;
+    }
+    public RaceAttribute getAttribute(int attributeID) {
+        for (RaceAttribute raceAttribute: raceAttributes) {
+            if (raceAttribute.getAttribute().getID() == attributeID) {
+                return raceAttribute;
+            }
+        }
+        return null;
     }
 }
