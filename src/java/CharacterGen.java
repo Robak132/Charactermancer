@@ -3,7 +3,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import components.*;
 import mappings.*;
-import org.hibernate.Hibernate;
+import mappings.Race.Size;
 import tools.*;
 
 import javax.swing.*;
@@ -60,6 +60,7 @@ public class CharacterGen {
     private List<GroupSkill> professionSkills;
     private int prof_maxExp = 50;
 
+    private List<Attribute> attributes;
     private JPanel attributesTable;
     private JButton attr_rollButton;
     private JButton attr_OKButton;
@@ -334,6 +335,9 @@ public class CharacterGen {
             //TODO Add custom values given by user
         });
         attr_option1Button.addActionListener(e -> {
+            for (int i = 0; i < RAttr.size(); i++) {
+                attributes.get(i).setCharValue(RAttr.get(i).getValue());
+            }
             for (int i=0;i<TAttr.size();i++)
                 sheet.setBaseAttributes(i, TAttr.get(i).getValue());
             sheet.setMove(attr_move.getValue());
@@ -409,7 +413,7 @@ public class CharacterGen {
             activeField.setText(rollTalent.getName());
 
             activeField = (JTextField) raceskill_randomTalentsPanel.getComponent(1, raceskill_randomTalents.size() - 1);
-            racetalent_updateMax(rollTalent, activeField);
+//            racetalent_updateMax(rollTalent, activeField);
 
             JTextArea activeArea = (JTextArea) raceskill_randomTalentsPanel.getComponent(2, raceskill_randomTalents.size() - 1);
             activeArea.setText(rollTalent.getBaseTalent().getTest());
@@ -449,68 +453,66 @@ public class CharacterGen {
     }
 
     void attr_createTable() {
-        String[] columns = {"M", "WW", "US", "S", "Wt", "I", "Zw", "Zr", "Int", "SW", "Ogd", "Żyw"};
-        attributesTable.setLayout(new GridLayoutManager(5, columns.length + 2, new Insets(0, 0, 0, 0), -1, -1));
+        attributes = connection.getRaceAttributes(sheet.getRace());
+        attributesTable.setLayout(new GridLayoutManager(5, attributes.size() + 4, new Insets(0, 0, 0, 0), -1, -1));
         attributesTable.add(new Spacer(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null));
-        attributesTable.add(new Spacer(), new GridConstraints(0, columns.length + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null));
+        attributesTable.add(new Spacer(), new GridConstraints(0, attributes.size() + 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null));
 
-        for (int i = 0; i < columns.length; i++) {
-            JLabel charLabel = new JLabel();
-            charLabel.setHorizontalAlignment(JLabel.CENTER);
-            charLabel.setHorizontalTextPosition(0);
-            charLabel.setText(columns[i]);
-            attributesTable.add(charLabel, new GridConstraints(1, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
-        }
-
-        attr_move = new JIntegerField();
+        attr_move = new JIntegerField(sheet.getRace().getM());
         attr_move.setHorizontalAlignment(JTextField.CENTER);
         attr_move.setEditable(false);
         attr_move.setFont(new Font(attr_move.getFont().getName(),Font.ITALIC+Font.BOLD,attr_move.getFont().getSize()+2));
         attributesTable.add(attr_move, new GridConstraints(2, 1, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null));
 
-        for (int i = 1; i < columns.length-1; i++) {
-            JIntegerField baseAttr = new JIntegerField();
+        for (int i = 0; i < attributes.size(); i++) {
+            boolean changeBackground = (sheet.getRace().getSize()== Size.NORMAL && i == 2) || i == 3 || i == 8;
+            Color foregroundColor = Color.black;
+            if (sheet.getProf().getAttr(i)) {
+                foregroundColor = ColorPalette.CustomGreen;
+            }
+
+            JLabel charLabel = new JLabel();
+            charLabel.setHorizontalAlignment(JLabel.CENTER);
+            charLabel.setHorizontalTextPosition(0);
+            charLabel.setText(attributes.get(i).getName());
+            attributesTable.add(charLabel, new GridConstraints(1, i+2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
+
+            JIntegerField baseAttr = new JIntegerField(attributes.get(i).getBaseValue());
+            baseAttr.setForeground(foregroundColor);
+            if (changeBackground) {
+                baseAttr.setBackground(ColorPalette.CustomWhiteBlue);
+            }
             baseAttr.setHorizontalAlignment(JTextField.CENTER);
             baseAttr.setEditable(false);
             BAttr.add(baseAttr);
 
             JIntegerField attr = new JIntegerField();
+            attr.setForeground(foregroundColor);
+            if (changeBackground) {
+                attr.setBackground(ColorPalette.CustomWhiteBlue);
+            }
             attr.setHorizontalAlignment(JTextField.CENTER);
             RAttr.add(attr);
             attr.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    if (!attr_locked) {
-                        if (mouse_source == null) {
-                            mouse_source = (JIntegerField) e.getSource();
-                            mouse_color = mouse_source.getForeground();
-                            mouse_source.setForeground(Color.red);
-                            mouse_source.setFont(new Font(mouse_source.getFont().getName(),Font.BOLD, mouse_source.getFont().getSize()));
-                        }
-                        else {
-                            JIntegerField target = (JIntegerField) e.getSource();
-                            int temp = target.getValue();
-                            target.setValue(mouse_source.getValue());
-                            mouse_source.setValue(temp);
-                            mouse_source.setForeground(mouse_color);
-                            mouse_source.setFont(new Font(mouse_source.getFont().getName(),Font.PLAIN, mouse_source.getFont().getSize()));
-                            mouse_source = null;
-                        }
-                        attr_maxExp = 25;
-                        calculateTotal();
-                    }
+                    attr_replaceValues(e);
                 }
             });
 
-            JIntegerField sumAttr = new JIntegerField();
+            JIntegerField sumAttr = new JIntegerField(attributes.get(i).getTotalValue());
+            sumAttr.setForeground(foregroundColor);
+            if (changeBackground) {
+                sumAttr.setBackground(ColorPalette.CustomWhiteBlue);
+            }
             sumAttr.setHorizontalAlignment(JTextField.CENTER);
             sumAttr.setEditable(false);
             sumAttr.setFont(new Font(sumAttr.getFont().getName(),Font.ITALIC+Font.BOLD,sumAttr.getFont().getSize()+2));
             TAttr.add(sumAttr);
 
-            attributesTable.add(baseAttr, new GridConstraints(2, i+1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null));
-            attributesTable.add(attr, new GridConstraints(3, i+1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null));
-            attributesTable.add(sumAttr, new GridConstraints(4, i+1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null));
+            attributesTable.add(baseAttr, new GridConstraints(2, i+2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null));
+            attributesTable.add(attr, new GridConstraints(3, i+2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null));
+            attributesTable.add(sumAttr, new GridConstraints(4, i+2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null));
         }
 
         attr_hp = new JIntegerField();
@@ -518,27 +520,27 @@ public class CharacterGen {
         attr_hp.setEditable(false);
         attr_hp.setFont(new Font(attr_hp.getFont().getName(),Font.ITALIC+Font.BOLD,attr_hp.getFont().getSize()+2));
         attr_hp.setBackground(ColorPalette.CustomWhiteBlue);
-        attributesTable.add(attr_hp, new GridConstraints(2, columns.length, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null));
+        attributesTable.add(attr_hp, new GridConstraints(2, attributes.size()+2, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null));
     }
-    void attr_fillTable() {
-        attr_move.setValue(sheet.getRace().getM());
-
-        for (int i=0; i<BAttr.size();i++) {
-            Integer number = sheet.getRace().getAttr(i);
-            BAttr.get(i).setValue(number);
-
-            if ((sheet.getRace().getSize()==Race.Size.NORMAL && i == 2) || i == 3 || i == 8) {
-                BAttr.get(i).setBackground(ColorPalette.CustomWhiteBlue);
-                RAttr.get(i).setBackground(ColorPalette.CustomWhiteBlue);
-                TAttr.get(i).setBackground(ColorPalette.CustomWhiteBlue);
+    void attr_replaceValues(MouseEvent e) {
+        if (!attr_locked) {
+            if (mouse_source == null) {
+                mouse_source = (JIntegerField) e.getSource();
+                mouse_color = mouse_source.getForeground();
+                mouse_source.setForeground(Color.red);
+                mouse_source.setFont(new Font(mouse_source.getFont().getName(),Font.BOLD, mouse_source.getFont().getSize()));
             }
-        }
-        for (int i=0;i<RAttr.size();i++) {
-            if (sheet.getProf().getAttr(i)) {
-                BAttr.get(i).setForeground(ColorPalette.CustomGreen);
-                RAttr.get(i).setForeground(ColorPalette.CustomGreen);
-                TAttr.get(i).setForeground(ColorPalette.CustomGreen);
+            else {
+                JIntegerField target = (JIntegerField) e.getSource();
+                int temp = target.getValue();
+                target.setValue(mouse_source.getValue());
+                mouse_source.setValue(temp);
+                mouse_source.setForeground(mouse_color);
+                mouse_source.setFont(new Font(mouse_source.getFont().getName(),Font.PLAIN, mouse_source.getFont().getSize()));
+                mouse_source = null;
             }
+            attr_maxExp = 25;
+            calculateTotal();
         }
     }
 
@@ -594,6 +596,7 @@ public class CharacterGen {
             fate_attrRemain.changeValue(advValues[finalI] - now);
             field.changeValue(now - advValues[finalI]);
             advValues[finalI] = now;
+            attributes.get(finalI).setAdvValue(now);
             calculateHP();
 
             fate_attributeTable.iterateThroughColumns(3, o -> {
@@ -631,19 +634,21 @@ public class CharacterGen {
                 row = base_itr++;
                 baseSkills.add(skill);
             }
-
             if (professionSkills.contains(skill)) {
                 color = ColorPalette.CustomGreen;
+            }
+
+            for (Attribute attribute : attributes) {
+                if (attribute.equals(skill.getAttr())) {
+                    skill.setAttr(attribute);
+                    break;
+                }
             }
 
             Container nameContainer = raceskill_createComboIfNeeded(skill, row, column, color);
             column++;
 
-            List<Attribute> list = sheet.getRace().getAttributes();
-            for (Attribute attribute : list) {
-                System.out.println(attribute.getBaseValue());
-            }
-            JTextField attrField = new JTextField("attr");
+            JTextField attrField = new JTextField(skill.getAttr().getName());
             attrField.setHorizontalAlignment(JTextField.CENTER);
             attrField.setEditable(false);
             attrField.setFocusable(false);
@@ -652,16 +657,14 @@ public class CharacterGen {
             ListSpinner<Integer> jSpinner = new ListSpinner<>(new Integer[]{0, 3, 5});
             jSpinner.setHorizontalAlignment(JTextField.CENTER);
             jSpinner.setEditable(false);
-            jSpinner.addChangeListener(e -> raceskill_updatePoints(nameContainer, jSpinner, skill));
             raceskill_skillsPanel.add(jSpinner, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            int value = sheet.getSumAttribute(Race.Attributes.find("attr"));
-            JIntegerField sumField = new JIntegerField(value, "%d", JTextField.CENTER);
+            JIntegerField sumField = new JIntegerField(skill.getTotalValue(), "%d", JTextField.CENTER);
             sumField.setEditable(false);
             sumField.setFocusable(false);
             raceskill_skillsPanel.add(sumField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            skill.setStartValue(value);
+            jSpinner.addChangeListener(e -> raceskill_updatePoints(nameContainer, jSpinner, sumField, skill));
             tabOrder.add(((JSpinner.DefaultEditor) jSpinner.getEditor()).getTextField());
         }
         raceskill_skillsPanel.setFocusCycleRoot(true);
@@ -693,12 +696,13 @@ public class CharacterGen {
             return comboBox;
         }
     }
-    void raceskill_updatePoints(Container container, ListSpinner<Integer> spinner, GroupSkill skill) {
+    void raceskill_updatePoints(Container container, ListSpinner<Integer> spinner, JIntegerField totalField, GroupSkill skill) {
         int now = (int) spinner.getValue();
         int last = (int) spinner.getLastValue();
 
         if (skill.getAdvValue() != now) {
             skill.setAdvValue(now);
+            totalField.setValue(skill.getTotalValue());
 
             raceskill_points.put(last, raceskill_points.get(last)-1);
             raceskill_points.put(now, raceskill_points.get(now)+1);
@@ -748,7 +752,7 @@ public class CharacterGen {
             attrField.setHorizontalAlignment(JTextField.CENTER);
             attrField.setEditable(false);
             attrField.setFocusable(false);
-            racetalent_updateMax(talents.get(i).getTalent(), attrField);
+//            racetalent_updateMax(talents.get(i).getTalent(), attrField);
             raceskill_talentsPanel.add(attrField, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
 
             JTextArea testArea = new JTextArea(talents.get(i).getTalent().getBaseTalent().getTest());
@@ -822,7 +826,7 @@ public class CharacterGen {
     }
     void racetalent_updateTalent(RaceTalent talent, int row, int index) {
         JTextField testField = (JTextField) raceskill_talentsPanel.getComponent(1, row);
-        racetalent_updateMax(talent.getAllTalents()[index], testField);
+//        racetalent_updateMax(talent.getAllTalents()[index], testField);
         JTextArea textArea = (JTextArea) raceskill_talentsPanel.getComponent(2, row);
         textArea.setText(talent.getAllTalents()[index].getBaseTalent().getTest());
         JLabel desc = (JLabel) raceskill_talentsPanel.getComponent(3, row);
@@ -855,7 +859,7 @@ public class CharacterGen {
                 break;
             case 2:
                 attr_createTable();
-                attr_fillTable();
+//                attr_fillTable();
                 break;
             case 3:
                 fate_createTable();

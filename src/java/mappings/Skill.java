@@ -22,7 +22,7 @@ public class Skill {
 
     @ManyToOne
     @JoinColumn(name = "ATTR")
-    private BaseAttribute attr;
+    private Attribute attr;
 
     public Skill() {}
     public Skill(int ID, String name, boolean adv, String descr) {
@@ -44,10 +44,10 @@ public class Skill {
     public void setName(String name) {
         this.name = name;
     }
-    public BaseAttribute getAttr() {
+    public Attribute getAttr() {
         return attr;
     }
-    public void setAttr(BaseAttribute attr) {
+    public void setAttr(Attribute attr) {
         this.attr = attr;
     }
     public String getDescr() {

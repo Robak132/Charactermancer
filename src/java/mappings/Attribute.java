@@ -1,20 +1,22 @@
 package mappings;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "RACE_ATTRIBUTES")
+@Table(name = "ATTRIBUTES")
 public class Attribute {
     @Id
     @Column(name = "ID")
     private int ID;
-    @Column(name = "VALUE")
+    @Column(name = "NAME")
+    private String name;
+
+    @Transient
     private int baseValue;
     @Transient
     private int charValue;
@@ -23,15 +25,12 @@ public class Attribute {
     @Transient
     private int totalValue;
 
-    @ManyToOne
-    @JoinColumn(name = "IDATTR")
-    private BaseAttribute baseAttribute;
-
-    public Attribute(int ID, int value) {
+    public Attribute(int ID, String name) {
         this.ID = ID;
-        this.baseValue = value;
+        this.name = name;
     }
     public Attribute() {
+
     }
 
     public int getID() {
@@ -40,8 +39,14 @@ public class Attribute {
     public void setID(int ID) {
         this.ID = ID;
     }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public int getBaseValue() {
-        updateAll();
         return baseValue;
     }
     public void setBaseValue(int baseValue) {
@@ -49,18 +54,13 @@ public class Attribute {
         updateAll();
     }
     public int getCharValue() {
-        updateAll();
         return charValue;
     }
     public void setCharValue(int charValue) {
         this.charValue = charValue;
         updateAll();
     }
-    public void setTotalValue(int totalValue) {
-        this.totalValue = totalValue;
-    }
     public int getAdvValue() {
-        updateAll();
         return advValue;
     }
     public void setAdvValue(int advValue) {
@@ -68,21 +68,22 @@ public class Attribute {
         updateAll();
     }
     public int getTotalValue() {
-        updateAll();
         return totalValue;
-    }
-    public BaseAttribute getBaseAttribute() {
-        return baseAttribute;
-    }
-    public void setBaseAttribute(BaseAttribute baseAttribute) {
-        this.baseAttribute = baseAttribute;
-    }
-
-    public String getName() {
-        return baseAttribute.getName();
     }
 
     private void updateAll() {
-        totalValue=baseValue+advValue;
+        totalValue=baseValue+charValue+advValue;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Attribute attribute = (Attribute) o;
+        return ID == attribute.ID && Objects.equals(name, attribute.name);
     }
 }

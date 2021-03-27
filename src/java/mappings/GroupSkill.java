@@ -13,8 +13,6 @@ public class GroupSkill {
     @Column(name = "GRP")
     private boolean group;
     @Transient
-    private int startValue=0;
-    @Transient
     private int advValue=0;
     @Transient
     private int totalValue=0;
@@ -58,33 +56,32 @@ public class GroupSkill {
     public boolean isAdv() {
         return base.isAdv();
     }
-    public BaseAttribute getAttr() {
+    public Attribute getAttr() {
         return base.getAttr();
+    }
+    public void setAttr(Attribute attribute) {
+        base.setAttr(attribute);
     }
 
     public int getStartValue() {
-        return startValue;
-    }
-    public void setStartValue(int startValue) {
-        this.startValue = startValue;
-        setTotalValue();
+        return base.getAttr().getTotalValue();
     }
     public int getAdvValue() {
         return advValue;
     }
     public void setAdvValue(int advValue) {
         this.advValue = advValue;
-        setTotalValue();
     }
     public int getTotalValue() {
+        updateAll();
         return totalValue;
     }
 
-    private void setTotalValue() {
-        if (!base.isAdv() || advValue != 0) {
-            this.totalValue = startValue + advValue;
+    private void updateAll() {
+        if (isAdv() && advValue == 0) {
+            totalValue = 0;
         } else {
-            this.totalValue = 0;
+            totalValue = getStartValue() + advValue;
         }
     }
 

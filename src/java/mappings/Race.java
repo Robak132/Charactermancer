@@ -1,6 +1,5 @@
 package mappings;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import javax.persistence.*;
 import java.util.HashMap;
@@ -56,7 +55,7 @@ public class Race {
     @Fetch(FetchMode.JOIN)
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name= "IDRACE")
-    List<Attribute> attributes;
+    List<RaceAttribute> raceAttributes;
 
     public enum Size {
         TINY(0),
@@ -245,10 +244,10 @@ public class Race {
         this.randomTalents = randomTalents;
     }
 
-    public List<Attribute> getAttributes() {
-        return attributes;
+    public List<RaceAttribute> getAttributes() {
+        return raceAttributes;
     }
-    public void setAttributes(List<Attribute> attributes) {
-        this.attributes = attributes;
+    public void setAttributes(List<RaceAttribute> raceAttributes) {
+        this.raceAttributes = raceAttributes;
     }
 }

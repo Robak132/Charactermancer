@@ -9,14 +9,14 @@
         <property name="dialect">org.hibernate.dialect.SQLiteDialect</property>
         <property name="show_sql">true</property>
 
-        <mapping class="mappings.BaseAttribute" />
+        <mapping class="mappings.Attribute" />
         <mapping class="mappings.GroupSkill" />
         <mapping class="mappings.GroupTalent" />
         <mapping class="mappings.Profession" />
         <mapping class="mappings.ProfSkill" />
         <mapping class="mappings.ProfTable" />
         <mapping class="mappings.Race" />
-        <mapping class="mappings.Attribute" />
+        <mapping class="mappings.RaceAttribute" />
         <mapping class="mappings.RaceSkill" />
         <mapping class="mappings.RaceTable" />
         <mapping class="mappings.RaceTalent" />

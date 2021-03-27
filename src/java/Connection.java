@@ -283,6 +283,16 @@ public class Connection {
         return talent;
     }
 
+    List<Attribute> getRaceAttributes(Race race) {
+        List<Attribute> attributeList = new ArrayList<>();
+        for (RaceAttribute raceAttribute : race.getAttributes()) {
+            Attribute attribute = raceAttribute.getAttribute();
+            attribute.setBaseValue(raceAttribute.getValue());
+            attributeList.add(attribute);
+        }
+        return attributeList;
+    }
+
     List<String> getProfsClasses(int race) {
         List<String> result = new ArrayList<>();
         for (Object prof: getProfs(race))
