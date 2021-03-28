@@ -479,6 +479,7 @@ public class CharacterGen {
             }
             baseAttr.setHorizontalAlignment(JTextField.CENTER);
             baseAttr.setEditable(false);
+            attributesTable.add(baseAttr, new GridConstraints(1, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
             BAttr.add(baseAttr);
 
             JIntegerField attr = new JIntegerField();
@@ -487,13 +488,9 @@ public class CharacterGen {
                 attr.setBackground(ColorPalette.CustomWhiteBlue);
             }
             attr.setHorizontalAlignment(JTextField.CENTER);
+            attr.addMouseListener((MouseClickedAdapter) this::attr_replaceValues);
+            attributesTable.add(attr, new GridConstraints(2, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
             RAttr.add(attr);
-            attr.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    attr_replaceValues(e);
-                }
-            });
 
             JIntegerField sumAttr = new JIntegerField(attributes.get(i).getTotalValue());
             sumAttr.setForeground(foregroundColor);
@@ -503,11 +500,8 @@ public class CharacterGen {
             sumAttr.setHorizontalAlignment(JTextField.CENTER);
             sumAttr.setEditable(false);
             sumAttr.setFont(new Font(sumAttr.getFont().getName(),Font.ITALIC+Font.BOLD,sumAttr.getFont().getSize()+2));
-            TAttr.add(sumAttr);
-
-            attributesTable.add(baseAttr, new GridConstraints(1, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
-            attributesTable.add(attr, new GridConstraints(2, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
             attributesTable.add(sumAttr, new GridConstraints(3, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
+            TAttr.add(sumAttr);
         }
 
         attr_hp = new JIntegerField();
