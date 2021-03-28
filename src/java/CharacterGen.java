@@ -1,6 +1,4 @@
 import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import components.*;
 import mappings.*;
 import mappings.Race.Size;
@@ -61,7 +59,7 @@ public class CharacterGen {
     private int prof_maxExp = 50;
 
     private List<Attribute> attributes;
-    private JPanel attributesTable;
+    private GridPanel attributesTable;
     private JButton attr_rollButton;
     private JButton attr_OKButton;
     private JIntegerField attr_sumField;
@@ -454,15 +452,12 @@ public class CharacterGen {
 
     void attr_createTable() {
         attributes = connection.getRaceAttributes(sheet.getRace());
-        attributesTable.setLayout(new GridLayoutManager(5, attributes.size() + 4, new Insets(0, 0, 0, 0), -1, -1));
-        attributesTable.add(new Spacer(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null));
-        attributesTable.add(new Spacer(), new GridConstraints(0, attributes.size() + 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null));
 
         attr_move = new JIntegerField(sheet.getRace().getM());
         attr_move.setHorizontalAlignment(JTextField.CENTER);
         attr_move.setEditable(false);
         attr_move.setFont(new Font(attr_move.getFont().getName(),Font.ITALIC+Font.BOLD,attr_move.getFont().getSize()+2));
-        attributesTable.add(attr_move, new GridConstraints(2, 1, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null));
+        attributesTable.add(attr_move, new GridConstraints(1, 0, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null), false);
 
         for (int i = 0; i < attributes.size(); i++) {
             boolean changeBackground = (sheet.getRace().getSize()== Size.NORMAL && i == 2) || i == 3 || i == 8;
@@ -475,7 +470,7 @@ public class CharacterGen {
             charLabel.setHorizontalAlignment(JLabel.CENTER);
             charLabel.setHorizontalTextPosition(0);
             charLabel.setText(attributes.get(i).getName());
-            attributesTable.add(charLabel, new GridConstraints(1, i+2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
+            attributesTable.add(charLabel, new GridConstraints(0, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
 
             JIntegerField baseAttr = new JIntegerField(attributes.get(i).getBaseValue());
             baseAttr.setForeground(foregroundColor);
@@ -510,9 +505,9 @@ public class CharacterGen {
             sumAttr.setFont(new Font(sumAttr.getFont().getName(),Font.ITALIC+Font.BOLD,sumAttr.getFont().getSize()+2));
             TAttr.add(sumAttr);
 
-            attributesTable.add(baseAttr, new GridConstraints(2, i+2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null));
-            attributesTable.add(attr, new GridConstraints(3, i+2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null));
-            attributesTable.add(sumAttr, new GridConstraints(4, i+2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null));
+            attributesTable.add(baseAttr, new GridConstraints(1, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
+            attributesTable.add(attr, new GridConstraints(2, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
+            attributesTable.add(sumAttr, new GridConstraints(3, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
         }
 
         attr_hp = new JIntegerField();
@@ -520,7 +515,8 @@ public class CharacterGen {
         attr_hp.setEditable(false);
         attr_hp.setFont(new Font(attr_hp.getFont().getName(),Font.ITALIC+Font.BOLD,attr_hp.getFont().getSize()+2));
         attr_hp.setBackground(ColorPalette.CustomWhiteBlue);
-        attributesTable.add(attr_hp, new GridConstraints(2, attributes.size()+2, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null));
+        attributesTable.add(attr_hp, new GridConstraints(1, attributes.size()+1, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null), false);
+        attributesTable.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
     void attr_replaceValues(MouseEvent e) {
         if (!attr_locked) {
