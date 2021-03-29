@@ -167,7 +167,7 @@ public class CharacterGen {
             race_option1Button.setEnabled(false);
             race_option1.setEditable(false);
             race_option2Button.setEnabled(false);
-            race_option2Combo.setNotEditable();
+            race_option2Combo.setLocked(true);
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
@@ -180,7 +180,7 @@ public class CharacterGen {
                 race_option1Button.setEnabled(false);
                 race_option1.setEditable(false);
                 race_option2Button.setEnabled(false);
-                race_option2Combo.setNotEditable();
+                race_option2Combo.setLocked(true);
 
                 moveToNextTab(tabbedPane.getSelectedIndex());
             } catch (Exception ex) {
@@ -249,8 +249,8 @@ public class CharacterGen {
             prof_OKButton.setEnabled(false);
             for (JButton button : prof_buttons)
                 button.setEnabled(false);
-            prof_option4a.setNotEditable();
-            prof_option4b.setNotEditable();
+            prof_option4a.setLocked(true);
+            prof_option4b.setLocked(true);
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
@@ -263,8 +263,8 @@ public class CharacterGen {
             prof_OKButton.setEnabled(false);
             for (JButton button : prof_buttons)
                 button.setEnabled(false);
-            prof_option4a.setNotEditable();
-            prof_option4b.setNotEditable();
+            prof_option4a.setLocked(true);
+            prof_option4b.setLocked(true);
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
@@ -277,8 +277,8 @@ public class CharacterGen {
             prof_OKButton.setEnabled(false);
             for (JButton button : prof_buttons)
                 button.setEnabled(false);
-            prof_option4a.setNotEditable();
-            prof_option4b.setNotEditable();
+            prof_option4a.setLocked(true);
+            prof_option4b.setLocked(true);
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
@@ -618,7 +618,6 @@ public class CharacterGen {
                 column = 4;
                 row = adv_itr++;
                 advSkills.add(skill);
-                color = Color.red;
             } else {
                 column = 0;
                 row = base_itr++;
@@ -635,7 +634,8 @@ public class CharacterGen {
                 }
             }
 
-            Container nameContainer = raceskill_createComboIfNeeded(skill, row, column, color);
+            Container nameContainer = raceskill_createComboIfNeeded(skill, row, column);
+            nameContainer.setForeground(color);
             column++;
 
             JTextField attrField = new JTextField(skill.getAttr().getName());
@@ -661,13 +661,12 @@ public class CharacterGen {
         raceskill_skillsPanel.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
         raceskill_skillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
-    Container raceskill_createComboIfNeeded(GroupSkill skill, int row, int column, Color color) {
+    Container raceskill_createComboIfNeeded(GroupSkill skill, int row, int column) {
         if (!skill.isGroup()) {
             JTextField textField = new JTextField(skill.getName());
             String tooltip = skill.getBase().getDescr();
             if (tooltip != null)
                 textField.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
-            textField.setForeground(color);
             textField.setFocusable(false);
             textField.setEditable(false);
             raceskill_skillsPanel.add(textField, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
@@ -681,7 +680,7 @@ public class CharacterGen {
                 comboBox.addItem(alternateSkill.getName());
             comboBox.setPreferredSize(new Dimension(comboBox.getSize().width, -1));
             comboBox.refresh(false);
-            comboBox.setEditable(true);
+            comboBox.setLocked(true);
             raceskill_skillsPanel.add(comboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
             return comboBox;
         }

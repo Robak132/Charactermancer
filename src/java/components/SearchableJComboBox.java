@@ -14,22 +14,30 @@ import java.util.List;
 
 public class SearchableJComboBox extends JComboBox<String> {
     private final JTextField textField;
-    private boolean lock;
+    private final Map<AbstractButton, MouseListener[]> componentsMap = new HashMap<>();
+    private MouseListener[] mouseListeners;
     private TreeSet<String> items;
-    private String safe_value;
-    private String unsafe_value;
-    private int caret_position;
+
+    private String safeValue;
+    private String unsafeValue;
+
+    private Color goodColor = Color.BLACK;
+    private boolean listenerLock;
+    private boolean isLocked = false;
+    private int caretPosition;
 
     public SearchableJComboBox() {
         super();
         items = new TreeSet<>();
         textField = (JTextField) this.editor.getEditorComponent();
         textField.getDocument().addDocumentListener((SimpleDocumentListener) e -> {
-            if (!lock) {
+            if (!listenerLock) {
                 SwingUtilities.invokeLater(() -> {
-                    lock = true;
+                    listenerLock = true;
+                    Dimension currentDimension = getSize();
                     fill(textField.getText());
-                    lock = false;
+                    setMinimumSize(currentDimension);
+                    listenerLock = false;
                 });
             }
         });
@@ -54,23 +62,23 @@ public class SearchableJComboBox extends JComboBox<String> {
     private void fill(String text) {
         if (items.contains(text)) {
             fill("");
-            safe_value = text;
-            unsafe_value = text;
-            textField.setForeground(Color.black);
+            safeValue = text;
+            unsafeValue = text;
+            editor.getEditorComponent().setForeground(goodColor);
         } else {
-            caret_position = textField.getCaretPosition();
+            caretPosition = textField.getCaretPosition();
             this.removeAllItems();
-            textField.setForeground(Color.red);
+            editor.getEditorComponent().setForeground(Color.red);
             for (String name : items) {
                 if (name.toUpperCase().contains(text.toUpperCase()))
                     super.addItem(name);
             }
-            unsafe_value = text;
+            unsafeValue = text;
         }
         this.setSelectedItem(text);
-        if (text.length() < caret_position)
-            caret_position = text.length();
-        textField.setCaretPosition(caret_position);
+        if (text.length() < caretPosition)
+            caretPosition = text.length();
+        textField.setCaretPosition(caretPosition);
     }
 
     public void addItems(List<String> items, boolean startNull) {
@@ -90,27 +98,56 @@ public class SearchableJComboBox extends JComboBox<String> {
     }
 
     public String getValue() {
-        return unsafe_value;
+        return unsafeValue;
     }
     public String getSafeValue() {
-        return safe_value;
+        return safeValue;
     }
 
-    public void setNotEditable() {
-        textField.setEditable(false);
+    @Override
+    public void setForeground(Color fg) {
+        goodColor = fg;
+        super.setForeground(fg);
+    }
 
-        MouseListener[] mls = this.getMouseListeners();
-        for (MouseListener listener : mls)
-            this.removeMouseListener(listener);
+    public void setLocked(boolean aFlag) {
+        if (!isLocked) {
+            return;
+        }
 
-        Component[] comps = this.getComponents();
-        for (Component c : comps) {
-            if (c instanceof AbstractButton) {
-                c.setEnabled(false);
+        textField.setEditable(aFlag);
+        if (!aFlag) {
+            for (MouseListener listener : mouseListeners) {
+                this.addMouseListener(listener);
+            }
 
-                MouseListener[] mls2 = c.getMouseListeners();
-                for (MouseListener listener : mls2)
-                    c.removeMouseListener(listener);
+            for (Component c : getComponents()) {
+                if (c instanceof AbstractButton) {
+                    c.setEnabled(true);
+
+                    MouseListener[] innerMouseListeners = componentsMap.get(c);
+                    for (MouseListener listener : innerMouseListeners) {
+                        c.addMouseListener(listener);
+                    }
+                }
+            }
+        } else {
+            isLocked = true;
+            mouseListeners = this.getMouseListeners();
+            for (MouseListener listener : mouseListeners) {
+                this.removeMouseListener(listener);
+            }
+
+            for (Component c : getComponents()) {
+                if (c instanceof AbstractButton) {
+                    c.setEnabled(false);
+
+                    MouseListener[] innerMouseListeners = c.getMouseListeners();
+                    for (MouseListener listener : innerMouseListeners) {
+                        c.removeMouseListener(listener);
+                    }
+                    componentsMap.put((AbstractButton) c, innerMouseListeners);
+                }
             }
         }
     }
