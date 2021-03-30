@@ -162,7 +162,7 @@ public class CharacterGen {
         race_option1Button.addActionListener(e -> {
             race_option2Combo.setSelectedItem(race_option1.getText());
             sheet.setRace(rollRace);
-            updateExp(20);
+            expField.changeValue(20);
 
             race_option1Button.setEnabled(false);
             race_option1.setEditable(false);
@@ -242,7 +242,7 @@ public class CharacterGen {
         });
         prof_option1Button.addActionListener(e -> {
             sheet.setProf(profList.get(0));
-            updateExp(prof_maxExp);
+            expField.changeValue(prof_maxExp);
 
             prof_rollButton.setEnabled(false);
             prof_rollResult.setEditable(false);
@@ -256,7 +256,7 @@ public class CharacterGen {
         });
         prof_option2Button.addActionListener(e -> {
             sheet.setProf(profList.get(1));
-            updateExp(prof_maxExp);
+            expField.changeValue(prof_maxExp);
 
             prof_rollButton.setEnabled(false);
             prof_rollResult.setEditable(false);
@@ -270,7 +270,7 @@ public class CharacterGen {
         });
         prof_option3Button.addActionListener(e -> {
             sheet.setProf(profList.get(2));
-            updateExp(prof_maxExp);
+            expField.changeValue(prof_maxExp);
 
             prof_rollButton.setEnabled(false);
             prof_rollResult.setEditable(false);
@@ -344,7 +344,7 @@ public class CharacterGen {
 
             attr_option1Button.setEnabled(false);
             attr_locked = true;
-            updateExp(attr_maxExp);
+            expField.changeValue(attr_maxExp);
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
         //TODO: Make a3PutOwnValuesButton work and probably change the name
@@ -833,10 +833,6 @@ public class CharacterGen {
             TAttr.get(i).setValue(BAttr.get(i).getValue() + RAttr.get(i).getValue());
         calculateHP();
     }
-    void updateExp(int value) {
-        sheet.addExp(value);
-        expField.setValue(sheet.getExp());
-    }
 
     void moveToNextTab(int tab) {
         tabbedPane.setEnabledAt(tab + 1, true);
@@ -860,6 +856,9 @@ public class CharacterGen {
         }
     }
     void createUIComponents() {
+        expField = new JIntegerField(0);
+        expField.setRunnable(o -> sheet.setExp(((JIntegerField) o).getValue()));
+
         fate_attrRemain = new JIntegerField(5);
         raceskill_points = new HashMap<>();
         raceskill_points.put(0, 0);

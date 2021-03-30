@@ -1,6 +1,7 @@
 package components;
 
 import javax.swing.*;
+import tools.RunnableWithObject;
 
 public class JIntegerField extends JTypeField<Integer> {
     public JIntegerField() {
@@ -22,8 +23,7 @@ public class JIntegerField extends JTypeField<Integer> {
         changeValue(-1);
     }
     public void changeValue(int number) {
-        this.value+=number;
-        this.setText(String.format(format, value));
+        this.setValue(value+number);
     }
     public void increment() {
         changeValue(1);
@@ -32,6 +32,7 @@ public class JIntegerField extends JTypeField<Integer> {
 class JTypeField<T> extends JTextField {
     T value;
     String format;
+    RunnableWithObject runnable = null;
 
     public JTypeField(String format) {
         super();
@@ -45,9 +46,21 @@ class JTypeField<T> extends JTextField {
     public void setValue(T value) {
         this.setText(String.format(format, value));
         this.value = value;
+
+        if (runnable != null) {
+            runnable.run(this);
+        }
     }
+
     public T getValue() {
         return value;
+    }
+
+    public RunnableWithObject getRunnable() {
+        return runnable;
+    }
+    public void setRunnable(RunnableWithObject runnable) {
+        this.runnable = runnable;
     }
 
     public String getFormat() {

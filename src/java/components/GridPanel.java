@@ -2,7 +2,7 @@ package components;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import tools.Runnable;
+import tools.RunnableWithObject;
 import tools.DynamicMatrix2D;
 
 import javax.swing.*;
@@ -81,25 +81,25 @@ public class GridPanel extends JPanel {
         return components.get(row);
     }
 
-    public void iterateThroughRows(int col, Runnable runnable) {
+    public void iterateThroughRows(int col, RunnableWithObject runnable) {
         for (int i = 0; i < components.getYSize(); i++) {
             Component active = getComponent(col, i);
             runnable.run(active);
         }
     }
-    public void iterateThroughRows(int col, int rowStart, int rowEnd, Runnable runnable) {
+    public void iterateThroughRows(int col, int rowStart, int rowEnd, RunnableWithObject runnable) {
         for (int i = rowStart; i < rowEnd; i++) {
             Component active = getComponent(col, i);
             runnable.run(active);
         }
     }
-    public void iterateThroughColumns(int row, Runnable runnable) {
+    public void iterateThroughColumns(int row, RunnableWithObject runnable) {
         for (int i = 0; i < components.getXSize(row); i++) {
             Component active = getComponent(i, row);
             runnable.run(active);
         }
     }
-    public void iterateThroughColumns(int row, int columnStart, int columnEnd, Runnable runnable) {
+    public void iterateThroughColumns(int row, int columnStart, int columnEnd, RunnableWithObject runnable) {
         for (int i = columnStart; i < columnEnd; i++) {
             Component active = getComponent(i, row);
             runnable.run(active);

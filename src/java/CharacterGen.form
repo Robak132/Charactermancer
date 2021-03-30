@@ -1066,7 +1066,7 @@
               <text resource-bundle="hardcoded_values" key="bonus.exp"/>
             </properties>
           </component>
-          <component id="adadd" class="components.JIntegerField" binding="expField">
+          <component id="adadd" class="components.JIntegerField" binding="expField" custom-create="true">
             <constraints>
               <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
                 <preferred-size width="40" height="-1"/>
