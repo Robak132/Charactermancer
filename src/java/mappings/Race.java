@@ -30,12 +30,12 @@ public class Race {
     private int randomTalents;
 
     @OneToMany(mappedBy = "race")
-    Set<ProfTable> profTable;
+    private Set<ProfTable> profTable;
 
     @Fetch(FetchMode.JOIN)
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name= "IDRACE")
-    List<RaceAttribute> raceAttributes;
+    private List<RaceAttribute> raceAttributes;
 
     public enum Size {
         TINY(0),
@@ -137,5 +137,10 @@ public class Race {
             }
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Race {name = %s}", name);
     }
 }

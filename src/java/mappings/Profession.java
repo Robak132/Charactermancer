@@ -172,4 +172,9 @@ public class Profession {
         Profession c = (Profession) o;
         return id == c.id;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Profession {class = %s, career = %s, profession = %s}", clss, career, profession);
+    }
 }

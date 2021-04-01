@@ -2,6 +2,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import components.SearchableJComboBox;
+import mappings.Attribute;
 import mappings.Profession;
 import mappings.Race;
 import org.json.simple.JSONArray;
@@ -34,9 +35,7 @@ public class CharacterSheet {
 
     private Race race;
     private Profession prof;
-    private int[] base_attributes = new int[10];
-    private int[] adv_attributes = new int[10];
-    private int[] sum_attributes = new int[10];
+    private List<Attribute> attributeList;
     private List<JTextField> attributesTextFields = new ArrayList<>();
 
     private int move, maxhp, hp, exp;
@@ -113,36 +112,22 @@ public class CharacterSheet {
     public Race getRace() {
         return race;
     }
-    public Profession getProf() {
-        return prof;
-    }
     public void setRace(Race race) {
         this.race = race;
+    }
+
+    public Profession getProf() {
+        return prof;
     }
     public void setProf(Profession prof) {
         this.prof = prof;
     }
 
-    public int[] getBaseAttributes() {
-        return base_attributes;
+    public List<Attribute> getAttributeList() {
+        return attributeList;
     }
-    public int[] getSumAttributes() {
-        return sum_attributes;
-    }
-    public void setBaseAttributes(int index, int attribute) {
-        this.base_attributes[index] = attribute;
-    }
-    public void setAdvAttributes(int index, int attribute) {
-        this.adv_attributes[index] = attribute;
-    }
-    public void setAdvAttributes(int[] attributes) {
-        this.adv_attributes = attributes;
-    }
-    public void setSumAttributes(int index, int attribute) {
-        this.sum_attributes[index] = attribute;
-    }
-    public void setSumAttributes(int[] attributes) {
-        this.sum_attributes = attributes;
+    public void setAttributeList(List<Attribute> attributeList) {
+        this.attributeList = attributeList;
     }
 
     public int getExp() {
@@ -174,5 +159,18 @@ public class CharacterSheet {
     }
     public void setHP() {
         this.hp = maxhp;
+    }
+
+    @Override
+    public String toString() {
+        String ret = "";
+        ret += "CharacterSheet {\n";
+        ret += race + "\n";
+        ret += prof + "\n";
+        ret += "exp = " + exp + "\n";
+        ret += "attributes = " + attributeList + "\n";
+        ret += "}";
+
+        return ret;
     }
 }

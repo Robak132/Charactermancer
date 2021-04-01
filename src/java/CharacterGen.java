@@ -81,10 +81,10 @@ public class CharacterGen {
     private JButton fate_resilienceUP;
     private JButton fate_resilienceDOWN;
     private JButton fate_OKButton;
-    private final int[] startValues = new int[10];
-    private final int[] advValues = new int[10];
-    private final int[] sumValues = new int[10];
 
+    private final List<GroupTalent> raceskill_randomTalents = new ArrayList<>();
+    private final List<GroupSkill> baseSkills = new ArrayList<>();
+    private final List<GroupSkill> advSkills = new ArrayList<>();
     private GridPanel raceskill_skillsPanel;
     private GridPanel raceskill_talentsPanel;
     private GridPanel raceskill_randomTalentsPanel;
@@ -95,9 +95,6 @@ public class CharacterGen {
     private JButton raceskill_OKButton;
     private JButton raceskill_option1;
     private JLabel raceskill_noteLabel;
-    private final List<GroupTalent> raceskill_randomTalents = new ArrayList<>();
-    private final List<GroupSkill> baseSkills = new ArrayList<>();
-    private final List<GroupSkill> advSkills = new ArrayList<>();
     private Map<Integer, Integer> raceskill_points;
 
     private JIntegerField mouse_source = null;
@@ -336,8 +333,7 @@ public class CharacterGen {
             for (int i = 0; i < RAttr.size(); i++) {
                 attributes.get(i).setCharValue(RAttr.get(i).getValue());
             }
-            for (int i=0;i<TAttr.size();i++)
-                sheet.setBaseAttributes(i, TAttr.get(i).getValue());
+            sheet.setAttributeList(attributes);
             sheet.setMove(attr_move.getValue());
             sheet.setMaxHP(attr_hp.getValue());
             sheet.setHP();
@@ -388,10 +384,7 @@ public class CharacterGen {
             fate_resilienceDOWN.setEnabled(Integer.parseInt(fate_resilience.getText())!=sheet.getRace().getResilience());
         });
         fate_OKButton.addActionListener(e -> { //
-            for (int i=0;i<TAttr.size();i++) {
-                sheet.setSumAttributes(i, TAttr.get(i).getValue());
-            }
-            sheet.setAdvAttributes(advValues);
+            sheet.setAttributeList(attributes);
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
@@ -426,14 +419,17 @@ public class CharacterGen {
             }
         });
         raceskill_option1.addActionListener(e -> {
-            for (GroupSkill skill : baseSkills) {
-                System.out.printf("%s, %s, %d\n", skill.getName(), skill.getAttr(), skill.getTotalValue());
-            }
-            for (GroupSkill skill : advSkills) {
-                if (skill.getAdvValue() != 0) {
-                    System.out.printf("%s, %s, %d\n", skill.getName(), skill.getAttr(), skill.getTotalValue());
-                }
-            }
+            System.out.println(sheet);
+//            for (GroupSkill skill : baseSkills) {
+//                System.out.printf("%s, %s, %d\n", skill.getName(), skill.getAttr(), skill.getTotalValue());
+//            }
+//            for (GroupSkill skill : advSkills) {
+//                if (skill.getAdvValue() != 0) {
+//                    System.out.printf("%s, %s, %d\n", skill.getName(), skill.getAttr(), skill.getTotalValue());
+//                }
+//            }
+
+
 //            moveToNextTab(tabbedPane.getSelectedIndex());
         });
 
@@ -581,11 +577,11 @@ public class CharacterGen {
     }
     void fate_updatePoints(JSpinner activeSpinner, int finalI, JIntegerField field) {
         int now = (int) (activeSpinner.getValue());
+        int adv = attributes.get(finalI).getAdvValue();
 
-        if (advValues[finalI] != now) {
-            fate_attrRemain.changeValue(advValues[finalI] - now);
-            field.changeValue(now - advValues[finalI]);
-            advValues[finalI] = now;
+        if (adv != now) {
+            fate_attrRemain.changeValue(adv - now);
+            field.changeValue(now - adv);
             attributes.get(finalI).setAdvValue(now);
             calculateHP();
 
