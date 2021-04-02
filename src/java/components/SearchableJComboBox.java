@@ -111,11 +111,11 @@ public class SearchableJComboBox extends JComboBox<String> {
     }
 
     public void setLocked(boolean aFlag) {
-        if (!isLocked) {
+        if (isLocked == aFlag) {
             return;
         }
 
-        textField.setEditable(aFlag);
+        textField.setEditable(!aFlag);
         if (!aFlag) {
             for (MouseListener listener : mouseListeners) {
                 this.addMouseListener(listener);
