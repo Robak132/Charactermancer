@@ -29,9 +29,6 @@ public class Race {
     @Column(name = "RANDOM_TALENTS")
     private int randomTalents;
 
-    @OneToMany(mappedBy = "race")
-    private Set<ProfTable> profTable;
-
     @Fetch(FetchMode.JOIN)
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name= "IDRACE")

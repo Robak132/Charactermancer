@@ -22,9 +22,6 @@ public class Profession {
     @JoinColumn(name = "IDCAREER")
     private ProfessionCareer career;
 
-    @OneToMany(mappedBy = "prof")
-    Set<ProfTable> profTable;
-
     @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="PROF_ATTRIBUTES",

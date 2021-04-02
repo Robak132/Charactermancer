@@ -46,7 +46,6 @@ public class CharacterGen {
     private SearchableJComboBox prof_option4a;
     private SearchableJComboBox prof_option4b;
     private JButton prof_option4Button;
-    private final List<Profession> profList = new ArrayList<>();
     private final JTextField[][] prof_options = {
             {prof_option1a, prof_option1b},
             {prof_option2a, prof_option2b},
@@ -100,7 +99,10 @@ public class CharacterGen {
     private JIntegerField mouse_source = null;
     private Color mouse_color;
     private boolean attr_locked = true;
+
     private Race rollRace;
+    private final List<Profession> profList = new ArrayList<>();
+    private final List<GroupTalent> talentsList = new ArrayList<>();
 
     private final List<JIntegerField> BAttr = new ArrayList<>();
     private final List<JIntegerField> RAttr = new ArrayList<>();
@@ -348,40 +350,48 @@ public class CharacterGen {
         // Fate & Resolve //
         //TODO: Maybe change all buttons to JSpinners :thinking:
         fate_fateUP.addActionListener(e -> {
-            fate_extra.setText(String.valueOf(Integer.parseInt(fate_extra.getText()) - 1));
-            fate_fate.setText(String.valueOf(Integer.parseInt(fate_fate.getText()) + 1));
+            fate_extra.setValue(fate_extra.getValue() - 1);
+            fate_fate.setValue(fate_fate.getValue() + 1);
 
             fate_fateUP.setEnabled(Integer.parseInt(fate_extra.getText())!=0);
             fate_fateDOWN.setEnabled(true);
             fate_resilienceUP.setEnabled(Integer.parseInt(fate_extra.getText())!=0);
             fate_resilienceDOWN.setEnabled(Integer.parseInt(fate_resilience.getText())!=sheet.getRace().getResilience());
+
+            fate_OKButton.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
         });
         fate_fateDOWN.addActionListener(e -> {
-            fate_extra.setText(String.valueOf(Integer.parseInt(fate_extra.getText())+1));
-            fate_fate.setText(String.valueOf(Integer.parseInt(fate_fate.getText())-1));
+            fate_extra.setValue(fate_extra.getValue()+1);
+            fate_fate.setValue(fate_fate.getValue()-1);
 
             fate_fateUP.setEnabled(true);
             fate_fateDOWN.setEnabled(Integer.parseInt(fate_fate.getText())!=sheet.getRace().getFate());
             fate_resilienceUP.setEnabled(true);
             fate_resilienceDOWN.setEnabled(Integer.parseInt(fate_resilience.getText())!=sheet.getRace().getResilience());
+
+            fate_OKButton.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
         });
         fate_resilienceUP.addActionListener(e -> {
-            fate_extra.setText(String.valueOf(Integer.parseInt(fate_extra.getText()) - 1));
-            fate_resilience.setText(String.valueOf(Integer.parseInt(fate_resilience.getText()) + 1));
+            fate_extra.setValue(fate_extra.getValue() - 1);
+            fate_resilience.setValue(fate_resilience.getValue() + 1);
 
             fate_fateUP.setEnabled(Integer.parseInt(fate_extra.getText())!=0);
             fate_fateDOWN.setEnabled(Integer.parseInt(fate_fate.getText())!=sheet.getRace().getFate());
             fate_resilienceUP.setEnabled(Integer.parseInt(fate_extra.getText())!=0);
             fate_resilienceDOWN.setEnabled(true);
+
+            fate_OKButton.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
         });
         fate_resilienceDOWN.addActionListener(e -> {
-            fate_extra.setText(String.valueOf(Integer.parseInt(fate_extra.getText())+1));
-            fate_resilience.setText(String.valueOf(Integer.parseInt(fate_resilience.getText())-1));
+            fate_extra.setValue(fate_extra.getValue() + 1);
+            fate_resilience.setValue(fate_resilience.getValue() - 1);
 
             fate_fateUP.setEnabled(true);
             fate_fateDOWN.setEnabled(Integer.parseInt(fate_fate.getText())!=sheet.getRace().getFate());
             fate_resilienceUP.setEnabled(true);
             fate_resilienceDOWN.setEnabled(Integer.parseInt(fate_resilience.getText())!=sheet.getRace().getResilience());
+
+            fate_OKButton.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
         });
         fate_OKButton.addActionListener(e -> { //
             sheet.setAttributeList(attributes);
@@ -419,16 +429,8 @@ public class CharacterGen {
             }
         });
         raceskill_option1.addActionListener(e -> {
+            sheet.setTalentList(talentsList);
             System.out.println(sheet);
-//            for (GroupSkill skill : baseSkills) {
-//                System.out.printf("%s, %s, %d\n", skill.getName(), skill.getAttr(), skill.getTotalValue());
-//            }
-//            for (GroupSkill skill : advSkills) {
-//                if (skill.getAdvValue() != 0) {
-//                    System.out.printf("%s, %s, %d\n", skill.getName(), skill.getAttr(), skill.getTotalValue());
-//                }
-//            }
-
 
 //            moveToNextTab(tabbedPane.getSelectedIndex());
         });
@@ -596,6 +598,8 @@ public class CharacterGen {
                 }
             });
         }
+
+        fate_OKButton.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
     }
 
     void raceskill_createTable() {
@@ -719,7 +723,8 @@ public class CharacterGen {
     }
 
     void racetalent_createTable() {
-        List<RaceTalent> talents = connection.getTalentsByRace(sheet.getRace().getID());
+        List<RaceTalent> raceTalentsList = connection.getTalentsByRace(sheet.getRace().getID());
+        raceTalentsList.forEach(e -> talentsList.add(e.getTalent()));
 
         // Constants
         final Dimension[] columnDimensions = new Dimension[]{
@@ -730,10 +735,10 @@ public class CharacterGen {
 
         // Talents - Header
         raceskill_talentsPanel.add(new JLabel("Talents", JLabel.CENTER), new GridConstraints(0, 0, 1, -1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
-        for (int i=0;i<talents.size();i++) {
+        for (int i = 0; i < raceTalentsList.size(); i++) {
             int column = 0;
 
-            racetalent_createComboIfNeeded(talents.get(i), i + 1, column, columnDimensions[column]);
+            racetalent_createComboIfNeeded(raceTalentsList.get(i), i + 1, column, columnDimensions[column]);
             column++;
 
             JTextField attrField = new JTextField();
@@ -743,14 +748,14 @@ public class CharacterGen {
 //            racetalent_updateMax(talents.get(i).getTalent(), attrField);
             raceskill_talentsPanel.add(attrField, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
 
-            JTextArea testArea = new JTextArea(talents.get(i).getTalent().getBaseTalent().getTest());
+            JTextArea testArea = new JTextArea(raceTalentsList.get(i).getTalent().getBaseTalent().getTest());
             testArea.setFont(new Font(testArea.getFont().getName(), testArea.getFont().getStyle(), 10));
             testArea.setLineWrap(true);
             testArea.setWrapStyleWord(true);
             testArea.setEditable(false);
             raceskill_talentsPanel.add(testArea, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
 
-            String tooltip = talents.get(i).getTalent().getBaseTalent().getDesc();
+            String tooltip = raceTalentsList.get(i).getTalent().getBaseTalent().getDesc();
             JLabel desc = new JLabel(new ImageIcon("src/resources/images/info.png"));
             desc.setToolTipText(MultiLineTooltip.splitToolTip(tooltip, 75, 10));
             raceskill_talentsPanel.add(desc, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null), false);
@@ -819,6 +824,8 @@ public class CharacterGen {
         textArea.setText(talent.getAllTalents()[index].getBaseTalent().getTest());
         JLabel desc = (JLabel) raceskill_talentsPanel.getComponent(3, row);
         desc.setToolTipText(MultiLineTooltip.splitToolTip(talent.getAllTalents()[index].getBaseTalent().getDesc()));
+
+        talentsList.set(row-1, talent.getAllTalents()[index]);
     }
 
     void calculateHP() {
@@ -843,7 +850,6 @@ public class CharacterGen {
                 break;
             case 2:
                 attr_createTable();
-//                attr_fillTable();
                 break;
             case 3:
                 fate_createTable();
