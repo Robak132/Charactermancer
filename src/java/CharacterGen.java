@@ -449,7 +449,7 @@ public class CharacterGen {
     }
 
     void attr_createTable() {
-        attributes = connection.getRaceAttributes(sheet.getRace());
+        attributes = sheet.getRace().getAttributes();
 
         attr_move = new JIntegerField(sheet.getRace().getM());
         attr_move.setHorizontalAlignment(JTextField.CENTER);
@@ -888,7 +888,7 @@ public class CharacterGen {
     }
     Object[] getOneRandomAttr(int index, Race race) {
         Object[] returns = new Object[2];
-        int raceAttr = race.getAttribute(index+1).getValue();
+        int raceAttr = race.getRaceAttribute(index+1).getValue();
         int rollAttr = Dice.randomDice(2, 10);
         int sumAttr = raceAttr + rollAttr;
 

@@ -1,10 +1,8 @@
 package mappings;
 
-import java.util.List;
+import java.util.*;
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -121,19 +119,29 @@ public class Race {
         this.randomTalents = randomTalents;
     }
 
-    public List<RaceAttribute> getAttributes() {
+    public List<RaceAttribute> getRaceAttributes() {
         return raceAttributes;
     }
-    public void setAttributes(List<RaceAttribute> raceAttributes) {
-        this.raceAttributes = raceAttributes;
-    }
-    public RaceAttribute getAttribute(int attributeID) {
+    public RaceAttribute getRaceAttribute(int attributeID) {
         for (RaceAttribute raceAttribute: raceAttributes) {
             if (raceAttribute.getAttribute().getID() == attributeID) {
                 return raceAttribute;
             }
         }
         return null;
+    }
+    public void setRaceAttributes(List<RaceAttribute> raceAttributes) {
+        this.raceAttributes = raceAttributes;
+    }
+
+    public List<Attribute> getAttributes() {
+        List<Attribute> tempList = new ArrayList<>();
+        for (RaceAttribute raceAttribute : raceAttributes) {
+            Attribute attribute = raceAttribute.getAttribute();
+            attribute.setBaseValue(raceAttribute.getValue());
+            tempList.add(attribute);
+        }
+        return tempList;
     }
 
     @Override

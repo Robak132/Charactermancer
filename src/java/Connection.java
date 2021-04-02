@@ -96,7 +96,7 @@ public class Connection {
         Profession prof = null;
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("FROM Profession WHERE clss =:param1 AND profession =:param2 AND level =:param3");
+            Query SQLQuery = session.createQuery("FROM Profession p WHERE p.career.professionClass =:param1 AND profession =:param2 AND level =:param3");
             SQLQuery.setParameter("param1", clss);
             SQLQuery.setParameter("param2", profession);
             SQLQuery.setParameter("param3", level);
@@ -294,16 +294,6 @@ public class Connection {
             ex.printStackTrace();
         }
         return talent;
-    }
-
-    List<Attribute> getRaceAttributes(Race race) {
-        List<Attribute> attributeList = new ArrayList<>();
-        for (RaceAttribute raceAttribute : race.getAttributes()) {
-            Attribute attribute = raceAttribute.getAttribute();
-            attribute.setBaseValue(raceAttribute.getValue());
-            attributeList.add(attribute);
-        }
-        return attributeList;
     }
 
     List<String> getProfsClasses(int race) {
