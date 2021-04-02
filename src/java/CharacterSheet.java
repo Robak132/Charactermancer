@@ -2,9 +2,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import components.SearchableJComboBox;
-import mappings.Attribute;
-import mappings.Profession;
-import mappings.Race;
+import mappings.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -32,14 +30,17 @@ public class CharacterSheet {
     private JPanel basePanel;
     private JButton exitButton;
     private JTextField raceSelectText;
+    private List<JTextField> attributesTextFields = new ArrayList<>();
+    private int move, maxhp, hp;
+    private boolean warning = false;
+
 
     private Race race;
     private Profession prof;
     private List<Attribute> attributeList;
-    private List<JTextField> attributesTextFields = new ArrayList<>();
-
-    private int move, maxhp, hp, exp;
-    private boolean warning = false;
+    private List<GroupSkill> skillList;
+    private List<GroupTalent> talentList;
+    private int exp;
 
     public CharacterSheet(JFrame _frame, Main _screen, Connection _connection) {
         frame = _frame;
@@ -81,9 +82,6 @@ public class CharacterSheet {
             frame.validate();
         });
     }
-    private void checkCharValue() {
-        System.out.println(race.getName());
-    }
     public static void ReadJSONExample() {
         JSONParser parser = new JSONParser();
         JSONArray a = null;
@@ -115,19 +113,29 @@ public class CharacterSheet {
     public void setRace(Race race) {
         this.race = race;
     }
-
     public Profession getProf() {
         return prof;
     }
     public void setProf(Profession prof) {
         this.prof = prof;
     }
-
     public List<Attribute> getAttributeList() {
         return attributeList;
     }
     public void setAttributeList(List<Attribute> attributeList) {
         this.attributeList = attributeList;
+    }
+    public List<GroupSkill> getSkillList() {
+        return skillList;
+    }
+    public void setSkillList(List<GroupSkill> skillList) {
+        this.skillList = skillList;
+    }
+    public List<GroupTalent> getTalentList() {
+        return talentList;
+    }
+    public void setTalentList(List<GroupTalent> talentList) {
+        this.talentList = talentList;
     }
 
     public int getExp() {
@@ -165,11 +173,27 @@ public class CharacterSheet {
     public String toString() {
         String ret = "";
         ret += "CharacterSheet {\n";
+        ret += "exp = " + exp + "\n";
         ret += race + "\n";
         ret += prof + "\n";
-        ret += "exp = " + exp + "\n";
-        ret += "attributes = " + attributeList + "\n";
-        ret += "}";
+
+        ret += "Attributes = [\n";
+        for (Attribute attribute : attributeList) {
+            ret += "\t" + attribute + "\n";
+        }
+        ret += "]\n";
+
+        ret += "Skills = [\n";
+//        for (GroupSkill skill : skillList) {
+//            ret += "\t" + skill + "\n";
+//        }
+        ret += "]\n";
+
+        ret += "Talents = [\n";
+//        for (GroupTalent talent : talentList) {
+//            ret += "\t" + talent + "\n";
+//        }
+        ret += "]\n";
 
         return ret;
     }

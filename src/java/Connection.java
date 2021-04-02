@@ -123,11 +123,24 @@ public class Connection {
         }
         return prof;
     }
+    List<ProfessionClass> getProfessionClass() {
+        List<ProfessionClass> profs = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query SQLQuery = session.createQuery("FROM ProfessionClass");
+            profs = SQLQuery.list();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return profs;
+    }
     List<Profession> getProfs(int race) {
         List<Profession> profs = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.race.id =:param AND t.prof.clss!='Zwierzęta'");
+            Query SQLQuery = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.race.id =:param AND t.prof.career.professionClass!='Zwierzęta'");
             SQLQuery.setParameter("param", race);
             profs = SQLQuery.list();
             session.close();
@@ -143,7 +156,7 @@ public class Connection {
         List<Profession> profs = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.prof.clss = :param2 AND t.race.id =:param");
+            Query SQLQuery = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.prof.career.professionClass = :param2 AND t.race.id =:param");
             SQLQuery.setParameter("param", race);
             SQLQuery.setParameter("param2", clss);
             profs = SQLQuery.list();
@@ -295,8 +308,8 @@ public class Connection {
 
     List<String> getProfsClasses(int race) {
         List<String> result = new ArrayList<>();
-        for (Object prof: getProfs(race))
-            result.add(((Profession) prof).getClss());
+        for (ProfessionClass prof: getProfessionClass())
+            result.add(prof.getName());
         return result;
     }
     List<String> getProfsNames(int race, String clss) {
