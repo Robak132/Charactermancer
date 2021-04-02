@@ -60,6 +60,15 @@ public class GroupTalent {
     }
 
     @Override
+    public String toString() {
+        if (name.equals(baseTalent.getName())) {
+            return String.format("Talent {name = %s, lvl = %d}", name, currentLvl);
+        } else {
+            return String.format("Talent {name = %s (%s), lvl = %d}", name, baseTalent.getName(), currentLvl);
+        }
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

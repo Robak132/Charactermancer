@@ -191,7 +191,7 @@ public class CharacterSheet {
 
         ret += "Talents = [\n";
         for (GroupTalent talent : talentList) {
-            ret += "\t" + talent.getName() + "\n";
+            ret += "\t" + talent + "\n";
         }
         ret += "]\n";
 
