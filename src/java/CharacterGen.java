@@ -197,7 +197,7 @@ public class CharacterGen {
                 prof_rollResult.setValue(rollResultNumeric);
             } while (profList.contains(rollProf));
             profList.add(rollProf);
-            prof_options[profList.size() - 1][0].setText(rollProf.getCareer());
+            prof_options[profList.size() - 1][0].setText(rollProf.getCareer().getName());
             prof_options[profList.size() - 1][1].setText(rollProf.getProfession());
             prof_buttons[profList.size() - 1].setEnabled(true);
             if (profList.size() > 1)
@@ -223,7 +223,7 @@ public class CharacterGen {
                     } else {
                         rollLabel.setVisible(false);
                         profList.add(prof);
-                        prof_options[profList.size() - 1][0].setText(prof.getCareer());
+                        prof_options[profList.size() - 1][0].setText(prof.getCareer().getName());
                         prof_options[profList.size() - 1][1].setText(prof.getProfession());
                         prof_buttons[profList.size() - 1].setEnabled(true);
                     }
@@ -281,7 +281,7 @@ public class CharacterGen {
         });
         //TODO: Make prof_option4Button works
         //FIXME: Optimise SearchableJComboBoxes
-        prof_option4a.addActionListener(e -> prof_option4b.addItems(connection.getProfsNames(sheet.getRace().getID(), prof_option4a.getValue())));
+//        prof_option4a.addActionListener(e -> prof_option4b.addItems(connection.getProfsNames(sheet.getRace().getID(), prof_option4a.getValue())));
 
         // Attributes //
         attr_rollButton.addActionListener(e -> {
@@ -331,7 +331,7 @@ public class CharacterGen {
         });
         attr_option1Button.addActionListener(e -> {
             for (int i = 0; i < RAttr.size(); i++) {
-                attributes.get(i).setCharValue(RAttr.get(i).getValue());
+                attributes.get(i).setRndValue(RAttr.get(i).getValue());
             }
             sheet.setAttributeList(attributes);
             sheet.setMove(attr_move.getValue());
@@ -458,7 +458,7 @@ public class CharacterGen {
         for (int i = 0; i < attributes.size(); i++) {
             boolean changeBackground = (sheet.getRace().getSize()== Size.NORMAL && i == 2) || i == 3 || i == 8;
             Color foregroundColor = Color.black;
-            if (sheet.getProf().getAttr(i)) {
+            if (sheet.getProf().hasAttribute(i+1)) {
                 foregroundColor = ColorPalette.CustomGreen;
             }
 
@@ -557,7 +557,10 @@ public class CharacterGen {
             fate_attributeTable.add(attr, new GridConstraints(2, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
 
             JSpinner adv = new JSpinner(new SpinnerNumberModel(0, 0, 5, 1));
-            adv.setEnabled(sheet.getProf().getAttr(i));
+            adv.setEnabled(false);
+            if (sheet.getProf().hasAttribute(i+1)) {
+                adv.setEnabled(true);
+            }
             fate_attributeTable.add(adv,new GridConstraints(3, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
 
             JIntegerField sumAttr = new JIntegerField(BAttr.get(i).getValue());
@@ -835,8 +838,8 @@ public class CharacterGen {
         tabbedPane.setSelectedIndex(tab + 1);
         switch (tab + 1) {
             case 1:
-                prof_option4a.addItems(connection.getProfsClasses(sheet.getRace().getID()));
-                prof_option4b.addItems(connection.getProfsNames(sheet.getRace().getID(), prof_option4a.getValue()));
+//                prof_option4a.addItems(connection.getProfsClasses(sheet.getRace().getID()));
+//                prof_option4b.addItems(connection.getProfsNames(sheet.getRace().getID(), prof_option4a.getValue()));
                 break;
             case 2:
                 attr_createTable();

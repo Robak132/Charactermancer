@@ -1,11 +1,7 @@
 package mappings;
 
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "ATTRIBUTES")
@@ -19,7 +15,7 @@ public class Attribute {
     @Transient
     private int baseValue;
     @Transient
-    private int charValue;
+    private int rndValue;
     @Transient
     private int advValue;
     @Transient
@@ -29,9 +25,7 @@ public class Attribute {
         this.ID = ID;
         this.name = name;
     }
-    public Attribute() {
-
-    }
+    public Attribute() {}
 
     public int getID() {
         return ID;
@@ -53,11 +47,11 @@ public class Attribute {
         this.baseValue = baseValue;
         updateAll();
     }
-    public int getCharValue() {
-        return charValue;
+    public int getRndValue() {
+        return rndValue;
     }
-    public void setCharValue(int charValue) {
-        this.charValue = charValue;
+    public void setRndValue(int rndValue) {
+        this.rndValue = rndValue;
         updateAll();
     }
     public int getAdvValue() {
@@ -72,7 +66,7 @@ public class Attribute {
     }
 
     private void updateAll() {
-        totalValue=baseValue+charValue+advValue;
+        totalValue=baseValue+ rndValue +advValue;
     }
 
     @Override
@@ -85,5 +79,10 @@ public class Attribute {
         }
         Attribute attribute = (Attribute) o;
         return ID == attribute.ID && Objects.equals(name, attribute.name);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Attribute {name = %3s, BV = %3d, RV = %3d, AV = %3d, TV = %3d}", name, baseValue, rndValue, advValue, totalValue);
     }
 }

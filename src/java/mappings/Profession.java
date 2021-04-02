@@ -1,6 +1,10 @@
 package mappings;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -9,58 +13,30 @@ public class Profession {
     @Id
     @Column(name = "ID")
     private int id;
-    @Column(name = "CLASS")
-    private String clss;
-    @Column(name = "CAREER")
-    private String career;
     @Column(name = "PROFESSION")
     private String profession;
-    @Column(name = "PROFESSIONENG")
-    private String professioneng;
     @Column(name = "LEVEL")
     private int level;
-    @Column(name = "WW")
-    private boolean ww;
-    @Column(name = "US")
-    private boolean us;
-    @Column(name = "S")
-    private boolean s;
-    @Column(name = "WT")
-    private boolean wt;
-    @Column(name = "I")
-    private boolean i;
-    @Column(name = "ZW")
-    private boolean zw;
-    @Column(name = "ZR")
-    private boolean zr;
-    @Column(name = "IT")
-    private boolean it;
-    @Column(name = "SW")
-    private boolean sw;
-    @Column(name = "OGD")
-    private boolean ogd;
+
+    @ManyToOne
+    @JoinColumn(name = "IDCAREER")
+    private ProfessionCareer career;
 
     @OneToMany(mappedBy = "prof")
     Set<ProfTable> profTable;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="PROF_ATTRIBUTES",
+            joinColumns = @JoinColumn(name = "IDPROF"),
+            inverseJoinColumns = @JoinColumn(name = "IDATTR"))
+    List<Attribute> attributes;
+
     public Profession() {}
-    public Profession(int id, String clss, String career, String profession, String professioneng, int level, boolean ww, boolean us, boolean s, boolean wt, boolean i, boolean zw, boolean zr, boolean it, boolean sw, boolean ogd) {
+    public Profession(int id, String profession, int level) {
         this.id = id;
-        this.clss = clss;
-        this.career = career;
         this.profession = profession;
-        this.professioneng = professioneng;
         this.level = level;
-        this.ww = ww;
-        this.us = us;
-        this.s = s;
-        this.wt = wt;
-        this.i = i;
-        this.zw = zw;
-        this.zr = zr;
-        this.it = it;
-        this.sw = sw;
-        this.ogd = ogd;
     }
 
     public int getId() {
@@ -68,18 +44,6 @@ public class Profession {
     }
     public void setId(int id) {
         this.id = id;
-    }
-    public String getClss() {
-        return clss;
-    }
-    public void setClss(String clss) {
-        this.clss = clss;
-    }
-    public String getCareer() {
-        return career;
-    }
-    public void setCareer(String career) {
-        this.career = career;
     }
     public String getProfession() {
         return profession;
@@ -93,72 +57,26 @@ public class Profession {
     public void setLevel(int level) {
         this.level = level;
     }
-    public boolean getWw() {
-        return ww;
+
+    public ProfessionCareer getCareer() {
+        return career;
     }
-    public void setWw(boolean ww) {
-        this.ww = ww;
+    public void setCareer(ProfessionCareer career) {
+        this.career = career;
     }
-    public boolean getUs() {
-        return us;
+    public List<Attribute> getAttributes() {
+        return attributes;
     }
-    public void setUs(boolean us) {
-        this.us = us;
+    public boolean hasAttribute(int ID) {
+        for (Attribute attr : attributes) {
+            if (attr.getID() == ID) {
+                return true;
+            }
+        }
+        return false;
     }
-    public boolean getS() {
-        return s;
-    }
-    public void setS(boolean s) {
-        this.s = s;
-    }
-    public boolean getWt() {
-        return wt;
-    }
-    public void setWt(boolean wt) {
-        this.wt = wt;
-    }
-    public boolean getI() {
-        return i;
-    }
-    public void setI(boolean i) {
-        this.i = i;
-    }
-    public boolean getZw() {
-        return zw;
-    }
-    public void setZw(boolean zw) {
-        this.zw = zw;
-    }
-    public boolean getZr() {
-        return zr;
-    }
-    public void setZr(boolean zr) {
-        this.zr = zr;
-    }
-    public boolean getIt() {
-        return it;
-    }
-    public void setIt(boolean it) {
-        this.it = it;
-    }
-    public boolean getSw() {
-        return sw;
-    }
-    public void setSw(boolean sw) {
-        this.sw = sw;
-    }
-    public boolean getOgd() {
-        return ogd;
-    }
-    public void setOgd(boolean ogd) {
-        this.ogd = ogd;
-    }
-    public boolean getAttr(int number) {
-        boolean[] attributes = new boolean[] {ww, us, s, wt, i, zw, zr, it, sw, ogd};
-        return attributes[number];
-    }
-    public boolean[] getAllAttr() {
-        return new boolean[] {ww, us, s, wt, i, zw, zr, it, sw, ogd};
+    public void setAttributes(List<Attribute> attributes) {
+        this.attributes = attributes;
     }
 
     @Override
@@ -175,6 +93,6 @@ public class Profession {
 
     @Override
     public String toString() {
-        return String.format("Profession {class = %s, career = %s, profession = %s}", clss, career, profession);
+        return String.format("Profession {class = %s, career = %s, profession = %s}", career.getProfessionClass(), career, profession);
     }
 }
