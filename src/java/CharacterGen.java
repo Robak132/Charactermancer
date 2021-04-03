@@ -93,8 +93,11 @@ public class CharacterGen {
     private JIntegerField raceskill_rollResult;
     private JButton raceskill_OKButton;
     private JButton raceskill_option1;
-    private JLabel raceskill_noteLabel;
     private Map<Integer, Integer> raceskill_points;
+
+    private GridPanel profskill_skillsPanel;
+    private GridPanel profskill_talentsPanel;
+    private JButton pofskill_option1;
 
     private JIntegerField mouse_source = null;
     private Color mouse_color;
@@ -534,6 +537,7 @@ public class CharacterGen {
 
     void fate_createTable() {
         List<JIntegerField> values = List.copyOf(TAttr);
+        List<Component> tabOrder = new ArrayList<>();
         BAttr.clear();
         RAttr.clear();
         TAttr.clear();
@@ -562,6 +566,7 @@ public class CharacterGen {
             adv.setEnabled(false);
             if (sheet.getProf().hasAttribute(i+1)) {
                 adv.setEnabled(true);
+                tabOrder.add(((JSpinner.DefaultEditor) adv.getEditor()).getTextField());
             }
             fate_attributeTable.add(adv,new GridConstraints(3, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
 
@@ -574,6 +579,10 @@ public class CharacterGen {
 
             adv.addChangeListener(e -> fate_updatePoints(adv, finalI, sumAttr));
         }
+        fate_attributeTable.setFocusCycleRoot(true);
+        fate_attributeTable.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
+        tabOrder.get(0).requestFocusInWindow();
+
         fate_attributeTable.build(GridPanel.ALIGNMENT_HORIZONTAL);
 
         fate_fate.setValue(sheet.getRace().getFate());
@@ -607,19 +616,14 @@ public class CharacterGen {
         List<Component> tabOrder = new ArrayList<>();
         professionSkills = connection.getProfessionSkills(sheet.getProf());
 
-        // Skills - Headers
-        raceskill_skillsPanel.add(new JLabel("Basic skills", JLabel.CENTER), new GridConstraints(0, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
-        raceskill_skillsPanel.add(new JLabel("Advanced skills", JLabel.CENTER), new GridConstraints(0, 4, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
-
-        int base_itr = 1;
-        int adv_itr = 1;
+        int base_itr = 1, adv_itr = 1;
         int column, row;
         for (GroupSkill skill : skills) {
             Color color = Color.black;
-
             if (skill.isAdv()) {
                 column = 4;
                 row = adv_itr++;
+                color = Color.red;
                 advSkills.add(skill);
             } else {
                 column = 0;
@@ -637,7 +641,7 @@ public class CharacterGen {
                 }
             }
 
-            Container nameContainer = raceskill_createComboIfNeeded(skill, row, column);
+            Container nameContainer = createSkillComboIfNeeded(skill, raceskill_skillsPanel, row, column);
             nameContainer.setForeground(color);
             column++;
 
@@ -647,9 +651,8 @@ public class CharacterGen {
             attrField.setFocusable(false);
             raceskill_skillsPanel.add(attrField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            ListSpinner<Integer> jSpinner = new ListSpinner<>(new Integer[]{0, 3, 5});
+            AdvancedSpinner jSpinner = new AdvancedSpinner(new SpinnerTypeListModel<>(new Integer[]{0, 3, 5}));
             jSpinner.setHorizontalAlignment(JTextField.CENTER);
-            jSpinner.setEditable(false);
             raceskill_skillsPanel.add(jSpinner, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
             JIntegerField sumField = new JIntegerField(skill.getTotalValue(), "%d", JTextField.CENTER);
@@ -657,38 +660,23 @@ public class CharacterGen {
             sumField.setFocusable(false);
             raceskill_skillsPanel.add(sumField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            jSpinner.addChangeListener(e -> raceskill_updatePoints(nameContainer, jSpinner, sumField, skill));
+            jSpinner.addChangeListener(e -> raceskill_updatePoints(nameContainer, jSpinner, sumField, skill, professionSkills.contains(skill)));
             tabOrder.add(((JSpinner.DefaultEditor) jSpinner.getEditor()).getTextField());
         }
+        if (base_itr != 1) {
+            raceskill_skillsPanel.add(new JLabel("Basic skills", JLabel.CENTER), new GridConstraints(0, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
+        }
+        if (adv_itr != 1) {
+            raceskill_skillsPanel.add(new JLabel("Advanced skills", JLabel.CENTER), new GridConstraints(0, 4, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
+        }
+
         raceskill_skillsPanel.setFocusCycleRoot(true);
         raceskill_skillsPanel.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
+        tabOrder.get(0).requestFocusInWindow();
+
         raceskill_skillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
-    Container raceskill_createComboIfNeeded(GroupSkill skill, int row, int column) {
-        if (!skill.isGroup()) {
-            JTextField textField = new JTextField(skill.getName());
-            String tooltip = skill.getBase().getDescr();
-            if (tooltip != null)
-                textField.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
-            textField.setFocusable(false);
-            textField.setEditable(false);
-            raceskill_skillsPanel.add(textField, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
-            return textField;
-        } else {
-            SearchableJComboBox comboBox = new SearchableJComboBox();
-            String tooltip = skill.getBase().getDescr();
-            if (tooltip != null)
-                comboBox.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
-            for (GroupSkill alternateSkill : connection.getAlternateSkillsForGroup(skill.getBase().getID()))
-                comboBox.addItem(alternateSkill.getName());
-            comboBox.setPreferredSize(new Dimension(comboBox.getSize().width, -1));
-            comboBox.refresh(false);
-            comboBox.setLocked(true);
-            raceskill_skillsPanel.add(comboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
-            return comboBox;
-        }
-    }
-    void raceskill_updatePoints(Container container, ListSpinner<Integer> spinner, JIntegerField totalField, GroupSkill skill) {
+    void raceskill_updatePoints(Container container, AdvancedSpinner spinner, JIntegerField totalField, GroupSkill skill, boolean paintGreen) {
         int now = (int) spinner.getValue();
         int last = (int) spinner.getLastValue();
 
@@ -706,15 +694,15 @@ public class CharacterGen {
             container.setForeground(Color.black);
         }
 
-        if (professionSkills.contains(skill)) {
+        if (paintGreen) {
             container.setForeground(ColorPalette.CustomGreen);
         }
 
-        raceskill_skillsPanel.iterateThroughRows(2, 1, baseSkills.size() + 1, this::raceskill_changeColor);
-        raceskill_skillsPanel.iterateThroughRows(6, 1, advSkills.size() + 1, this::raceskill_changeColor);
+//        raceskill_skillsPanel.iterateThroughRows(2, 1, baseSkills.size(), this::raceskill_changeColor);
+//        raceskill_skillsPanel.iterateThroughRows(6, 1, advSkills.size(), this::raceskill_changeColor);
     }
     void raceskill_changeColor(Object object) {
-        JSpinner active = (JSpinner) object;
+        AdvancedSpinner active = (AdvancedSpinner) object;
         if (raceskill_points.get((int) active.getValue()) > 3) {
             ((JSpinner.DefaultEditor) active.getEditor()).getTextField().setForeground(Color.RED);
         } else {
@@ -807,6 +795,16 @@ public class CharacterGen {
             raceskill_talentsPanel.add(comboField, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions, null), false);
         }
     }
+    void racetalent_updateTalent(RaceTalent talent, int row, int index) {
+        JTextField testField = (JTextField) raceskill_talentsPanel.getComponent(1, row);
+//        racetalent_updateMax(talent.getAllTalents()[index], testField);
+        JTextArea textArea = (JTextArea) raceskill_talentsPanel.getComponent(2, row);
+        textArea.setText(talent.getAllTalents()[index].getBaseTalent().getTest());
+        JLabel desc = (JLabel) raceskill_talentsPanel.getComponent(3, row);
+        desc.setToolTipText(MultiLineTooltip.splitToolTip(talent.getAllTalents()[index].getBaseTalent().getDesc()));
+
+        talentsList.set(row-1, talent.getAllTalents()[index]);
+    }
 //    void racetalent_updateMax(GroupTalent talent, JTextField testField) {
 //        int max;
 //        try {
@@ -817,15 +815,75 @@ public class CharacterGen {
 //        }
 //        testField.setText(String.format("%d/%d", talent.getCurrentLvl(), max));
 //    }
-    void racetalent_updateTalent(RaceTalent talent, int row, int index) {
-        JTextField testField = (JTextField) raceskill_talentsPanel.getComponent(1, row);
-//        racetalent_updateMax(talent.getAllTalents()[index], testField);
-        JTextArea textArea = (JTextArea) raceskill_talentsPanel.getComponent(2, row);
-        textArea.setText(talent.getAllTalents()[index].getBaseTalent().getTest());
-        JLabel desc = (JLabel) raceskill_talentsPanel.getComponent(3, row);
-        desc.setToolTipText(MultiLineTooltip.splitToolTip(talent.getAllTalents()[index].getBaseTalent().getDesc()));
+    void profskill_createTable() {
+        List<GroupSkill> skills = connection.getProfessionSkills(sheet.getProf(), sheet.getAttributeList());
+        List<Component> tabOrder = new ArrayList<>();
 
-        talentsList.set(row-1, talent.getAllTalents()[index]);
+        int base_itr = 1;
+        int adv_itr = 1;
+        int column, row;
+        for (GroupSkill skill : skills) {
+            Color color = Color.black;
+
+            if (skill.isAdv()) {
+                column = 4;
+                row = adv_itr++;
+                color = Color.red;
+                advSkills.add(skill);
+            } else {
+                column = 0;
+                row = base_itr++;
+                baseSkills.add(skill);
+            }
+
+            Container nameContainer = createSkillComboIfNeeded(skill, profskill_skillsPanel, row, column);
+            nameContainer.setForeground(color);
+            column++;
+
+            JTextField attrField = new JTextField(skill.getAttr().getName());
+            attrField.setHorizontalAlignment(JTextField.CENTER);
+            attrField.setEditable(false);
+            attrField.setFocusable(false);
+            profskill_skillsPanel.add(attrField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
+
+            AdvancedSpinner jSpinner = new AdvancedSpinner(new SpinnerNumberModel(skill.getAdvValue(), 0, 10, 1));
+            jSpinner.setHorizontalAlignment(JTextField.CENTER);
+            profskill_skillsPanel.add(jSpinner, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
+
+            JIntegerField sumField = new JIntegerField(skill.getTotalValue(), "%d", JTextField.CENTER);
+            sumField.setEditable(false);
+            sumField.setFocusable(false);
+            profskill_skillsPanel.add(sumField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
+
+            jSpinner.addChangeListener(e -> profskill_updatePoints(nameContainer, jSpinner, sumField, skill));
+            tabOrder.add(((JSpinner.DefaultEditor) jSpinner.getEditor()).getTextField());
+        }
+
+        if (base_itr != 1) {
+            profskill_skillsPanel.add(new JLabel("Basic skills", JLabel.CENTER), new GridConstraints(0, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
+        }
+        if (adv_itr != 1) {
+            profskill_skillsPanel.add(new JLabel("Advanced skills", JLabel.CENTER), new GridConstraints(0, 4, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
+        }
+        profskill_skillsPanel.setFocusCycleRoot(true);
+        profskill_skillsPanel.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
+        tabOrder.get(0).requestFocusInWindow();
+
+        profskill_skillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
+    }
+    void profskill_updatePoints(Container container, AdvancedSpinner spinner, JIntegerField totalField, GroupSkill skill) {
+        int now = (int) spinner.getValue();
+
+        if (skill.getAdvValue() != now) {
+            skill.setAdvValue(now);
+            totalField.setValue(skill.getTotalValue());
+        }
+
+        if (now == 0 && skill.getBase().isAdv()) {
+            container.setForeground(Color.red);
+        } else {
+            container.setForeground(Color.black);
+        }
     }
 
     void calculateHP() {
@@ -857,6 +915,7 @@ public class CharacterGen {
             case 4:
                 raceskill_createTable();
                 racetalent_createTable();
+                profskill_createTable();
                 break;
         }
     }
@@ -869,6 +928,31 @@ public class CharacterGen {
         raceskill_points.put(0, 0);
         raceskill_points.put(3, 0);
         raceskill_points.put(5, 0);
+    }
+
+    Container createSkillComboIfNeeded(GroupSkill skill, GridPanel panel, int row, int column) {
+        if (!skill.isGroup()) {
+            JTextField textField = new JTextField(skill.getName());
+            String tooltip = skill.getBase().getDescr();
+            if (tooltip != null)
+                textField.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
+            textField.setFocusable(false);
+            textField.setEditable(false);
+            panel.add(textField, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
+            return textField;
+        } else {
+            SearchableJComboBox comboBox = new SearchableJComboBox();
+            String tooltip = skill.getBase().getDescr();
+            if (tooltip != null)
+                comboBox.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
+            for (GroupSkill alternateSkill : connection.getAlternateSkillsForGroup(skill.getBase().getID()))
+                comboBox.addItem(alternateSkill.getName());
+            comboBox.setPreferredSize(new Dimension(comboBox.getSize().width, -1));
+            comboBox.refresh(false);
+            comboBox.setEditable(false);
+            panel.add(comboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
+            return comboBox;
+        }
     }
 
     // Base functions to use with GUI and text //

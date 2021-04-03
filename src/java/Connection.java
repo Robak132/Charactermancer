@@ -228,13 +228,25 @@ public class Connection {
         List<GroupSkill> skills = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT p.skill FROM ProfSkill p WHERE p.profession.id =:param");
+            Query SQLQuery = session.createQuery("SELECT p.skill FROM ProfSkill p WHERE p.profession.id =:param ORDER BY p.skill.name");
             SQLQuery.setParameter("param", prof.getId());
             skills = SQLQuery.list();
             session.close();
         } catch (Exception ex) {
             abort();
             ex.printStackTrace();
+        }
+        return skills;
+    }
+    List<GroupSkill> getProfessionSkills(Profession prof, List<Attribute> attributesToBind) {
+        List<GroupSkill> skills = getProfessionSkills(prof);
+        for (GroupSkill skill : skills) {
+            for (Attribute attribute : attributesToBind) {
+                if (skill.getAttr().equals(attribute)) {
+                    skill.setAttr(attribute);
+                    break;
+                }
+            }
         }
         return skills;
     }
