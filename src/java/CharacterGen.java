@@ -79,7 +79,7 @@ public class CharacterGen {
     private JIntegerField fate_extra;
     private JButton fate_resilienceUP;
     private JButton fate_resilienceDOWN;
-    private JButton fate_OKButton;
+    private JButton fate_option1Button;
 
     private final List<GroupTalent> raceskill_randomTalents = new ArrayList<>();
     private final List<GroupSkill> baseSkills = new ArrayList<>();
@@ -98,6 +98,7 @@ public class CharacterGen {
     private GridPanel profskill_skillsPanel;
     private GridPanel profskill_talentsPanel;
     private JButton pofskill_option1;
+    private JPanel fate_panel;
 
     private JIntegerField mouse_source = null;
     private Color mouse_color;
@@ -218,6 +219,7 @@ public class CharacterGen {
                 prof_option4b.setEnabled(true);
             }
         });
+        prof_rollButton.setMnemonic(KeyEvent.VK_R);
         prof_OKButton.addActionListener(e -> {
             try {
                 if (Integer.parseInt(prof_rollResult.getText()) > 0 && Integer.parseInt(prof_rollResult.getText()) <= 100) {
@@ -257,6 +259,7 @@ public class CharacterGen {
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
+        prof_option1Button.setMnemonic(KeyEvent.VK_1);
         prof_option2Button.addActionListener(e -> {
             sheet.setProf(profList.get(1));
             expField.changeValue(prof_maxExp);
@@ -271,6 +274,7 @@ public class CharacterGen {
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
+        prof_option2Button.setMnemonic(KeyEvent.VK_2);
         prof_option3Button.addActionListener(e -> {
             sheet.setProf(profList.get(2));
             expField.changeValue(prof_maxExp);
@@ -285,9 +289,11 @@ public class CharacterGen {
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
-        //TODO: Make prof_option4Button works
-        //FIXME: Optimise SearchableJComboBoxes
-//        prof_option4a.addActionListener(e -> prof_option4b.addItems(connection.getProfsNames(sheet.getRace().getID(), prof_option4a.getValue())));
+        prof_option3Button.setMnemonic(KeyEvent.VK_3);
+
+        /* TODO: Make prof_option4Button works */
+        /* FIXME: Optimise SearchableJComboBoxes */
+        // prof_option4a.addActionListener(e -> prof_option4b.addItems(connection.getProfsNames(sheet.getRace().getID(), prof_option4a.getValue())));
 
         // Attributes //
         attr_rollButton.addActionListener(e -> {
@@ -332,7 +338,8 @@ public class CharacterGen {
             attr_OKButton.setEnabled(false);
             attr_option1Button.setEnabled(true);
         });
-        attr_OKButton.addActionListener(e->{
+        attr_rollAllButton.setMnemonic(KeyEvent.VK_R);
+        attr_OKButton.addActionListener(e -> {
             //TODO Add custom values given by user
         });
         attr_option1Button.addActionListener(e -> {
@@ -349,10 +356,45 @@ public class CharacterGen {
             expField.changeValue(attr_maxExp);
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
-        //TODO: Make a3PutOwnValuesButton work and probably change the name
+        attr_option1Button.setMnemonic(KeyEvent.VK_1);
+        a3PutOwnValuesButton.addActionListener(e -> {
+            //TODO: Make a3PutOwnValuesButton work and probably change the name
+        });
 
         // Fate & Resolve //
-        //TODO: Maybe change all buttons to JSpinners :thinking:
+        /* TODO: Maybe change all buttons to JSpinners :thinking: */
+        KeyStroke escapeKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_MASK);
+        Action testAction = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                Integer[] slots = new Integer[] {0, 0, 0};
+                int remain = 5;
+                while (remain > 0) {
+                    int value = Dice.randomInt(0, remain);
+                    int active_slot = Dice.randomInt(0, 2);
+                    remain-=value;
+                    slots[active_slot]+=value;
+                }
+
+                int active_slot = 0;
+                Integer[] attributes = sheet.getProf().getSimpleAttributes();
+                for (int i=0; i < attributes.length; i++) {
+                    if (attributes[i] != 0) {
+                        attributes[i] = slots[active_slot];
+                        active_slot++;
+                    }
+                }
+
+                fate_attributeTable.iterateThroughColumns(2, (o, i) -> {
+                    JSpinner spinner = (JSpinner) o;
+                    if (spinner.isEnabled()) {
+                        spinner.setValue(attributes[i]);
+                    }
+                });
+            }
+        };
+        fate_attributeTable.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "TestAction");
+        fate_attributeTable.getActionMap().put("TestAction", testAction);
+
         fate_fateUP.addActionListener(e -> {
             fate_extra.setValue(fate_extra.getValue() - 1);
             fate_fate.setValue(fate_fate.getValue() + 1);
@@ -362,7 +404,7 @@ public class CharacterGen {
             fate_resilienceUP.setEnabled(Integer.parseInt(fate_extra.getText())!=0);
             fate_resilienceDOWN.setEnabled(Integer.parseInt(fate_resilience.getText())!=sheet.getRace().getResilience());
 
-            fate_OKButton.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
+            fate_option1Button.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
         });
         fate_fateDOWN.addActionListener(e -> {
             fate_extra.setValue(fate_extra.getValue()+1);
@@ -373,7 +415,7 @@ public class CharacterGen {
             fate_resilienceUP.setEnabled(true);
             fate_resilienceDOWN.setEnabled(Integer.parseInt(fate_resilience.getText())!=sheet.getRace().getResilience());
 
-            fate_OKButton.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
+            fate_option1Button.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
         });
         fate_resilienceUP.addActionListener(e -> {
             fate_extra.setValue(fate_extra.getValue() - 1);
@@ -384,7 +426,7 @@ public class CharacterGen {
             fate_resilienceUP.setEnabled(Integer.parseInt(fate_extra.getText())!=0);
             fate_resilienceDOWN.setEnabled(true);
 
-            fate_OKButton.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
+            fate_option1Button.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
         });
         fate_resilienceDOWN.addActionListener(e -> {
             fate_extra.setValue(fate_extra.getValue() + 1);
@@ -395,13 +437,14 @@ public class CharacterGen {
             fate_resilienceUP.setEnabled(true);
             fate_resilienceDOWN.setEnabled(Integer.parseInt(fate_resilience.getText())!=sheet.getRace().getResilience());
 
-            fate_OKButton.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
+            fate_option1Button.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
         });
-        fate_OKButton.addActionListener(e -> { //
+        fate_option1Button.addActionListener(e -> { //
             sheet.setAttributeList(attributes);
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
+        fate_option1Button.setMnemonic(KeyEvent.VK_1);
 
         // Race skills & Talents //
         raceskill_rollButton.addActionListener(e -> {
@@ -555,13 +598,13 @@ public class CharacterGen {
         String[] columns = {"WW", "US", "S", "Wt", "I", "Zw", "Zr", "Int", "SW", "Ogd", "Żyw"};
         for (int i = 0; i < columns.length; i++) {
             JLabel charLabel = new JLabel(columns[i], JLabel.CENTER);
-            fate_attributeTable.add(charLabel, new GridConstraints(1, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
+            fate_attributeTable.add(charLabel, new GridConstraints(0, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
         }
 
         attr_hp = new JIntegerField(attr_hp.getValue());
         attr_hp.setHorizontalAlignment(JTextField.CENTER);
         attr_hp.setEditable(false);
-        fate_attributeTable.add(attr_hp, new GridConstraints(2, columns.length-1, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null), false);
+        fate_attributeTable.add(attr_hp, new GridConstraints(1, columns.length-1, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null), false);
 
         for (int i = 0; i < columns.length-1; i++) {
             int finalI = i;
@@ -570,7 +613,7 @@ public class CharacterGen {
             attr.setHorizontalAlignment(JTextField.CENTER);
             attr.setEditable(false);
             BAttr.add(attr);
-            fate_attributeTable.add(attr, new GridConstraints(2, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
+            fate_attributeTable.add(attr, new GridConstraints(1, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
 
             JSpinner adv = new JSpinner(new SpinnerNumberModel(0, 0, 5, 1));
             adv.setEnabled(false);
@@ -578,14 +621,14 @@ public class CharacterGen {
                 adv.setEnabled(true);
                 tabOrder.add(((JSpinner.DefaultEditor) adv.getEditor()).getTextField());
             }
-            fate_attributeTable.add(adv,new GridConstraints(3, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
+            fate_attributeTable.add(adv,new GridConstraints(2, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
 
             JIntegerField sumAttr = new JIntegerField(BAttr.get(i).getValue());
             sumAttr.setHorizontalAlignment(JTextField.CENTER);
             sumAttr.setEditable(false);
             sumAttr.setFont(new Font(sumAttr.getFont().getName(), Font.ITALIC + Font.BOLD, sumAttr.getFont().getSize() + 2));
             TAttr.add(sumAttr);
-            fate_attributeTable.add(sumAttr, new GridConstraints(4, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
+            fate_attributeTable.add(sumAttr, new GridConstraints(3, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
 
             adv.addChangeListener(e -> fate_updatePoints(adv, finalI, sumAttr));
         }
@@ -609,7 +652,7 @@ public class CharacterGen {
             attributes.get(finalI).setAdvValue(now);
             calculateHP();
 
-            fate_attributeTable.iterateThroughColumns(3, o -> {
+            fate_attributeTable.iterateThroughColumns(2, (o, i) -> {
                 JSpinner spinner = (JSpinner) o;
                 if (activeSpinner != o) {
                     SpinnerNumberModel model = (SpinnerNumberModel) spinner.getModel();
@@ -618,7 +661,7 @@ public class CharacterGen {
             });
         }
 
-        fate_OKButton.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
+        fate_option1Button.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
     }
 
     void raceskill_createTable() {
@@ -931,7 +974,7 @@ public class CharacterGen {
     }
     void createUIComponents() {
         expField = new JIntegerField(0);
-        expField.setRunnable(o -> sheet.setExp(((JIntegerField) o).getValue()));
+        expField.setRunnable((o, i) -> sheet.setExp(((JIntegerField) o).getValue()));
 
         fate_attrRemain = new JIntegerField(5);
         raceskill_points = new HashMap<>();

@@ -651,7 +651,7 @@
               </grid>
             </children>
           </grid>
-          <grid id="f773f" layout-manager="GridLayoutManager" row-count="7" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="f773f" binding="fate_panel" layout-manager="GridLayoutManager" row-count="7" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <tabbedpane title-resource-bundle="hardcoded_values" title-key="fate.resolve" enabled="false"/>
@@ -822,7 +822,7 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="dbb6f" class="javax.swing.JButton" binding="fate_OKButton" default-binding="true">
+                  <component id="dbb6f" class="javax.swing.JButton" binding="fate_option1Button">
                     <constraints>
                       <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="400" height="-1"/>

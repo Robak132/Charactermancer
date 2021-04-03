@@ -12,4 +12,7 @@ public abstract class Dice {
             sum += randomDice(sides);
         return sum;
     }
+    public static int randomInt(int min, int max) {
+        return min + ThreadLocalRandom.current().nextInt(max-min+1);
+    }
 }

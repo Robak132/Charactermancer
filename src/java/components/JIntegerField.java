@@ -48,7 +48,7 @@ class JTypeField<T> extends JTextField {
         this.value = value;
 
         if (runnable != null) {
-            runnable.run(this);
+            runnable.run(this, null);
         }
     }
 

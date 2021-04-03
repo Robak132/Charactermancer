@@ -63,6 +63,13 @@ public class Profession {
     public List<Attribute> getAttributes() {
         return attributes;
     }
+    public Integer[] getSimpleAttributes() {
+        Integer[] intAttributes = new Integer[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        for (Attribute attribute : attributes) {
+            intAttributes[attribute.getID()-1] = 1;
+        }
+        return intAttributes;
+    }
     public boolean hasAttribute(int ID) {
         for (Attribute attr : attributes) {
             if (attr.getID() == ID) {
