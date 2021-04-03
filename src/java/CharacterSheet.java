@@ -184,16 +184,16 @@ public class CharacterSheet {
         ret += "]\n";
 
         ret += "Skills = [\n";
-//        for (GroupSkill skill : skillList) {
-//            ret += "\t" + skill + "\n";
-//        }
+        for (GroupSkill skill : skillList) {
+            ret += "\t" + skill + "\n";
+        }
         ret += "]\n";
 
         ret += "Talents = [\n";
         for (GroupTalent talent : talentList) {
             ret += "\t" + talent + "\n";
         }
-        ret += "]\n";
+        ret += "]";
 
         return ret;
     }

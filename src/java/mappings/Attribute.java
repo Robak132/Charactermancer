@@ -83,6 +83,6 @@ public class Attribute {
 
     @Override
     public String toString() {
-        return String.format("Attribute {name = %3s, BV = %3d, RV = %3d, AV = %3d, TV = %3d}", name, baseValue, rndValue, advValue, totalValue);
+        return String.format("Attribute {ID = %d, name = %3s, BV = %3d, RV = %3d, AV = %3d, TV = %3d}", ID, name, baseValue, rndValue, advValue, totalValue);
     }
 }

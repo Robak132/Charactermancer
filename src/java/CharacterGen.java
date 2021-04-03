@@ -106,6 +106,7 @@ public class CharacterGen {
     private Race rollRace;
     private final List<Profession> profList = new ArrayList<>();
     private final List<GroupTalent> talentsList = new ArrayList<>();
+    private List<GroupSkill> skillsList;
 
     private final List<JIntegerField> BAttr = new ArrayList<>();
     private final List<JIntegerField> RAttr = new ArrayList<>();
@@ -203,7 +204,7 @@ public class CharacterGen {
             } while (profList.contains(rollProf));
             profList.add(rollProf);
             prof_options[profList.size() - 1][0].setText(rollProf.getCareer().getName());
-            prof_options[profList.size() - 1][1].setText(rollProf.getProfession());
+            prof_options[profList.size() - 1][1].setText(rollProf.getName());
             prof_buttons[profList.size() - 1].setEnabled(true);
             if (profList.size() > 1)
                 prof_maxExp = 25;
@@ -229,7 +230,7 @@ public class CharacterGen {
                         rollLabel.setVisible(false);
                         profList.add(prof);
                         prof_options[profList.size() - 1][0].setText(prof.getCareer().getName());
-                        prof_options[profList.size() - 1][1].setText(prof.getProfession());
+                        prof_options[profList.size() - 1][1].setText(prof.getName());
                         prof_buttons[profList.size() - 1].setEnabled(true);
                     }
                     if (profList.size() >= 3) {
@@ -432,7 +433,16 @@ public class CharacterGen {
             }
         });
         raceskill_option1.addActionListener(e -> {
+            List<GroupSkill> tempList = new ArrayList<>(0);
+            for (GroupSkill skill : skillsList) {
+                if (skill.getAdvValue() != 0) {
+                    tempList.add(skill);
+                }
+            }
+            skillsList = tempList;
+
             sheet.setTalentList(talentsList);
+            sheet.setSkillList(skillsList);
             System.out.println(sheet);
 
 //            moveToNextTab(tabbedPane.getSelectedIndex());
@@ -612,13 +622,13 @@ public class CharacterGen {
     }
 
     void raceskill_createTable() {
-        List<GroupSkill> skills = connection.getSkillsByRace(sheet.getRace());
+        skillsList = connection.getSkillsByRace(sheet.getRace());
         List<Component> tabOrder = new ArrayList<>();
         professionSkills = connection.getProfessionSkills(sheet.getProf());
 
         int base_itr = 1, adv_itr = 1;
         int column, row;
-        for (GroupSkill skill : skills) {
+        for (GroupSkill skill : skillsList) {
             Color color = Color.black;
             if (skill.isAdv()) {
                 column = 4;
@@ -688,7 +698,7 @@ public class CharacterGen {
             raceskill_points.put(now, raceskill_points.get(now)+1);
         }
 
-        if (now == 0 && skill.getBase().isAdv()) {
+        if (now == 0 && skill.getBaseSkill().isAdv()) {
             container.setForeground(Color.red);
         } else {
             container.setForeground(Color.black);
@@ -879,7 +889,7 @@ public class CharacterGen {
             totalField.setValue(skill.getTotalValue());
         }
 
-        if (now == 0 && skill.getBase().isAdv()) {
+        if (now == 0 && skill.getBaseSkill().isAdv()) {
             container.setForeground(Color.red);
         } else {
             container.setForeground(Color.black);
@@ -933,7 +943,7 @@ public class CharacterGen {
     Container createSkillComboIfNeeded(GroupSkill skill, GridPanel panel, int row, int column) {
         if (!skill.isGroup()) {
             JTextField textField = new JTextField(skill.getName());
-            String tooltip = skill.getBase().getDescr();
+            String tooltip = skill.getBaseSkill().getDescr();
             if (tooltip != null)
                 textField.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
             textField.setFocusable(false);
@@ -942,10 +952,10 @@ public class CharacterGen {
             return textField;
         } else {
             SearchableJComboBox comboBox = new SearchableJComboBox();
-            String tooltip = skill.getBase().getDescr();
+            String tooltip = skill.getBaseSkill().getDescr();
             if (tooltip != null)
                 comboBox.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
-            for (GroupSkill alternateSkill : connection.getAlternateSkillsForGroup(skill.getBase().getID()))
+            for (GroupSkill alternateSkill : connection.getAlternateSkillsForGroup(skill.getBaseSkill().getID()))
                 comboBox.addItem(alternateSkill.getName());
             comboBox.setPreferredSize(new Dimension(comboBox.getSize().width, -1));
             comboBox.refresh(false);

@@ -11,7 +11,7 @@ import org.hibernate.annotations.FetchMode;
 public class Race {
     @Id
     @Column(name = "ID")
-    private int id;
+    private int ID;
     @Column(name = "NAME")
     private String name;
     @Column(name = "M")
@@ -59,8 +59,8 @@ public class Race {
     }
 
     public Race() {}
-    public Race(int id, String name, int m, int fate, int resilience, int extra, int size, int randomTalents) {
-        this.id = id;
+    public Race(int ID, String name, int m, int fate, int resilience, int extra, int size, int randomTalents) {
+        this.ID = ID;
         this.name = name;
         this.m = m;
         this.fate = fate;
@@ -71,10 +71,10 @@ public class Race {
     }
 
     public int getID() {
-        return id;
+        return ID;
     }
     public void setID(int id) {
-        this.id = id;
+        this.ID = id;
     }
     public String getName() {
         return name;
@@ -146,6 +146,6 @@ public class Race {
 
     @Override
     public String toString() {
-        return String.format("Race {name = %s}", name);
+        return String.format("Race {ID = %d, name = %s}", ID, name);
     }
 }

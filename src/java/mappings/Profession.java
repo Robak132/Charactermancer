@@ -5,16 +5,15 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "PROFESSIONS")
 public class Profession {
     @Id
     @Column(name = "ID")
-    private int id;
+    private int ID;
     @Column(name = "PROFESSION")
-    private String profession;
+    private String name;
     @Column(name = "LEVEL")
     private int level;
 
@@ -30,23 +29,23 @@ public class Profession {
     List<Attribute> attributes;
 
     public Profession() {}
-    public Profession(int id, String profession, int level) {
-        this.id = id;
-        this.profession = profession;
+    public Profession(int ID, String name, int level) {
+        this.ID = ID;
+        this.name = name;
         this.level = level;
     }
 
-    public int getId() {
-        return id;
+    public int getID() {
+        return ID;
     }
-    public void setId(int id) {
-        this.id = id;
+    public void setID(int id) {
+        this.ID = id;
     }
-    public String getProfession() {
-        return profession;
+    public String getName() {
+        return name;
     }
-    public void setProfession(String profession) {
-        this.profession = profession;
+    public void setName(String profession) {
+        this.name = profession;
     }
     public int getLevel() {
         return level;
@@ -85,11 +84,15 @@ public class Profession {
             return false;
         }
         Profession c = (Profession) o;
-        return id == c.id;
+        return ID == c.ID;
     }
 
     @Override
     public String toString() {
-        return String.format("Profession {class = %s, career = %s, profession = %s}", career.getProfessionClass(), career, profession);
+        return String.format("Profession {\n" +
+                "\t%s\n" +
+                "\t%s\n" +
+                "\tProfession {ID = %d, name = %s}\n" +
+                "}", career.getProfessionClass(), career, ID, name);
     }
 }

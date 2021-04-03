@@ -42,6 +42,6 @@ public class ProfessionCareer {
 
     @Override
     public String toString() {
-        return name;
+        return String.format("Career {ID = %d, name = %s}", ID, name);
     }
 }

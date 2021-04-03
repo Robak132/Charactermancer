@@ -62,9 +62,9 @@ public class GroupTalent {
     @Override
     public String toString() {
         if (name.equals(baseTalent.getName())) {
-            return String.format("Talent {name = %s, lvl = %d}", name, currentLvl);
+            return String.format("Talent {ID = %d, name = %s, lvl = %d}", ID, name, currentLvl);
         } else {
-            return String.format("Talent {name = %s (%s), lvl = %d}", name, baseTalent.getName(), currentLvl);
+            return String.format("Talent {ID = %d, name = %s [%s], lvl = %d}", ID, name, baseTalent.getName(), currentLvl);
         }
     }
 

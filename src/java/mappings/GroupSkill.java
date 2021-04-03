@@ -16,15 +16,16 @@ public class GroupSkill {
     private int advValue=0;
     @Transient
     private int totalValue=0;
+
     @ManyToOne
     @JoinColumn(name = "IDBASE")
-    private Skill base;
+    private Skill baseSkill;
 
     public GroupSkill() {}
-    public GroupSkill(int ID, String name, Skill base, boolean group) {
+    public GroupSkill(int ID, String name, Skill baseSkill, boolean group) {
         this.ID = ID;
         this.name = name;
-        this.base = base;
+        this.baseSkill = baseSkill;
         this.group = group;
     }
 
@@ -40,11 +41,11 @@ public class GroupSkill {
     public void setName(String name) {
         this.name = name;
     }
-    public Skill getBase() {
-        return base;
+    public Skill getBaseSkill() {
+        return baseSkill;
     }
-    public void setBase(Skill base) {
-        this.base = base;
+    public void setBaseSkill(Skill baseSkill) {
+        this.baseSkill = baseSkill;
     }
     public boolean isGroup() {
         return group;
@@ -54,17 +55,17 @@ public class GroupSkill {
     }
 
     public boolean isAdv() {
-        return base.isAdv();
+        return baseSkill.isAdv();
     }
     public Attribute getAttr() {
-        return base.getAttr();
+        return baseSkill.getAttr();
     }
     public void setAttr(Attribute attribute) {
-        base.setAttr(attribute);
+        baseSkill.setAttr(attribute);
     }
 
     public int getStartValue() {
-        return base.getAttr().getTotalValue();
+        return baseSkill.getAttr().getTotalValue();
     }
     public int getAdvValue() {
         return advValue;
@@ -82,6 +83,15 @@ public class GroupSkill {
             totalValue = 0;
         } else {
             totalValue = getStartValue() + advValue;
+        }
+    }
+
+    @Override
+    public String toString() {
+        if (name.equals(baseSkill.getName())) {
+            return String.format("Skill {ID = %d, name = %s, AV = %d, TV = %d}", ID, name, advValue, totalValue);
+        } else {
+            return String.format("Skill {ID = %d, name = %s [%s], AV = %d, TV = %d}", ID, name, baseSkill.getName(), advValue, totalValue);
         }
     }
 

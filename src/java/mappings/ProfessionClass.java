@@ -32,6 +32,6 @@ public class ProfessionClass {
 
     @Override
     public String toString() {
-        return name;
+        return String.format("Class {ID = %d, name = %s}", ID, name);
     }
 }
