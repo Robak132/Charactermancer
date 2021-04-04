@@ -1,11 +1,6 @@
 package mappings;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "SKILLS")
@@ -15,21 +10,23 @@ public class Skill {
     private int ID;
     @Column(name = "NAME")
     private String name;
-    @Column(name = "ADV")
-    private boolean adv;
-    @Column(name = "DESCR")
-    private String descr;
 
     @ManyToOne
-    @JoinColumn(name = "ATTR")
-    private BaseAttribute attr;
+    @JoinColumn(name = "IDBASE")
+    private BaseSkill baseSkill;
+
+    @Transient
+    private Attribute linkedAttribute;
+    @Transient
+    private int advValue=0;
+    @Transient
+    private int totalValue=0;
 
     public Skill() {}
-    public Skill(int ID, String name, boolean adv, String descr) {
+    public Skill(int ID, String name, BaseSkill baseSkill) {
         this.ID = ID;
         this.name = name;
-        this.adv = adv;
-        this.descr = descr;
+        this.baseSkill = baseSkill;
     }
 
     public int getID() {
@@ -44,22 +41,69 @@ public class Skill {
     public void setName(String name) {
         this.name = name;
     }
-    public BaseAttribute getAttr() {
-        return attr;
+    public BaseSkill getBaseSkill() {
+        return baseSkill;
     }
-    public void setAttr(BaseAttribute attr) {
-        this.attr = attr;
+    public void setBaseSkill(BaseSkill baseSkill) {
+        this.baseSkill = baseSkill;
     }
-    public String getDescr() {
-        return descr;
-    }
-    public void setDescr(String descr) {
-        this.descr = descr;
-    }
+
     public boolean isAdv() {
-        return adv;
+        return baseSkill.isAdv();
     }
-    public void setAdv(boolean adv) {
-        this.adv = adv;
+    public BaseAttribute getAttr() {
+        return baseSkill.getAttr();
+    }
+    public void setAttr(BaseAttribute baseAttribute) {
+        baseSkill.setAttr(baseAttribute);
+    }
+
+    public int getStartValue() {
+        return linkedAttribute.getTotalValue();
+    }
+    public int getAdvValue() {
+        return advValue;
+    }
+    public void setAdvValue(int advValue) {
+        this.advValue = advValue;
+    }
+    public int getTotalValue() {
+        updateAll();
+        return totalValue;
+    }
+
+    public Attribute getLinkedAttribute() {
+        return linkedAttribute;
+    }
+    public void setLinkedAttribute(Attribute linkedAttribute) {
+        this.linkedAttribute = linkedAttribute;
+    }
+
+    private void updateAll() {
+        if (isAdv() && advValue == 0) {
+            totalValue = 0;
+        } else {
+            totalValue = getStartValue() + advValue;
+        }
+    }
+
+    @Override
+    public String toString() {
+        if (name.equals(baseSkill.getName())) {
+            return String.format("Skill {ID = %3d, name = %s, AV = %d, TV = %d}", ID, name, advValue, totalValue);
+        } else {
+            return String.format("Skill {ID = %3d, name = %s [%s], AV = %d, TV = %d}", ID, name, baseSkill.getName(), advValue, totalValue);
+        }
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Skill skill = (Skill) o;
+        return ID == skill.ID;
     }
 }

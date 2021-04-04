@@ -3,8 +3,6 @@ package mappings;
 import java.util.*;
 import javax.persistence.*;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -39,7 +37,7 @@ public class Race {
     @JoinTable(name="RACE_SKILLS",
             joinColumns = @JoinColumn(name = "IDRACE"),
             inverseJoinColumns = @JoinColumn(name = "IDSKILL"))
-    private List<GroupSkill> raceSkills;
+    private List<SkillGroup> raceSkills;
 
     public enum Size {
         TINY(0),
@@ -148,15 +146,17 @@ public class Race {
         return attributeList;
     }
 
-    public List<GroupSkill> getRaceSkills() {
+    public List<SkillGroup> getRaceSkills() {
         return raceSkills;
     }
-    public List<GroupSkill> getRaceSkills(List<Attribute> attributes) {
-        for (GroupSkill skill : raceSkills) {
-            for (Attribute attribute : attributes) {
-                if (skill.getAttr() == attribute.getBaseAttribute()) {
-                    skill.setLinkedAttribute(attribute);
-                    break;
+    public List<SkillGroup> getRaceSkills(List<Attribute> attributes) {
+        for (SkillGroup skill : raceSkills) {
+            for (Skill singleSkill : skill.getSkills()) {
+                for (Attribute attribute : attributes) {
+                    if (singleSkill.getAttr().equals(attribute.getBaseAttribute())) {
+                        singleSkill.setLinkedAttribute(attribute);
+                        break;
+                    }
                 }
             }
         }

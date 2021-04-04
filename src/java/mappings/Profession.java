@@ -6,6 +6,7 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -92,16 +93,21 @@ public class Profession {
     public List<ProfSkill> getProfSkills() {
         return profSkills;
     }
-    public List<ProfSkill> getProfSkills(List<Attribute> attributes) {
+    public List<SkillGroup> getProfSkills(List<Attribute> attributes) {
+        List<SkillGroup> tempList = new ArrayList<>();
         for (ProfSkill skill : profSkills) {
-            for (Attribute attribute : attributes) {
-                if (skill.getSkill().getAttr().equals(attribute.getBaseAttribute())) {
-                    skill.getSkill().setLinkedAttribute(attribute);
-                    break;
+            SkillGroup tempSkill = skill.getSkill();
+            tempList.add(tempSkill);
+            for (Skill singleSkill : tempSkill.getSkills()) {
+                for (Attribute attribute : attributes) {
+                    if (singleSkill.getAttr().equals(attribute.getBaseAttribute())) {
+                        singleSkill.setLinkedAttribute(attribute);
+                        break;
+                    }
                 }
             }
         }
-        return profSkills;
+        return tempList;
     }
     public void setProfSkills(List<ProfSkill> profSkills) {
         this.profSkills = profSkills;

@@ -168,11 +168,11 @@ public class Connection {
         return profs;
     }
 
-    List<GroupSkill> getAlternateSkillsForGroup(int custom) {
-        List<GroupSkill> skills = new ArrayList<>();
+    List<Skill> getAlternateSkillsForGroup(int custom) {
+        List<Skill> skills = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT G FROM GroupSkill G JOIN G.baseSkill WHERE G.baseSkill.id=:param AND G.group=false");
+            Query SQLQuery = session.createQuery("SELECT G FROM Skill G JOIN G.baseSkill WHERE G.baseSkill.id=:param AND G.group=false");
             SQLQuery.setParameter("param", custom);
             skills = SQLQuery.list();
             session.close();
@@ -182,8 +182,8 @@ public class Connection {
         }
         return skills;
     }
-    List<GroupSkill> getProfessionSkills(Profession prof) {
-        List<GroupSkill> skills = new ArrayList<>();
+    List<Skill> getProfessionSkills(Profession prof) {
+        List<Skill> skills = new ArrayList<>();
         try {
             Session session = factory.openSession();
             Query SQLQuery = session.createQuery("SELECT p.skill FROM ProfSkill p WHERE p.profession.ID =:param ORDER BY p.skill.name");
@@ -196,9 +196,9 @@ public class Connection {
         }
         return skills;
     }
-    List<GroupSkill> getProfessionSkills(Profession prof, List<BaseAttribute> attributesToBind) {
-        List<GroupSkill> skills = getProfessionSkills(prof);
-        for (GroupSkill skill : skills) {
+    List<Skill> getProfessionSkills(Profession prof, List<BaseAttribute> attributesToBind) {
+        List<Skill> skills = getProfessionSkills(prof);
+        for (Skill skill : skills) {
             for (BaseAttribute baseAttribute : attributesToBind) {
                 if (skill.getAttr().equals(baseAttribute)) {
                     skill.setAttr(baseAttribute);
@@ -208,19 +208,19 @@ public class Connection {
         }
         return skills;
     }
-    List<Skill> getProfessionBaseSkills(Profession prof) {
-        List<Skill> skills = new ArrayList<>();
+    List<BaseSkill> getProfessionBaseSkills(Profession prof) {
+        List<BaseSkill> baseSkills = new ArrayList<>();
         try {
             Session session = factory.openSession();
             Query SQLQuery = session.createQuery("SELECT p.skill.base FROM ProfSkill p WHERE p.profession.ID =:param");
             SQLQuery.setParameter("param", prof.getID());
-            skills = SQLQuery.list();
+            baseSkills = SQLQuery.list();
             session.close();
         } catch (Exception ex) {
             abort();
             ex.printStackTrace();
         }
-        return skills;
+        return baseSkills;
     }
 
     List<RaceTalent> getTalentsByRace(int race) {

@@ -16,18 +16,14 @@ public class ProfSkill {
     private Profession profession;
     @ManyToOne
     @JoinColumn(name = "IDSKILL")
-    private GroupSkill skill;
-    @ManyToOne
-    @JoinColumn(name = "IDEXCL")
-    private GroupSkill skillExcl;
+    private SkillGroup skill;
 
     public ProfSkill() {}
-    public ProfSkill(int ID, boolean s, Profession profession, GroupSkill skill, GroupSkill skillExcl) {
+    public ProfSkill(int ID, boolean s, Profession profession, SkillGroup skill) {
         this.ID = ID;
         this.S = s;
         this.profession = profession;
         this.skill = skill;
-        this.skillExcl = skillExcl;
     }
 
     public int getID() {
@@ -48,16 +44,10 @@ public class ProfSkill {
     public void setProfession(Profession profession) {
         this.profession = profession;
     }
-    public GroupSkill getSkill() {
+    public SkillGroup getSkill() {
         return skill;
     }
-    public void setSkill(GroupSkill skill) {
+    public void setSkill(SkillGroup skill) {
         this.skill = skill;
-    }
-    public GroupSkill getSkillExcl() {
-        return skillExcl;
-    }
-    public void setSkillExcl(GroupSkill skillExcl) {
-        this.skillExcl = skillExcl;
     }
 }

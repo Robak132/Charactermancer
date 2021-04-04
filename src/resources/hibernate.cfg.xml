@@ -10,7 +10,7 @@
         <property name="show_sql">true</property>
 
         <mapping class="mappings.BaseAttribute" />
-        <mapping class="mappings.GroupSkill" />
+        <mapping class="mappings.Skill" />
         <mapping class="mappings.GroupTalent" />
         <mapping class="mappings.Profession" />
         <mapping class="mappings.ProfessionCareer" />
@@ -22,7 +22,8 @@
         <mapping class="mappings.RaceTable" />
         <mapping class="mappings.RaceTalent" />
         <mapping class="mappings.RandomTalent" />
-        <mapping class="mappings.Skill" />
+        <mapping class="mappings.BaseSkill" />
+        <mapping class="mappings.SkillGroup" />
         <mapping class="mappings.Talent" />
     </session-factory>
 </hibernate-configuration>

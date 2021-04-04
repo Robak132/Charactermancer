@@ -38,7 +38,7 @@ public class CharacterSheet {
     private Race race;
     private Profession prof;
     private List<Attribute> attributeList;
-    private List<GroupSkill> skillList;
+    private List<Skill> skillList;
     private List<GroupTalent> talentList;
     private int exp;
 
@@ -125,10 +125,10 @@ public class CharacterSheet {
     public void setAttributeList(List<Attribute> attributeList) {
         this.attributeList = attributeList;
     }
-    public List<GroupSkill> getSkillList() {
+    public List<Skill> getSkillList() {
         return skillList;
     }
-    public void setSkillList(List<GroupSkill> skillList) {
+    public void setSkillList(List<Skill> skillList) {
         this.skillList = skillList;
     }
     public List<GroupTalent> getTalentList() {
@@ -184,7 +184,7 @@ public class CharacterSheet {
         ret += "]\n";
 
         ret += "Skills = [\n";
-        for (GroupSkill skill : skillList) {
+        for (Skill skill : skillList) {
             ret += "\t" + skill + "\n";
         }
         ret += "]\n";
