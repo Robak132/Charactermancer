@@ -168,48 +168,6 @@ public class Connection {
         return profs;
     }
 
-    List<GroupSkill> getSkillsByRace(Race race) {
-        List<GroupSkill> skills = new ArrayList<>();
-        try {
-            Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT r.skill FROM RaceSkill r WHERE r.race.id=:param ORDER BY r.skill.baseSkill.adv, r.skill.name");
-            SQLQuery.setParameter("param", race.getID());
-            skills = SQLQuery.list();
-            session.close();
-        } catch (Exception ex) {
-            abort();
-            ex.printStackTrace();
-        }
-        return skills;
-    }
-    List<GroupSkill> getBaseSkillsByRace(int race) {
-        List<GroupSkill> skills = new ArrayList<>();
-        try {
-            Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT r.skill FROM RaceSkill r JOIN r.skill WHERE r.race.id=:param AND NOT r.skill.base.adv ORDER BY r.skill.name");
-            SQLQuery.setParameter("param", race);
-            skills = SQLQuery.list();
-            session.close();
-        } catch (Exception ex) {
-            abort();
-            ex.printStackTrace();
-        }
-        return skills;
-    }
-    List<GroupSkill> getAdvSkillsByRace(int race) {
-        List<GroupSkill> skills = new ArrayList<>();
-        try {
-            Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT r.skill FROM RaceSkill r JOIN r.skill WHERE r.race.id=:param AND r.skill.base.adv ORDER BY r.skill.name");
-            SQLQuery.setParameter("param", race);
-            skills = SQLQuery.list();
-            session.close();
-        } catch (Exception ex) {
-            abort();
-            ex.printStackTrace();
-        }
-        return skills;
-    }
     List<GroupSkill> getAlternateSkillsForGroup(int custom) {
         List<GroupSkill> skills = new ArrayList<>();
         try {
@@ -238,12 +196,12 @@ public class Connection {
         }
         return skills;
     }
-    List<GroupSkill> getProfessionSkills(Profession prof, List<Attribute> attributesToBind) {
+    List<GroupSkill> getProfessionSkills(Profession prof, List<BaseAttribute> attributesToBind) {
         List<GroupSkill> skills = getProfessionSkills(prof);
         for (GroupSkill skill : skills) {
-            for (Attribute attribute : attributesToBind) {
-                if (skill.getAttr().equals(attribute)) {
-                    skill.setAttr(attribute);
+            for (BaseAttribute baseAttribute : attributesToBind) {
+                if (skill.getAttr().equals(baseAttribute)) {
+                    skill.setAttr(baseAttribute);
                     break;
                 }
             }

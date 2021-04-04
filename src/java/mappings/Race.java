@@ -5,6 +5,8 @@ import javax.persistence.*;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity
 @Table(name = "RACES")
@@ -27,10 +29,17 @@ public class Race {
     @Column(name = "RANDOM_TALENTS")
     private int randomTalents;
 
-    @Fetch(FetchMode.JOIN)
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name= "IDRACE")
     private List<RaceAttribute> raceAttributes;
+
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="RACE_SKILLS",
+            joinColumns = @JoinColumn(name = "IDRACE"),
+            inverseJoinColumns = @JoinColumn(name = "IDSKILL"))
+    private List<GroupSkill> raceSkills;
 
     public enum Size {
         TINY(0),
@@ -124,24 +133,34 @@ public class Race {
     }
     public RaceAttribute getRaceAttribute(int attributeID) {
         for (RaceAttribute raceAttribute: raceAttributes) {
-            if (raceAttribute.getAttribute().getID() == attributeID) {
+            if (raceAttribute.getBaseAttribute().getID() == attributeID) {
                 return raceAttribute;
             }
         }
         return null;
     }
-    public void setRaceAttributes(List<RaceAttribute> raceAttributes) {
-        this.raceAttributes = raceAttributes;
-    }
 
     public List<Attribute> getAttributes() {
-        List<Attribute> tempList = new ArrayList<>();
+        List<Attribute> attributeList = new ArrayList<>();
         for (RaceAttribute raceAttribute : raceAttributes) {
-            Attribute attribute = raceAttribute.getAttribute();
-            attribute.setBaseValue(raceAttribute.getValue());
-            tempList.add(attribute);
+            attributeList.add(new Attribute(raceAttribute));
         }
-        return tempList;
+        return attributeList;
+    }
+
+    public List<GroupSkill> getRaceSkills() {
+        return raceSkills;
+    }
+    public List<GroupSkill> getRaceSkills(List<Attribute> attributes) {
+        for (GroupSkill skill : raceSkills) {
+            for (Attribute attribute : attributes) {
+                if (skill.getAttr() == attribute.getBaseAttribute()) {
+                    skill.setLinkedAttribute(attribute);
+                    break;
+                }
+            }
+        }
+        return raceSkills;
     }
 
     @Override

@@ -12,14 +12,17 @@ public class GroupSkill {
     private String name;
     @Column(name = "GRP")
     private boolean group;
-    @Transient
-    private int advValue=0;
-    @Transient
-    private int totalValue=0;
 
     @ManyToOne
     @JoinColumn(name = "IDBASE")
     private Skill baseSkill;
+
+    @Transient
+    private Attribute linkedAttribute;
+    @Transient
+    private int advValue=0;
+    @Transient
+    private int totalValue=0;
 
     public GroupSkill() {}
     public GroupSkill(int ID, String name, Skill baseSkill, boolean group) {
@@ -57,15 +60,15 @@ public class GroupSkill {
     public boolean isAdv() {
         return baseSkill.isAdv();
     }
-    public Attribute getAttr() {
+    public BaseAttribute getAttr() {
         return baseSkill.getAttr();
     }
-    public void setAttr(Attribute attribute) {
-        baseSkill.setAttr(attribute);
+    public void setAttr(BaseAttribute baseAttribute) {
+        baseSkill.setAttr(baseAttribute);
     }
 
     public int getStartValue() {
-        return baseSkill.getAttr().getTotalValue();
+        return linkedAttribute.getTotalValue();
     }
     public int getAdvValue() {
         return advValue;
@@ -76,6 +79,13 @@ public class GroupSkill {
     public int getTotalValue() {
         updateAll();
         return totalValue;
+    }
+
+    public Attribute getLinkedAttribute() {
+        return linkedAttribute;
+    }
+    public void setLinkedAttribute(Attribute linkedAttribute) {
+        this.linkedAttribute = linkedAttribute;
     }
 
     private void updateAll() {
@@ -94,7 +104,6 @@ public class GroupSkill {
             return String.format("Skill {ID = %d, name = %s [%s], AV = %d, TV = %d}", ID, name, baseSkill.getName(), advValue, totalValue);
         }
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

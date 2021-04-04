@@ -1,51 +1,28 @@
 package mappings;
 
-import java.util.Objects;
-import javax.persistence.*;
-
-@Entity
-@Table(name = "ATTRIBUTES")
 public class Attribute {
-    @Id
-    @Column(name = "ID")
-    private int ID;
-    @Column(name = "NAME")
-    private String name;
+    private int rndValue = 0;
+    private int advValue = 0;
+    private int totalValue = 0;
+    private RaceAttribute raceAttribute;
+    private BaseAttribute baseAttribute;
 
-    @Transient
-    private int baseValue;
-    @Transient
-    private int rndValue;
-    @Transient
-    private int advValue;
-    @Transient
-    private int totalValue;
-
-    public Attribute(int ID, String name) {
-        this.ID = ID;
-        this.name = name;
+    public Attribute() {
     }
-    public Attribute() {}
+    public Attribute(RaceAttribute raceAttribute) {
+        this.raceAttribute = raceAttribute;
+        this.baseAttribute = raceAttribute.getBaseAttribute();
+    }
 
     public int getID() {
-        return ID;
-    }
-    public void setID(int ID) {
-        this.ID = ID;
+        return baseAttribute.getID();
     }
     public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
+        return baseAttribute.getName();
     }
 
     public int getBaseValue() {
-        return baseValue;
-    }
-    public void setBaseValue(int baseValue) {
-        this.baseValue = baseValue;
-        updateAll();
+        return raceAttribute.getValue();
     }
     public int getRndValue() {
         return rndValue;
@@ -66,23 +43,19 @@ public class Attribute {
     }
 
     private void updateAll() {
-        totalValue=baseValue+ rndValue +advValue;
+        totalValue=raceAttribute.getValue() + rndValue + advValue;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Attribute attribute = (Attribute) o;
-        return ID == attribute.ID && Objects.equals(name, attribute.name);
+    public RaceAttribute getRaceAttribute() {
+        return raceAttribute;
+    }
+    public BaseAttribute getBaseAttribute() {
+        return baseAttribute;
     }
 
     @Override
     public String toString() {
-        return String.format("Attribute {ID = %d, name = %3s, BV = %3d, RV = %3d, AV = %3d, TV = %3d}", ID, name, baseValue, rndValue, advValue, totalValue);
+        return String.format("Attribute {ID = %3d, name = %3s, BV = %3d, RV = %3d, AV = %3d, TV = %3d}",
+                getID(), getName(), getBaseValue(), rndValue, advValue, totalValue);
     }
 }

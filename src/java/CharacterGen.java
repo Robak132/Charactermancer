@@ -107,7 +107,8 @@ public class CharacterGen {
     private Race rollRace;
     private final List<Profession> profList = new ArrayList<>();
     private final List<GroupTalent> talentsList = new ArrayList<>();
-    private List<GroupSkill> skillsList;
+    private List<GroupSkill> raceSkillList = new ArrayList<>();
+    private List<GroupSkill> profSkillList = new ArrayList<>();
 
     private final List<JIntegerField> BAttr = new ArrayList<>();
     private final List<JIntegerField> RAttr = new ArrayList<>();
@@ -477,15 +478,15 @@ public class CharacterGen {
         });
         raceskill_option1.addActionListener(e -> {
             List<GroupSkill> tempList = new ArrayList<>(0);
-            for (GroupSkill skill : skillsList) {
+            for (GroupSkill skill : raceSkillList) {
                 if (skill.getAdvValue() != 0) {
                     tempList.add(skill);
                 }
             }
-            skillsList = tempList;
+            raceSkillList = tempList;
 
             sheet.setTalentList(talentsList);
-            sheet.setSkillList(skillsList);
+            sheet.setSkillList(raceSkillList);
             System.out.println(sheet);
 
 //            moveToNextTab(tabbedPane.getSelectedIndex());
@@ -665,13 +666,13 @@ public class CharacterGen {
     }
 
     void raceskill_createTable() {
-        skillsList = connection.getSkillsByRace(sheet.getRace());
+        raceSkillList = sheet.getRace().getRaceSkills(attributes);
         List<Component> tabOrder = new ArrayList<>();
         professionSkills = connection.getProfessionSkills(sheet.getProf());
 
         int base_itr = 1, adv_itr = 1;
         int column, row;
-        for (GroupSkill skill : skillsList) {
+        for (GroupSkill skill : raceSkillList) {
             Color color = Color.black;
             if (skill.isAdv()) {
                 column = 4;
@@ -688,8 +689,8 @@ public class CharacterGen {
             }
 
             for (Attribute attribute : attributes) {
-                if (attribute.equals(skill.getAttr())) {
-                    skill.setAttr(attribute);
+                if (attribute.getBaseAttribute().equals(skill.getAttr())) {
+                    skill.setAttr(attribute.getBaseAttribute());
                     break;
                 }
             }
@@ -869,13 +870,14 @@ public class CharacterGen {
 //        testField.setText(String.format("%d/%d", talent.getCurrentLvl(), max));
 //    }
     void profskill_createTable() {
-        List<GroupSkill> skills = connection.getProfessionSkills(sheet.getProf(), sheet.getAttributeList());
+        List<ProfSkill> professionSkills = sheet.getProf().getProfSkills(attributes);
+        professionSkills.forEach(e -> profSkillList.add(e.getSkill()));
         List<Component> tabOrder = new ArrayList<>();
 
         int base_itr = 1;
         int adv_itr = 1;
         int column, row;
-        for (GroupSkill skill : skills) {
+        for (GroupSkill skill : profSkillList) {
             Color color = Color.black;
 
             if (skill.isAdv()) {
@@ -1055,9 +1057,5 @@ public class CharacterGen {
         returns[0] = numeric;
         returns[1] = connection.getRandomTalent(numeric);
         return returns;
-    }
-    void getRaceSkills(Race race) {
-        List<GroupSkill> baseSkills = connection.getBaseSkillsByRace(race.getID());
-        List<GroupSkill> advSkills = connection.getAdvSkillsByRace(race.getID());
     }
 }

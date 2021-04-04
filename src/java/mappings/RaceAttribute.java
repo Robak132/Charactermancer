@@ -18,7 +18,7 @@ public class RaceAttribute {
 
     @ManyToOne
     @JoinColumn(name = "IDATTR")
-    private Attribute attribute;
+    private BaseAttribute baseAttribute;
 
     public RaceAttribute(int ID, int value) {
         this.ID = ID;
@@ -40,10 +40,10 @@ public class RaceAttribute {
         this.value = value;
     }
 
-    public Attribute getAttribute() {
-        return attribute;
+    public BaseAttribute getBaseAttribute() {
+        return baseAttribute;
     }
-    public void setAttribute(Attribute attribute) {
-        this.attribute = attribute;
+    public void setBaseAttribute(BaseAttribute baseAttribute) {
+        this.baseAttribute = baseAttribute;
     }
 }

@@ -1,5 +1,7 @@
 package mappings;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -26,7 +28,12 @@ public class Profession {
     @JoinTable(name="PROF_ATTRIBUTES",
             joinColumns = @JoinColumn(name = "IDPROF"),
             inverseJoinColumns = @JoinColumn(name = "IDATTR"))
-    List<Attribute> attributes;
+    private List<BaseAttribute> baseAttributes;
+
+    @Fetch(FetchMode.JOIN)
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name= "IDPROF")
+    private List<ProfSkill> profSkills;
 
     public Profession() {}
     public Profession(int ID, String name, int level) {
@@ -53,33 +60,51 @@ public class Profession {
     public void setLevel(int level) {
         this.level = level;
     }
-
     public ProfessionCareer getCareer() {
         return career;
     }
     public void setCareer(ProfessionCareer career) {
         this.career = career;
     }
-    public List<Attribute> getAttributes() {
-        return attributes;
+
+    public List<BaseAttribute> getAttributes() {
+        return baseAttributes;
     }
     public Integer[] getSimpleAttributes() {
         Integer[] intAttributes = new Integer[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        for (Attribute attribute : attributes) {
-            intAttributes[attribute.getID()-1] = 1;
+        for (BaseAttribute baseAttribute : baseAttributes) {
+            intAttributes[baseAttribute.getID()-1] = 1;
         }
         return intAttributes;
     }
     public boolean hasAttribute(int ID) {
-        for (Attribute attr : attributes) {
+        for (BaseAttribute attr : baseAttributes) {
             if (attr.getID() == ID) {
                 return true;
             }
         }
         return false;
     }
-    public void setAttributes(List<Attribute> attributes) {
-        this.attributes = attributes;
+    public void setAttributes(List<BaseAttribute> baseAttributes) {
+        this.baseAttributes = baseAttributes;
+    }
+
+    public List<ProfSkill> getProfSkills() {
+        return profSkills;
+    }
+    public List<ProfSkill> getProfSkills(List<Attribute> attributes) {
+        for (ProfSkill skill : profSkills) {
+            for (Attribute attribute : attributes) {
+                if (skill.getSkill().getAttr().equals(attribute.getBaseAttribute())) {
+                    skill.getSkill().setLinkedAttribute(attribute);
+                    break;
+                }
+            }
+        }
+        return profSkills;
+    }
+    public void setProfSkills(List<ProfSkill> profSkills) {
+        this.profSkills = profSkills;
     }
 
     @Override
