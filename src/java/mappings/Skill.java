@@ -16,11 +16,13 @@ public class Skill {
     private BaseSkill baseSkill;
 
     @Transient
+    private boolean advanceable = false;
+    @Transient
     private Attribute linkedAttribute;
     @Transient
-    private int advValue=0;
+    private int advValue = 0;
     @Transient
-    private int totalValue=0;
+    private int totalValue = 0;
 
     public Skill() {}
     public Skill(int ID, String name, BaseSkill baseSkill) {
@@ -58,6 +60,12 @@ public class Skill {
         baseSkill.setAttr(baseAttribute);
     }
 
+    public boolean isAdvanceable() {
+        return advanceable;
+    }
+    public void setAdvanceable(boolean advanceable) {
+        this.advanceable = advanceable;
+    }
     public int getStartValue() {
         return linkedAttribute.getTotalValue();
     }

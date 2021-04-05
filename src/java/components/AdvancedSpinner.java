@@ -27,4 +27,7 @@ public class AdvancedSpinner extends JSpinner {
     public void setHorizontalAlignment(int alignment) {
         textField.setHorizontalAlignment(alignment);
     }
+    public JTextField getTextField() {
+        return textField;
+    }
 }

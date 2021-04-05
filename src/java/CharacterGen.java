@@ -98,7 +98,6 @@ public class CharacterGen {
     private GridPanel profskill_skillsPanel;
     private GridPanel profskill_talentsPanel;
     private JButton pofskill_option1;
-    private JPanel fate_panel;
 
     private JIntegerField mouse_source = null;
     private Color mouse_color;
@@ -365,36 +364,34 @@ public class CharacterGen {
         // Fate & Resolve //
         /* TODO: Maybe change all buttons to JSpinners :thinking: */
         KeyStroke escapeKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_MASK);
-        Action testAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                Integer[] slots = new Integer[] {0, 0, 0};
-                int remain = 5;
-                while (remain > 0) {
-                    int value = Dice.randomInt(0, remain);
-                    int active_slot = Dice.randomInt(0, 2);
-                    remain-=value;
-                    slots[active_slot]+=value;
-                }
-
-                int active_slot = 0;
-                Integer[] attributes = sheet.getProf().getSimpleAttributes();
-                for (int i=0; i < attributes.length; i++) {
-                    if (attributes[i] != 0) {
-                        attributes[i] = slots[active_slot];
-                        active_slot++;
-                    }
-                }
-
-                fate_attributeTable.iterateThroughColumns(2, (o, i) -> {
-                    JSpinner spinner = (JSpinner) o;
-                    if (spinner.isEnabled()) {
-                        spinner.setValue(attributes[i]);
-                    }
-                });
+        Action action = AbstractActionBuilder.getAction(() -> {
+            Integer[] slots = new Integer[] {0, 0, 0};
+            int remain = 5;
+            while (remain > 0) {
+                int value = Dice.randomInt(0, remain);
+                int active_slot = Dice.randomInt(0, 2);
+                remain-=value;
+                slots[active_slot]+=value;
             }
-        };
-        fate_attributeTable.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "TestAction");
-        fate_attributeTable.getActionMap().put("TestAction", testAction);
+
+            int active_slot = 0;
+            Integer[] attributes = sheet.getProf().getSimpleAttributes();
+            for (int i=0; i < attributes.length; i++) {
+                if (attributes[i] != 0) {
+                    attributes[i] = slots[active_slot];
+                    active_slot++;
+                }
+            }
+
+            fate_attributeTable.iterateThroughColumns(2, (o, i) -> {
+                AdvancedSpinner spinner = (AdvancedSpinner) o;
+                if (spinner.isEnabled()) {
+                    spinner.setValue(attributes[i]);
+                }
+            });
+        });
+        fate_attributeTable.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "VK_R");
+        fate_attributeTable.getActionMap().put("VK_R", action);
 
         fate_fateUP.addActionListener(e -> {
             fate_extra.setValue(fate_extra.getValue() - 1);
@@ -483,17 +480,12 @@ public class CharacterGen {
                     tempList.add(skill);
                 }
             }
-
-            for (Skill skill : profSkillList) {
-                if (skill.getAdvValue() != 0) {
-                    tempList.add(skill);
-                }
-            }
-            sheet.setSkillList(tempList);
+            raceSkillList = tempList;
+            sheet.setSkillList(raceSkillList);
             sheet.setTalentList(talentsList);
             System.out.println(sheet);
 
-//            moveToNextTab(tabbedPane.getSelectedIndex());
+            moveToNextTab(tabbedPane.getSelectedIndex());
         });
 
         // Pane controls //
@@ -620,11 +612,11 @@ public class CharacterGen {
             BAttr.add(attr);
             fate_attributeTable.add(attr, new GridConstraints(1, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
 
-            JSpinner adv = new JSpinner(new SpinnerNumberModel(0, 0, 5, 1));
+            AdvancedSpinner adv = new AdvancedSpinner(new SpinnerNumberModel(0, 0, 5, 1));
             adv.setEnabled(false);
             if (sheet.getProf().hasAttribute(i+1)) {
                 adv.setEnabled(true);
-                tabOrder.add(((JSpinner.DefaultEditor) adv.getEditor()).getTextField());
+                tabOrder.add(adv.getTextField());
             }
             fate_attributeTable.add(adv,new GridConstraints(2, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
 
@@ -647,7 +639,7 @@ public class CharacterGen {
         fate_resilience.setValue(sheet.getRace().getResilience());
         fate_extra.setValue(sheet.getRace().getExtra());
     }
-    void fate_updatePoints(JSpinner activeSpinner, int finalI, JIntegerField field) {
+    void fate_updatePoints(AdvancedSpinner activeSpinner, int finalI, JIntegerField field) {
         int now = (int) (activeSpinner.getValue());
         int adv = attributes.get(finalI).getAdvValue();
 
@@ -658,7 +650,7 @@ public class CharacterGen {
             calculateHP();
 
             fate_attributeTable.iterateThroughColumns(2, (o, i) -> {
-                JSpinner spinner = (JSpinner) o;
+                AdvancedSpinner spinner = (AdvancedSpinner) o;
                 if (activeSpinner != o) {
                     SpinnerNumberModel model = (SpinnerNumberModel) spinner.getModel();
                     model.setMaximum((int) model.getValue() + fate_attrRemain.getValue());
@@ -671,7 +663,7 @@ public class CharacterGen {
 
     void raceskill_createTable() {
         List<SkillGroup> raceSkills = sheet.getRace().getRaceSkills(attributes);
-        raceSkills.forEach(e -> profSkillList.add(e.getFirstSkill()));
+        raceSkills.forEach(e -> raceSkillList.add(e.getFirstSkill()));
 
         List<Component> tabOrder = new ArrayList<>();
         professionSkills = connection.getProfessionSkills(sheet.getProf());
@@ -682,7 +674,7 @@ public class CharacterGen {
             Color color = Color.black;
             int finalI = i;
 
-            if (profSkillList.get(i).isAdv()) {
+            if (raceSkillList.get(i).isAdv()) {
                 column = 4;
                 row = adv_itr++;
                 color = Color.red;
@@ -690,7 +682,7 @@ public class CharacterGen {
                 column = 0;
                 row = base_itr++;
             }
-            if (professionSkills.contains(profSkillList.get(i))) {
+            if (professionSkills.contains(raceSkillList.get(i))) {
                 color = ColorPalette.CustomGreen;
             }
 
@@ -698,7 +690,7 @@ public class CharacterGen {
             nameContainer.setForeground(color);
             column++;
 
-            JTextField attrField = new JTextField(profSkillList.get(i).getAttr().getName());
+            JTextField attrField = new JTextField(raceSkillList.get(i).getAttr().getName());
             attrField.setHorizontalAlignment(JTextField.CENTER);
             attrField.setEditable(false);
             attrField.setFocusable(false);
@@ -708,13 +700,13 @@ public class CharacterGen {
             jSpinner.setHorizontalAlignment(JTextField.CENTER);
             raceskill_skillsPanel.add(jSpinner, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            JIntegerField sumField = new JIntegerField(profSkillList.get(i).getTotalValue(), "%d", JTextField.CENTER);
+            JIntegerField sumField = new JIntegerField(raceSkillList.get(i).getTotalValue(), "%d", JTextField.CENTER);
             sumField.setEditable(false);
             sumField.setFocusable(false);
             raceskill_skillsPanel.add(sumField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            jSpinner.addChangeListener(e -> raceskill_updatePoints(nameContainer, jSpinner, sumField, profSkillList.get(finalI), professionSkills.contains(profSkillList.get(finalI))));
-            tabOrder.add(((JSpinner.DefaultEditor) jSpinner.getEditor()).getTextField());
+            jSpinner.addChangeListener(e -> raceskill_updatePoints(nameContainer, jSpinner, sumField, raceSkillList.get(finalI), professionSkills.contains(raceSkillList.get(finalI))));
+            tabOrder.add(jSpinner.getTextField());
         }
         if (base_itr != 1) {
             raceskill_skillsPanel.add(new JLabel("Basic skills", JLabel.CENTER), new GridConstraints(0, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
@@ -757,9 +749,9 @@ public class CharacterGen {
     void raceskill_changeColor(Object object) {
         AdvancedSpinner active = (AdvancedSpinner) object;
         if (raceskill_points.get((int) active.getValue()) > 3) {
-            ((JSpinner.DefaultEditor) active.getEditor()).getTextField().setForeground(Color.RED);
+            active.getTextField().setForeground(Color.RED);
         } else {
-            ((JSpinner.DefaultEditor) active.getEditor()).getTextField().setForeground(Color.BLACK);
+            active.getTextField().setForeground(Color.BLACK);
         }
     }
 
@@ -869,7 +861,7 @@ public class CharacterGen {
 //        testField.setText(String.format("%d/%d", talent.getCurrentLvl(), max));
 //    }
     void profskill_createTable() {
-        List<SkillGroup> professionSkills = sheet.getProf().getProfSkills(attributes);
+        List<SkillGroup> professionSkills = sheet.getProf().getProfSkills(attributes, raceSkillList);
         professionSkills.forEach(e -> profSkillList.add(e.getFirstSkill()));
         List<Component> tabOrder = new ArrayList<>();
 
@@ -899,7 +891,7 @@ public class CharacterGen {
             attrField.setFocusable(false);
             profskill_skillsPanel.add(attrField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            AdvancedSpinner jSpinner = new AdvancedSpinner(new SpinnerNumberModel(profSkillList.get(i).getAdvValue(), 0, 10, 1));
+            AdvancedSpinner jSpinner = new AdvancedSpinner(new SpinnerNumberModel(profSkillList.get(i).getAdvValue(), profSkillList.get(i).getAdvValue(), 10, 1));
             jSpinner.setHorizontalAlignment(JTextField.CENTER);
             profskill_skillsPanel.add(jSpinner, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
@@ -909,7 +901,7 @@ public class CharacterGen {
             profskill_skillsPanel.add(sumField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
             jSpinner.addChangeListener(e -> profskill_updatePoints(nameContainer, jSpinner, sumField, profSkillList.get(finalI)));
-            tabOrder.add(((JSpinner.DefaultEditor) jSpinner.getEditor()).getTextField());
+            tabOrder.add(jSpinner.getTextField());
         }
 
         if (base_itr != 1) {
@@ -968,6 +960,8 @@ public class CharacterGen {
             case 4:
                 raceskill_createTable();
                 racetalent_createTable();
+                break;
+            case 5:
                 profskill_createTable();
                 break;
         }

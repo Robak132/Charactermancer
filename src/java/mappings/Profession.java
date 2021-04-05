@@ -102,6 +102,32 @@ public class Profession {
                 for (Attribute attribute : attributes) {
                     if (singleSkill.getAttr().equals(attribute.getBaseAttribute())) {
                         singleSkill.setLinkedAttribute(attribute);
+                        singleSkill.setAdvanceable(true);
+                        break;
+                    }
+                }
+            }
+        }
+        return tempList;
+    }
+
+    public List<SkillGroup> getProfSkills(List<Attribute> attributes, List<Skill> skills) {
+        List<SkillGroup> tempList = new ArrayList<>();
+        for (ProfSkill skill : profSkills) {
+            SkillGroup tempSkill = skill.getSkill();
+            tempList.add(tempSkill);
+            for (int i = 0; i < tempSkill.getSkills().size(); i++) {
+                Skill singleSkill = tempSkill.getSkills().get(i);
+                for (Skill compareSkill : skills) {
+                    if (compareSkill.equals(singleSkill)) {
+                        tempSkill.getSkills().set(i, compareSkill);
+                        break;
+                    }
+                }
+                for (Attribute attribute : attributes) {
+                    if (singleSkill.getAttr().equals(attribute.getBaseAttribute())) {
+                        tempSkill.getSkills().get(i).setLinkedAttribute(attribute);
+                        tempSkill.getSkills().get(i).setAdvanceable(true);
                         break;
                     }
                 }
