@@ -6,7 +6,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "TALENTS_RND_TABLE")
-public class RandomTalent {
+public class TalentRandom {
     @Id
     @Column(name = "ID")
     private int ID;
@@ -14,12 +14,13 @@ public class RandomTalent {
     private int indexDOWN;
     @Column(name = "IDXUP")
     private int indexUP;
+
     @ManyToOne
     @JoinColumn(name = "IDTAL")
-    private GroupTalent talent;
+    private TalentGroup talent;
 
-    public RandomTalent() {}
-    public RandomTalent(int ID, int indexDOWN, int indexUP, GroupTalent talent) {
+    public TalentRandom() {}
+    public TalentRandom(int ID, int indexDOWN, int indexUP, TalentGroup talent) {
         this.ID = ID;
         this.indexDOWN = indexDOWN;
         this.indexUP = indexUP;
@@ -44,10 +45,10 @@ public class RandomTalent {
     public void setIndexUP(int idxup) {
         this.indexUP = idxup;
     }
-    public GroupTalent getTalent() {
+    public TalentGroup getTalent() {
         return talent;
     }
-    public void setTalent(GroupTalent talent) {
+    public void setTalent(TalentGroup talent) {
         this.talent = talent;
     }
 
@@ -59,7 +60,7 @@ public class RandomTalent {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        RandomTalent that = (RandomTalent) o;
+        TalentRandom that = (TalentRandom) o;
         return Objects.equals(talent, that.talent);
     }
     @Override

@@ -41,7 +41,7 @@ public class CharacterSheet {
     private Profession prof;
     private List<Attribute> attributeList;
     private List<Skill> skillList;
-    private List<GroupTalent> talentList;
+    private List<Talent> talentList;
     private int exp;
 
     public CharacterSheet(JFrame _frame, Main _screen, Connection _connection) {
@@ -133,10 +133,10 @@ public class CharacterSheet {
     public void setSkillList(List<Skill> skillList) {
         this.skillList = skillList;
     }
-    public List<GroupTalent> getTalentList() {
+    public List<Talent> getTalentList() {
         return talentList;
     }
-    public void setTalentList(List<GroupTalent> talentList) {
+    public void setTalentList(List<Talent> talentList) {
         this.talentList = talentList;
     }
 
@@ -192,7 +192,7 @@ public class CharacterSheet {
         ret += "]\n";
 
         ret += "Talents = [\n";
-        for (GroupTalent talent : talentList) {
+        for (Talent talent : talentList) {
             ret += "\t" + talent + "\n";
         }
         ret += "]";

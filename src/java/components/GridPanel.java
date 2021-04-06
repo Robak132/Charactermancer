@@ -53,6 +53,7 @@ public class GridPanel extends JPanel {
         build(GridPanel.ALIGNMENT_NOTOP);
     }
     public void build(int alignment) {
+        removeAll();
         Logger.getLogger(getClass().getName()).log(Level.INFO, String.format("GridPanel built (col: %d, row: %d)", columns, rows));
         setLayout(new GridLayoutManager(rows+2, columns+2, new Insets(0, 0, 0, 0), -1, -1));
         addSpacers(alignment);

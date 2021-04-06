@@ -1,9 +1,7 @@
 package mappings;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "TALENTS")
@@ -13,23 +11,24 @@ public class Talent {
     private int ID;
     @Column(name = "NAME")
     private String name;
-    @Column(name = "NAMEENG")
-    private String nameEng;
-    @Column(name = "MAX_LVL")
-    private String maxLvl;
-    @Column(name = "TEST")
-    private String test;
-    @Column(name = "DESCR")
-    private String desc;
+
+    @ManyToOne
+    @JoinColumn(name = "IDBASE")
+    private BaseTalent baseTalent;
+
+    @Transient
+    private int currentLvl = 0;
+    @Transient
+    private boolean advanceable = false;
+    @Transient
+    private Attribute linkedAttribute = null;
 
     public Talent() {}
-    public Talent(int ID, String name, String nameEng, String maxLvl, String test, String desc) {
+    public Talent(int ID, String name, int currentLvl, BaseTalent baseTalent) {
         this.ID = ID;
         this.name = name;
-        this.nameEng = nameEng;
-        this.maxLvl = maxLvl;
-        this.test = test;
-        this.desc = desc;
+        this.currentLvl = currentLvl;
+        this.baseTalent = baseTalent;
     }
 
     public int getID() {
@@ -44,28 +43,74 @@ public class Talent {
     public void setName(String name) {
         this.name = name;
     }
-    public String getNameEng() {
-        return nameEng;
+    public int getCurrentLvl() {
+        return currentLvl;
     }
-    public void setNameEng(String nameEng) {
-        this.nameEng = nameEng;
+    public void setCurrentLvl(int currentLvl) {
+        this.currentLvl = currentLvl;
     }
-    public String getMaxLvl() {
-        return maxLvl;
+    public Attribute getLinkedAttribute() {
+        return linkedAttribute;
     }
-    public void setMaxLvl(String maxLvl) {
-        this.maxLvl = maxLvl;
+    public void setLinkedAttribute(Attribute linkedAttribute) {
+        this.linkedAttribute = linkedAttribute;
     }
-    public String getTest() {
-        return test;
+    public boolean isAdvanceable() {
+        return advanceable;
     }
-    public void setTest(String test) {
-        this.test = test;
+    public void setAdvanceable(boolean advanceable) {
+        this.advanceable = advanceable;
     }
-    public String getDesc() {
-        return desc;
+
+    public Integer getMax() {
+        if (linkedAttribute != null) {
+            return linkedAttribute.getBonus();
+        } else if (baseTalent.getConstLvl() != null) {
+            return baseTalent.getConstLvl();
+        }
+        return null;
     }
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public String getMaxString() {
+        if (getMax() != null) {
+            return String.valueOf(getMax());
+        }
+        return "";
+    }
+    public BaseAttribute getAttr() {
+        return baseTalent.getAttr();
+    }
+    public void setAttr(BaseAttribute baseAttribute) {
+        baseTalent.setAttr(baseAttribute);
+    }
+    public BaseTalent getBaseTalent() {
+        return baseTalent;
+    }
+    public void setBaseTalent(BaseTalent baseTalent) {
+        this.baseTalent = baseTalent;
+    }
+
+    @Override
+    public String toString() {
+        if (name.equals(baseTalent.getName())) {
+            return String.format("Talent {ID = %d, name = %s, lvl = %d}", ID, name, currentLvl);
+        } else {
+            return String.format("Talent {ID = %d, name = %s [%s], lvl = %d}", ID, name, baseTalent.getName(), currentLvl);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Talent that = (Talent) o;
+        return ID == that.ID && Objects.equals(name, that.name);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(ID, name);
     }
 }

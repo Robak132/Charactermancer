@@ -39,6 +39,13 @@ public class Race {
             inverseJoinColumns = @JoinColumn(name = "IDSKILL"))
     private List<SkillGroup> raceSkills;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="RACE_TALENTS",
+            joinColumns = @JoinColumn(name = "IDRACE"),
+            inverseJoinColumns = @JoinColumn(name = "IDTALENT"))
+    private List<TalentGroup> raceTalents;
+
     public enum Size {
         TINY(0),
         LITTLE(1),
@@ -161,6 +168,23 @@ public class Race {
             }
         }
         return raceSkills;
+    }
+
+    public List<TalentGroup> getRaceTalents() {
+        return raceTalents;
+    }
+    public List<TalentGroup> getRaceTalents(List<Attribute> attributes) {
+        for (TalentGroup talent : raceTalents) {
+            for (Talent singleTalent : talent.getTalents()) {
+                for (Attribute attribute : attributes) {
+                    if (singleTalent.getAttr().equals(attribute.getBaseAttribute())) {
+                        singleTalent.setLinkedAttribute(attribute);
+                        break;
+                    }
+                }
+            }
+        }
+        return raceTalents;
     }
 
     @Override

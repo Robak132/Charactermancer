@@ -225,25 +225,11 @@ public class Connection {
         return baseSkills;
     }
 
-    List<RaceTalent> getTalentsByRace(int race) {
-        List<RaceTalent> talents = new ArrayList<>();
+    List<Talent> getAlternateTalentsForGroup(int custom) {
+        List<Talent> skills = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT r FROM RaceTalent r WHERE r.race.id=:param");
-            SQLQuery.setParameter("param", race);
-            talents = SQLQuery.list();
-            session.close();
-        } catch (Exception ex) {
-            abort();
-            ex.printStackTrace();
-        }
-        return talents;
-    }
-    List<GroupTalent> getAlternateTalentsForGroup(int custom) {
-        List<GroupTalent> skills = new ArrayList<>();
-        try {
-            Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT G FROM GroupTalent G WHERE G.baseTalent.id=:param AND G.group=false");
+            Query SQLQuery = session.createQuery("SELECT G FROM Talent G WHERE G.baseTalent.id=:param AND G.group=false");
             SQLQuery.setParameter("param", custom);
             skills = SQLQuery.list();
             session.close();
@@ -253,13 +239,13 @@ public class Connection {
         }
         return skills;
     }
-    GroupTalent getRandomTalent(int n) {
-        GroupTalent talent = null;
+    TalentGroup getRandomTalent(int n) {
+        TalentGroup talent = null;
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT r.talent FROM RandomTalent r WHERE r.indexDOWN <= :param AND :param <= r.indexUP");
+            Query SQLQuery = session.createQuery("SELECT r.talent FROM TalentRandom r WHERE r.indexDOWN <= :param AND :param <= r.indexUP");
             SQLQuery.setParameter("param", n);
-            talent = SQLQuery.list().size()==0 ? null : (GroupTalent) SQLQuery.list().get(0);
+            talent = SQLQuery.list().size()==0 ? null : (TalentGroup) SQLQuery.list().get(0);
             session.close();
         } catch (Exception ex) {
             abort();

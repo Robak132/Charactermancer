@@ -18,7 +18,7 @@ public class Skill {
     @Transient
     private boolean advanceable = false;
     @Transient
-    private Attribute linkedAttribute;
+    private Attribute linkedAttribute = null;
     @Transient
     private int advValue = 0;
     @Transient

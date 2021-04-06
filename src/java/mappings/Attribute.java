@@ -39,9 +39,12 @@ public class Attribute {
         updateAll();
     }
     public int getTotalValue() {
+        updateAll();
         return totalValue;
     }
-
+    public int getBonus() {
+        return getTotalValue() / 10;
+    }
     private void updateAll() {
         totalValue=raceAttribute.getValue() + rndValue + advValue;
     }

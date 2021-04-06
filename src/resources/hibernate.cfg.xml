@@ -11,7 +11,8 @@
 
         <mapping class="mappings.BaseAttribute" />
         <mapping class="mappings.Skill" />
-        <mapping class="mappings.GroupTalent" />
+        <mapping class="mappings.Talent" />
+        <mapping class="mappings.TalentGroup" />
         <mapping class="mappings.Profession" />
         <mapping class="mappings.ProfessionCareer" />
         <mapping class="mappings.ProfessionClass" />
@@ -20,10 +21,9 @@
         <mapping class="mappings.Race" />
         <mapping class="mappings.RaceAttribute" />
         <mapping class="mappings.RaceTable" />
-        <mapping class="mappings.RaceTalent" />
-        <mapping class="mappings.RandomTalent" />
+        <mapping class="mappings.TalentRandom" />
         <mapping class="mappings.BaseSkill" />
         <mapping class="mappings.SkillGroup" />
-        <mapping class="mappings.Talent" />
+        <mapping class="mappings.BaseTalent" />
     </session-factory>
 </hibernate-configuration>
