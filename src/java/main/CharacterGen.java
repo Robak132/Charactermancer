@@ -111,8 +111,10 @@ public class CharacterGen {
     private List<Skill> raceSkills = new ArrayList<>();
     private final List<TalentGroup> randomTalentGroups = new ArrayList<>();
     private final List<Talent> randomTalents = new ArrayList<>();
-
     private final List<Skill> profSkillList = new ArrayList<>();
+
+    private List<TalentGroup> profTalentGroups = new ArrayList<>();
+    private List<Talent> profTalents = new ArrayList<>();
 
     private final List<JIntegerField> BAttr = new ArrayList<>();
     private final List<JIntegerField> RAttr = new ArrayList<>();
@@ -251,7 +253,7 @@ public class CharacterGen {
             }
         });
         prof_option1Button.addActionListener(e -> {
-            sheet.setProf(profList.get(0));
+            sheet.setProfession(profList.get(0));
             expField.changeValue(prof_maxExp);
 
             prof_rollButton.setEnabled(false);
@@ -266,7 +268,7 @@ public class CharacterGen {
         });
         prof_option1Button.setMnemonic(KeyEvent.VK_1);
         prof_option2Button.addActionListener(e -> {
-            sheet.setProf(profList.get(1));
+            sheet.setProfession(profList.get(1));
             expField.changeValue(prof_maxExp);
 
             prof_rollButton.setEnabled(false);
@@ -281,7 +283,7 @@ public class CharacterGen {
         });
         prof_option2Button.setMnemonic(KeyEvent.VK_2);
         prof_option3Button.addActionListener(e -> {
-            sheet.setProf(profList.get(2));
+            sheet.setProfession(profList.get(2));
             expField.changeValue(prof_maxExp);
 
             prof_rollButton.setEnabled(false);
@@ -380,7 +382,7 @@ public class CharacterGen {
             }
 
             int active_slot = 0;
-            Integer[] attributes = sheet.getProf().getSimpleAttributes();
+            Integer[] attributes = sheet.getProfession().getSimpleAttributes();
             for (int i=0; i < attributes.length; i++) {
                 if (attributes[i] != 0) {
                     attributes[i] = slots[active_slot];
@@ -499,7 +501,7 @@ public class CharacterGen {
         for (int i = 0; i < attributes.size(); i++) {
             boolean changeBackground = (sheet.getRace().getSize()== Size.NORMAL && i == 2) || i == 3 || i == 8;
             Color foregroundColor = Color.black;
-            if (sheet.getProf().hasAttribute(i+1)) {
+            if (sheet.getProfession().hasAttribute(i+1)) {
                 foregroundColor = ColorPalette.CustomGreen;
             }
 
@@ -600,7 +602,7 @@ public class CharacterGen {
 
             AdvancedSpinner adv = new AdvancedSpinner(new SpinnerNumberModel(0, 0, 5, 1));
             adv.setEnabled(false);
-            if (sheet.getProf().hasAttribute(i+1)) {
+            if (sheet.getProfession().hasAttribute(i+1)) {
                 adv.setEnabled(true);
                 tabOrder.add(adv.getTextField());
             }
@@ -650,7 +652,7 @@ public class CharacterGen {
     private void raceskill_createTable() {
         raceSkillGroups = sheet.getRace().getRaceSkills(attributes);
         raceSkillGroups.forEach(e -> raceSkills.add(e.getFirstSkill()));
-        professionSkills = connection.getProfessionSkills(sheet.getProf());
+        professionSkills = connection.getProfessionSkills(sheet.getProfession());
 
         List<Component> tabOrder = new ArrayList<>();
         int base_itr = 1, adv_itr = 1;
@@ -876,7 +878,7 @@ public class CharacterGen {
     }
 
     private void profskill_createTable() {
-        List<SkillGroup> professionSkills = sheet.getProf().getProfSkills(attributes, raceSkills);
+        List<SkillGroup> professionSkills = sheet.getProfession().getProfSkills(attributes, raceSkills);
         professionSkills.forEach(e -> profSkillList.add(e.getFirstSkill()));
         List<Component> tabOrder = new ArrayList<>();
 
@@ -946,6 +948,51 @@ public class CharacterGen {
         }
     }
 
+    private void proftalent_createTable() {
+        List<TalentGroup> profTalentGroups = sheet.getProfession().getProfTalents(attributes);
+        profTalentGroups.forEach(e -> profTalents.add(e.getFirstTalent()));
+        ButtonGroup buttonGroup = new ButtonGroup();
+
+        // Constants
+        final Dimension[] columnDimensions = new Dimension[]{
+                new Dimension(200, -1),
+                new Dimension(30, -1),
+                new Dimension(200, -1)
+        };
+
+        // Talents - Header
+        profskill_talentsPanel.add(new JLabel("Talents", JLabel.CENTER), new GridConstraints(0, 0, 1, -1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
+        for (int i = 0; i < profTalentGroups.size(); i++) {
+            int column = 0;
+
+            Container nameContainer = createTalentComboIfNeeded(profTalentGroups.get(i), profskill_talentsPanel, i + 1, column, columnDimensions[column]);
+            column++;
+
+            JTextField attrField = new JTextField(profTalents.get(i).getMaxString());
+            attrField.setHorizontalAlignment(JTextField.CENTER);
+            attrField.setEditable(false);
+            attrField.setFocusable(false);
+            profskill_talentsPanel.add(attrField, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
+
+            JTextArea testArea = new JTextArea(profTalents.get(i).getBaseTalent().getTest());
+            testArea.setFont(new Font(testArea.getFont().getName(), testArea.getFont().getStyle(), 10));
+            testArea.setLineWrap(true);
+            testArea.setWrapStyleWord(true);
+            testArea.setEditable(false);
+            profskill_talentsPanel.add(testArea, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
+
+            String tooltip = profTalents.get(i).getBaseTalent().getDesc();
+            JLabel desc = new JLabel(new ImageIcon("src/resources/images/info.png"));
+            desc.setToolTipText(MultiLineTooltip.splitToolTip(tooltip, 75, 10));
+            profskill_talentsPanel.add(desc, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null), false);
+
+            JRadioButton radioButton = new JRadioButton();
+            buttonGroup.add(radioButton);
+            profskill_talentsPanel.add(radioButton, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null), false);
+        }
+        profskill_talentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
+    }
+
     private void calculateHP() {
         int value = (TAttr.get(3).getValue() / 10) * 2 + TAttr.get(8).getValue() / 10;
         if (sheet.getRace().getSize() == Race.Size.NORMAL)
@@ -979,6 +1026,9 @@ public class CharacterGen {
                 break;
             case 5:
                 profskill_createTable();
+                proftalent_createTable();
+                break;
+            default:
                 break;
         }
     }

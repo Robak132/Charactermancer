@@ -36,6 +36,13 @@ public class Profession {
     @JoinColumn(name= "IDPROF")
     private List<ProfSkill> profSkills;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="PROF_TALENTS",
+            joinColumns = @JoinColumn(name = "IDPROF"),
+            inverseJoinColumns = @JoinColumn(name = "IDTAL"))
+    private List<TalentGroup> profTalents;
+
     public Profession() {}
     public Profession(int ID, String name, int level) {
         this.ID = ID;
@@ -136,6 +143,26 @@ public class Profession {
         return tempList;
     }
     public void setProfSkills(List<ProfSkill> profSkills) {
+        this.profSkills = profSkills;
+    }
+
+    public List<TalentGroup> getProfTalents(List<Attribute> attributes) {
+        for (TalentGroup talentGroup : profTalents) {
+            for (Talent singleTalent : talentGroup.getTalents()) {
+                for (Attribute attribute : attributes) {
+                    if (singleTalent.getAttr() != null) {
+                        if (singleTalent.getAttr().equals(attribute.getBaseAttribute())) {
+                            singleTalent.setLinkedAttribute(attribute);
+                            singleTalent.setAdvanceable(true);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return profTalents;
+    }
+    public void setProfTalents(List<ProfSkill> profSkills) {
         this.profSkills = profSkills;
     }
 

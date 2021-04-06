@@ -113,10 +113,10 @@ public class CharacterSheet {
     public void setRace(Race race) {
         this.race = race;
     }
-    public Profession getProf() {
+    public Profession getProfession() {
         return prof;
     }
-    public void setProf(Profession prof) {
+    public void setProfession(Profession prof) {
         this.prof = prof;
     }
     public List<Attribute> getAttributeList() {
