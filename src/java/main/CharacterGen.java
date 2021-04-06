@@ -98,7 +98,7 @@ public class CharacterGen {
 
     private GridPanel profskill_skillsPanel;
     private GridPanel profskill_talentsPanel;
-    private JButton pofskill_option1;
+    private JButton profskill_option1;
 
     private JIntegerField mouse_source = null;
     private Color mouse_color;
@@ -110,7 +110,7 @@ public class CharacterGen {
     private List<SkillGroup> raceSkillGroups = new ArrayList<>();
     private List<Skill> raceSkills = new ArrayList<>();
     private final List<TalentGroup> randomTalentGroups = new ArrayList<>();
-    private List<Talent> randomTalents = new ArrayList<>();
+    private final List<Talent> randomTalents = new ArrayList<>();
 
     private final List<Skill> profSkillList = new ArrayList<>();
 
@@ -487,7 +487,7 @@ public class CharacterGen {
     }
 
 
-    void attr_createTable() {
+    private void attr_createTable() {
         attributes = sheet.getRace().getAttributes();
 
         attr_move = new JIntegerField(sheet.getRace().getM());
@@ -549,7 +549,7 @@ public class CharacterGen {
         attributesTable.add(attr_hp, new GridConstraints(1, attributes.size()+1, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null), false);
         attributesTable.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
-    void attr_replaceValues(MouseEvent e) {
+    private void attr_replaceValues(MouseEvent e) {
         if (!attr_locked) {
             if (mouse_source == null) {
                 mouse_source = (JIntegerField) e.getSource();
@@ -571,7 +571,7 @@ public class CharacterGen {
         }
     }
 
-    void fate_createTable() {
+    private void fate_createTable() {
         List<JIntegerField> values = List.copyOf(TAttr);
         List<Component> tabOrder = new ArrayList<>();
         BAttr.clear();
@@ -625,7 +625,7 @@ public class CharacterGen {
         fate_resilience.setValue(sheet.getRace().getResilience());
         fate_extra.setValue(sheet.getRace().getExtra());
     }
-    void fate_updatePoints(AdvancedSpinner activeSpinner, int finalI, JIntegerField field) {
+    private void fate_updatePoints(AdvancedSpinner activeSpinner, int finalI, JIntegerField field) {
         int now = (int) (activeSpinner.getValue());
         int adv = attributes.get(finalI).getAdvValue();
 
@@ -647,7 +647,7 @@ public class CharacterGen {
         fate_option1Button.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
     }
 
-    void raceskill_createTable() {
+    private void raceskill_createTable() {
         raceSkillGroups = sheet.getRace().getRaceSkills(attributes);
         raceSkillGroups.forEach(e -> raceSkills.add(e.getFirstSkill()));
         professionSkills = connection.getProfessionSkills(sheet.getProf());
@@ -708,7 +708,7 @@ public class CharacterGen {
 
         raceskill_updateTable(raceSkills);
     }
-    void raceskill_updateTable(List<Skill> raceSkills) {
+    private void raceskill_updateTable(List<Skill> raceSkills) {
         int base_itr = 1, adv_itr = 1;
         int column, row;
         for (Skill skill : raceSkills) {
@@ -726,7 +726,7 @@ public class CharacterGen {
             ((AdvancedSpinner) raceskill_skillsPanel.getComponent(column + 2, row)).setValue(skill.getAdvValue());
         }
     }
-    void raceskill_updatePoints(Container container, AdvancedSpinner spinner, JIntegerField totalField, Skill skill, boolean paintGreen) {
+    private void raceskill_updatePoints(Container container, AdvancedSpinner spinner, JIntegerField totalField, Skill skill, boolean paintGreen) {
         int now = (int) spinner.getValue();
         int last = skill.getAdvValue();
 
@@ -756,7 +756,7 @@ public class CharacterGen {
 //        raceskill_skillsPanel.iterateThroughRows(2, 1, baseSkills.size(), this::raceskill_changeColor);
 //        raceskill_skillsPanel.iterateThroughRows(6, 1, advSkills.size(), this::raceskill_changeColor);
     }
-    void raceskill_changeColor(Object object) {
+    private void raceskill_changeColor(Object object) {
         AdvancedSpinner active = (AdvancedSpinner) object;
         if (raceskill_points.get((int) active.getValue()) > 3) {
             active.getTextField().setForeground(Color.RED);
@@ -765,7 +765,7 @@ public class CharacterGen {
         }
     }
 
-    void racetalent_createTable() {
+    private void racetalent_createTable() {
         List<TalentGroup> raceTalentGroups = sheet.getRace().getRaceTalents();
         raceTalentGroups.forEach(e -> raceTalents.add(e.getFirstTalent()));
 
@@ -836,7 +836,7 @@ public class CharacterGen {
 
         raceskill_randomTalentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
-    void racetalent_roll() {
+    private void racetalent_roll() {
         TalentGroup rollTalent;
         do {
             Object[] result = getRandomTalent();
@@ -875,7 +875,7 @@ public class CharacterGen {
         }
     }
 
-    void profskill_createTable() {
+    private void profskill_createTable() {
         List<SkillGroup> professionSkills = sheet.getProf().getProfSkills(attributes, raceSkills);
         professionSkills.forEach(e -> profSkillList.add(e.getFirstSkill()));
         List<Component> tabOrder = new ArrayList<>();
@@ -931,7 +931,7 @@ public class CharacterGen {
 
         profskill_skillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
-    void profskill_updatePoints(Container container, AdvancedSpinner spinner, JIntegerField totalField, Skill skill) {
+    private void profskill_updatePoints(Container container, AdvancedSpinner spinner, JIntegerField totalField, Skill skill) {
         int now = (int) spinner.getValue();
 
         if (skill.getAdvValue() != now) {
@@ -946,19 +946,19 @@ public class CharacterGen {
         }
     }
 
-    void calculateHP() {
+    private void calculateHP() {
         int value = (TAttr.get(3).getValue() / 10) * 2 + TAttr.get(8).getValue() / 10;
         if (sheet.getRace().getSize() == Race.Size.NORMAL)
             value += TAttr.get(2).getValue() / 10;
         attr_hp.setValue(value);
     }
-    void calculateTotal() {
+    private void calculateTotal() {
         for (int i=0;i<10;i++)
             TAttr.get(i).setValue(BAttr.get(i).getValue() + RAttr.get(i).getValue());
         calculateHP();
     }
 
-    void moveToNextTab(int tab) {
+    private void moveToNextTab(int tab) {
         tabbedPane.setEnabledAt(tab + 1, true);
         tabbedPane.setSelectedIndex(tab + 1);
         Logger.getLogger(getClass().getName()).log(Level.INFO, String.format("Loaded tab %d", tab + 1));
@@ -982,7 +982,7 @@ public class CharacterGen {
                 break;
         }
     }
-    void createUIComponents() {
+    private void createUIComponents() {
         expField = new JIntegerField(0);
         expField.setRunnable((o, i) -> sheet.setExp(((JIntegerField) o).getValue()));
 
@@ -993,7 +993,7 @@ public class CharacterGen {
         raceskill_points.put(5, 0);
     }
 
-    Container createSkillComboIfNeeded(SkillGroup groupSkill, GridPanel panel, int row, int column) {
+    private Container createSkillComboIfNeeded(SkillGroup groupSkill, GridPanel panel, int row, int column) {
         if (groupSkill.countSkills() == 1) {
             Skill singleSkill = groupSkill.getFirstSkill();
 
@@ -1019,7 +1019,7 @@ public class CharacterGen {
             return comboBox;
         }
     }
-    Container createTalentComboIfNeeded(TalentGroup groupTalent, GridPanel panel, int row, int column, Dimension columnDimensions) {
+    private Container createTalentComboIfNeeded(TalentGroup groupTalent, GridPanel panel, int row, int column, Dimension columnDimensions) {
         if (groupTalent.countTalents() == 1) {
             Talent singleTalent = groupTalent.getFirstTalent();
 
@@ -1046,7 +1046,7 @@ public class CharacterGen {
             return comboBox;
         }
     }
-    void updateTalentRow(TalentGroup talentGroup, List<Talent> finalTalents, GridPanel panel, int row, ActionEvent event) {
+    private void updateTalentRow(TalentGroup talentGroup, List<Talent> finalTalents, GridPanel panel, int row, ActionEvent event) {
         int index = ((JComboBox<?>) event.getSource()).getSelectedIndex();
         Talent talent = talentGroup.getTalents().get(index);
 
@@ -1061,21 +1061,21 @@ public class CharacterGen {
     }
 
     // Base functions to use with GUI and text //
-    Object[] getRandomRace() {
+    private Object[] getRandomRace() {
         Object[] returns = new Object[2];
         int numeric = Dice.randomDice(1, 100);
         returns[0] = numeric;
         returns[1] = connection.getRaceFromTable(numeric);
         return returns;
     }
-    Object[] getRandomProf(Race race) {
+    private Object[] getRandomProf(Race race) {
         Object[] returns = new Object[2];
         int numeric = Dice.randomDice(1, 100);
         returns[0] = numeric;
         returns[1] = connection.getProfFromTable(race.getID(), numeric);
         return returns;
     }
-    Object[] getOneRandomAttr(int index, Race race) {
+    private Object[] getOneRandomAttr(int index, Race race) {
         Object[] returns = new Object[2];
         int raceAttr = race.getRaceAttribute(index+1).getValue();
         int rollAttr = Dice.randomDice(2, 10);
@@ -1085,7 +1085,7 @@ public class CharacterGen {
         returns[1] = sumAttr;
         return returns;
     }
-    Object[] getAllRandomAttr(Race race) {
+    private Object[] getAllRandomAttr(Race race) {
         Integer[] rollAttr = new Integer[10];
         Integer[] sumAttr = new Integer[10];
         Object[] returns = new Object[3];
@@ -1102,7 +1102,7 @@ public class CharacterGen {
         return returns;
     }
 
-    List<Skill> randomizeSkillsWithList(List<SkillGroup> skills, int[] values) {
+    private List<Skill> randomizeSkillsWithList(List<SkillGroup> skills, int[] values) {
         int range = skills.size();
         List<Integer> usedIndexes = new ArrayList<>();
         List<Skill> finalSkillList = new ArrayList<>();
@@ -1126,7 +1126,7 @@ public class CharacterGen {
         }
         return finalSkillList;
     }
-    Object[] getRandomTalent() {
+    private Object[] getRandomTalent() {
         Object[] returns = new Object[2];
         int numeric = Dice.randomDice(1, 100);
         returns[0] = numeric;

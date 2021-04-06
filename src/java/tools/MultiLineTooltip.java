@@ -4,9 +4,7 @@ import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class MultiLineTooltip {
     private static final int DIALOG_TOOLTIP_MAX_SIZE = 75;

@@ -30,9 +30,9 @@ public class JIntegerField extends JTypeField<Integer> {
     }
 }
 class JTypeField<T> extends JTextField {
-    T value;
-    String format;
-    RunnableWithObject runnable = null;
+    protected T value;
+    private String format;
+    private RunnableWithObject runnable = null;
 
     public JTypeField(String format) {
         super();

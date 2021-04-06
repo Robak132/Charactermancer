@@ -21,10 +21,6 @@ public class GridPanel extends JPanel {
     public static final int ALIGNMENT_NOTOP = 1;
     public static final int ALIGNMENT_CENTER = 2;
 
-    public GridPanel() {
-        super();
-    }
-
     @Override
     public void add(Component comp, Object constraints) {
         add(comp, constraints, true);

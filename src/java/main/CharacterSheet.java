@@ -34,7 +34,6 @@ public class CharacterSheet {
     private JTextField raceSelectText;
     private List<JTextField> attributesTextFields = new ArrayList<>();
     private int move, maxhp, hp;
-    private boolean warning = false;
 
 
     private Race race;
@@ -86,7 +85,6 @@ public class CharacterSheet {
     }
     public static void ReadJSONExample() {
         JSONParser parser = new JSONParser();
-        JSONArray a = null;
         try {
             JSONObject jsonObject = (JSONObject) parser.parse(new FileReader("src/resources/Nowy.json"));
             JSONArray atr = (JSONArray) jsonObject.get("attribs");

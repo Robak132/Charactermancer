@@ -19,6 +19,7 @@ public class Connection {
     Connection() {
         refresh();
     }
+
     private void refresh() {
         String path = this.getClass().getResource("/db/database.sqlite").toString();
         StandardServiceRegistryBuilder tempRegistry = new StandardServiceRegistryBuilder().configure("hibernate.cfg.xml");
@@ -31,13 +32,13 @@ public class Connection {
         Metadata meta = new MetadataSources(registry).getMetadataBuilder().build();
         factory = meta.getSessionFactoryBuilder().build();
     }
-    void abort() {
+    private void abort() {
         factory.close();
         StandardServiceRegistryBuilder.destroy(registry);
         refresh();
     }
 
-    Race getRaceFromTable(int n) {
+    public Race getRaceFromTable(int n) {
         Race race = null;
         try {
             Session session = factory.openSession();
@@ -51,7 +52,7 @@ public class Connection {
         }
         return race;
     }
-    Race getRace(String name) {
+    public Race getRace(String name) {
         Race race = null;
         try {
             Session session = factory.openSession();
@@ -65,7 +66,7 @@ public class Connection {
         }
         return race;
     }
-    List<Race> getRaces() {
+    public List<Race> getRaces() {
         List<Race> races = new ArrayList<>();
         try {
             Session session = factory.openSession();
@@ -79,7 +80,7 @@ public class Connection {
         return races;
     }
 
-    Profession getProfFromTable(int race, int n) {
+    public Profession getProfFromTable(int race, int n) {
         Profession prof = null;
         try {
             Session session = factory.openSession();
@@ -94,7 +95,7 @@ public class Connection {
         }
         return prof;
     }
-    Profession getProf(String clss, String profession, int level) {
+    public Profession getProf(String clss, String profession, int level) {
         Profession prof = null;
         try {
             Session session = factory.openSession();
@@ -110,7 +111,7 @@ public class Connection {
         }
         return prof;
     }
-    Profession getProf(String profession, int level) {
+    public Profession getProf(String profession, int level) {
         Profession prof = null;
         try {
             Session session = factory.openSession();
@@ -125,7 +126,7 @@ public class Connection {
         }
         return prof;
     }
-    List<ProfessionClass> getProfessionClass() {
+    public List<ProfessionClass> getProfessionClass() {
         List<ProfessionClass> profs = new ArrayList<>();
         try {
             Session session = factory.openSession();
@@ -138,7 +139,7 @@ public class Connection {
         }
         return profs;
     }
-    List<Profession> getProfs(int race) {
+    public List<Profession> getProfs(int race) {
         List<Profession> profs = new ArrayList<>();
         try {
             Session session = factory.openSession();
@@ -152,7 +153,7 @@ public class Connection {
         }
         return profs;
     }
-    List<Profession> getProfs(int race, String clss) {
+    public List<Profession> getProfs(int race, String clss) {
         if (clss == null)
             return getProfs(race);
         List<Profession> profs = new ArrayList<>();
@@ -170,21 +171,7 @@ public class Connection {
         return profs;
     }
 
-    List<Skill> getAlternateSkillsForGroup(int custom) {
-        List<Skill> skills = new ArrayList<>();
-        try {
-            Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT G FROM Skill G JOIN G.baseSkill WHERE G.baseSkill.id=:param AND G.group=false");
-            SQLQuery.setParameter("param", custom);
-            skills = SQLQuery.list();
-            session.close();
-        } catch (Exception ex) {
-            abort();
-            ex.printStackTrace();
-        }
-        return skills;
-    }
-    List<Skill> getProfessionSkills(Profession prof) {
+    public List<Skill> getProfessionSkills(Profession prof) {
         List<Skill> skills = new ArrayList<>();
         try {
             Session session = factory.openSession();
@@ -198,48 +185,8 @@ public class Connection {
         }
         return skills;
     }
-    List<Skill> getProfessionSkills(Profession prof, List<BaseAttribute> attributesToBind) {
-        List<Skill> skills = getProfessionSkills(prof);
-        for (Skill skill : skills) {
-            for (BaseAttribute baseAttribute : attributesToBind) {
-                if (skill.getAttr().equals(baseAttribute)) {
-                    skill.setAttr(baseAttribute);
-                    break;
-                }
-            }
-        }
-        return skills;
-    }
-    List<BaseSkill> getProfessionBaseSkills(Profession prof) {
-        List<BaseSkill> baseSkills = new ArrayList<>();
-        try {
-            Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT p.skill.base FROM ProfSkill p WHERE p.profession.ID =:param");
-            SQLQuery.setParameter("param", prof.getID());
-            baseSkills = SQLQuery.list();
-            session.close();
-        } catch (Exception ex) {
-            abort();
-            ex.printStackTrace();
-        }
-        return baseSkills;
-    }
 
-    List<Talent> getAlternateTalentsForGroup(int custom) {
-        List<Talent> skills = new ArrayList<>();
-        try {
-            Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT G FROM Talent G WHERE G.baseTalent.id=:param AND G.group=false");
-            SQLQuery.setParameter("param", custom);
-            skills = SQLQuery.list();
-            session.close();
-        } catch (Exception ex) {
-            abort();
-            ex.printStackTrace();
-        }
-        return skills;
-    }
-    TalentGroup getRandomTalent(int n) {
+    public TalentGroup getRandomTalent(int n) {
         TalentGroup talent = null;
         try {
             Session session = factory.openSession();
@@ -254,19 +201,19 @@ public class Connection {
         return talent;
     }
 
-    List<String> getProfsClasses(int race) {
+    public List<String> getProfsClasses(int race) {
         List<String> result = new ArrayList<>();
         for (ProfessionClass prof: getProfessionClass())
             result.add(prof.getName());
         return result;
     }
-    List<String> getProfsNames(int race, String clss) {
+    public List<String> getProfsNames(int race, String clss) {
         List<String> result = new ArrayList<>();
         for (Object prof : getProfs(race, clss))
             result.add(((Profession) prof).getName());
         return result;
     }
-    List<String> getRacesNames() {
+    public List<String> getRacesNames() {
         List<String> result = new ArrayList<>();
         for (Object prof : getRaces())
             result.add(((Race) prof).getName());

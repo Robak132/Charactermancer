@@ -8,16 +8,15 @@ import java.awt.event.KeyEvent;
 import java.util.Locale;
 
 public class Main {
-    static JFrame frame;
-    static JPanel startPanel;
-    final Connection connection;
+    private static JFrame frame;
+    public JPanel mainPanel;
 
-    JComboBox<ImageIcon> comboBox1;
-    JButton createcharButton;
-    JButton createsheetButton;
-    JPanel mainPanel;
-    Locale[] languages = new Locale[] {Locale.ENGLISH, new Locale("pl", "PL")};
-    Dimension activeDimension = null;
+    private final Connection connection;
+    private JComboBox<ImageIcon> comboBox1;
+    private JButton createcharButton;
+    private JButton createsheetButton;
+    private final Locale[] languages = new Locale[] {Locale.ENGLISH, new Locale("pl", "PL")};
+    private Dimension activeDimension = null;
 
     public static void main(String[] args) {
         frame = new JFrame("Charactermancer");

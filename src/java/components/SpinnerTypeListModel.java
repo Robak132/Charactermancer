@@ -1,13 +1,12 @@
 package components;
 
 import javax.swing.*;
-import java.util.List;
 
 public class SpinnerTypeListModel<T> extends SpinnerNumberModel {
-    T[] validValues;
-    T lastValue;
-    int index = 0;
-    int lastIndex = 0;
+    private final T[] validValues;
+    private T lastValue;
+    private int index = 0;
+    private int lastIndex;
 
     public SpinnerTypeListModel(T[] validValues) {
         super();

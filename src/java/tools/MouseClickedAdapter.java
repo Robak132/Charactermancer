@@ -14,18 +14,21 @@ public interface MouseClickedAdapter extends MouseListener {
 
     @Override
     default void mousePressed(MouseEvent e) {
-
+        // Ignored
     }
 
     @Override
     default void mouseReleased(MouseEvent e) {
+        // Ignored
     }
 
     @Override
     default void mouseEntered(MouseEvent e) {
+        // Ignored
     }
 
     @Override
     default void mouseExited(MouseEvent e) {
+        // Ignored
     }
 }
