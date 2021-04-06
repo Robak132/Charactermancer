@@ -11,6 +11,18 @@ public class AdvancedSpinner extends JSpinner {
         }
         return null;
     }
+    public Object getLastIndex() {
+        if (getModel() instanceof SpinnerTypeListModel<?>) {
+            return ((SpinnerTypeListModel<?>) getModel()).getLastIndex();
+        }
+        return null;
+    }
+    public Object getIndex() {
+        if (getModel() instanceof SpinnerTypeListModel<?>) {
+            return ((SpinnerTypeListModel<?>) getModel()).getIndex();
+        }
+        return null;
+    }
 
     public AdvancedSpinner(SpinnerModel model) {
         super(model);

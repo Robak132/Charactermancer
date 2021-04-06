@@ -1,5 +1,6 @@
 package tools;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Dice {
@@ -14,5 +15,9 @@ public abstract class Dice {
     }
     public static int randomInt(int min, int max) {
         return min + ThreadLocalRandom.current().nextInt(max-min+1);
+    }
+    public static Object randomItem(List<?> list) {
+        int rnd = randomInt(0, list.size()-1);
+        return list.get(rnd);
     }
 }

@@ -47,6 +47,19 @@ public class SpinnerTypeListModel<T> extends SpinnerNumberModel {
         return validValues[index];
     }
 
+    @Override
+    public void setValue(Object value) {
+        for (int i = 0; i<validValues.length; i++) {
+            if (validValues[i] == value) {
+                lastValue = validValues[index];
+                lastIndex = index;
+
+                index = i;
+                super.setValue(value);
+            }
+        }
+    }
+
     public Object getLastValue() {
         return lastValue;
     }

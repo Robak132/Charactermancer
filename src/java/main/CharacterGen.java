@@ -2,6 +2,8 @@ package main;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import components.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import mappings.*;
 import mappings.Race.Size;
 import tools.*;
@@ -108,7 +110,8 @@ public class CharacterGen {
     private Race rollRace;
     private final List<Profession> profList = new ArrayList<>();
     private final List<GroupTalent> talentsList = new ArrayList<>();
-    private List<Skill> raceSkillList = new ArrayList<>();
+    private List<SkillGroup> raceSkillGroups = new ArrayList<>();
+    private List<Skill> raceSkills = new ArrayList<>();
     private List<Skill> profSkillList = new ArrayList<>();
 
     private final List<JIntegerField> BAttr = new ArrayList<>();
@@ -365,7 +368,7 @@ public class CharacterGen {
 
         // Fate & Resolve //
         /* TODO: Maybe change all buttons to JSpinners :thinking: */
-        KeyStroke escapeKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_MASK);
+        KeyStroke escapeKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK);
         Action action = AbstractActionBuilder.getAction(() -> {
             Integer[] slots = new Integer[] {0, 0, 0};
             int remain = 5;
@@ -447,6 +450,13 @@ public class CharacterGen {
         fate_option1Button.setMnemonic(KeyEvent.VK_1);
 
         // Race skills & Talents //
+        action = AbstractActionBuilder.getAction(() -> {
+            raceSkills = randomizeSkillsWithList(raceSkillGroups, new int[] {3, 3, 3, 5, 5, 5});
+            raceskill_updateTable(raceSkills);
+        });
+        raceskill_skillsPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "VK_R");
+        raceskill_skillsPanel.getActionMap().put("VK_R", action);
+
         raceskill_rollButton.addActionListener(e -> {
             GroupTalent rollTalent;
             do {
@@ -477,13 +487,13 @@ public class CharacterGen {
         });
         raceskill_option1.addActionListener(e -> {
             List<Skill> tempList = new ArrayList<>();
-            for (Skill skill : raceSkillList) {
+            for (Skill skill : raceSkills) {
                 if (skill.getAdvValue() != 0) {
                     tempList.add(skill);
                 }
             }
-            raceSkillList = tempList;
-            sheet.setSkillList(raceSkillList);
+            raceSkills = tempList;
+            sheet.setSkillList(raceSkills);
             sheet.setTalentList(talentsList);
             System.out.println(sheet);
 
@@ -664,19 +674,18 @@ public class CharacterGen {
     }
 
     void raceskill_createTable() {
-        List<SkillGroup> raceSkills = sheet.getRace().getRaceSkills(attributes);
-        raceSkills.forEach(e -> raceSkillList.add(e.getFirstSkill()));
-
-        List<Component> tabOrder = new ArrayList<>();
+        raceSkillGroups = sheet.getRace().getRaceSkills(attributes);
+        raceSkillGroups.forEach(e -> raceSkills.add(e.getFirstSkill()));
         professionSkills = connection.getProfessionSkills(sheet.getProf());
 
+        List<Component> tabOrder = new ArrayList<>();
         int base_itr = 1, adv_itr = 1;
         int column, row;
-        for (int i = 0; i < raceSkills.size(); i++) {
+        for (int i = 0; i < raceSkillGroups.size(); i++) {
             Color color = Color.black;
             int finalI = i;
 
-            if (raceSkillList.get(i).isAdv()) {
+            if (raceSkills.get(i).isAdv()) {
                 column = 4;
                 row = adv_itr++;
                 color = Color.red;
@@ -684,15 +693,15 @@ public class CharacterGen {
                 column = 0;
                 row = base_itr++;
             }
-            if (professionSkills.contains(raceSkillList.get(i))) {
+            if (professionSkills.contains(raceSkills.get(i))) {
                 color = ColorPalette.CustomGreen;
             }
 
-            Container nameContainer = createSkillComboIfNeeded(raceSkills.get(i), raceskill_skillsPanel, row, column);
+            Container nameContainer = createSkillComboIfNeeded(raceSkillGroups.get(i), raceskill_skillsPanel, row, column);
             nameContainer.setForeground(color);
             column++;
 
-            JTextField attrField = new JTextField(raceSkillList.get(i).getAttr().getName());
+            JTextField attrField = new JTextField(raceSkills.get(i).getAttr().getName());
             attrField.setHorizontalAlignment(JTextField.CENTER);
             attrField.setEditable(false);
             attrField.setFocusable(false);
@@ -702,12 +711,13 @@ public class CharacterGen {
             jSpinner.setHorizontalAlignment(JTextField.CENTER);
             raceskill_skillsPanel.add(jSpinner, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            JIntegerField sumField = new JIntegerField(raceSkillList.get(i).getTotalValue(), "%d", JTextField.CENTER);
+            JIntegerField sumField = new JIntegerField(raceSkills.get(i).getTotalValue(), "%d", JTextField.CENTER);
             sumField.setEditable(false);
             sumField.setFocusable(false);
             raceskill_skillsPanel.add(sumField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            jSpinner.addChangeListener(e -> raceskill_updatePoints(nameContainer, jSpinner, sumField, raceSkillList.get(finalI), professionSkills.contains(raceSkillList.get(finalI))));
+            jSpinner.addChangeListener(e -> raceskill_updatePoints(nameContainer, jSpinner, sumField, raceSkills.get(finalI), professionSkills.contains(
+                    raceSkills.get(finalI))));
             tabOrder.add(jSpinner.getTextField());
         }
         if (base_itr != 1) {
@@ -722,10 +732,30 @@ public class CharacterGen {
         tabOrder.get(0).requestFocusInWindow();
 
         raceskill_skillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
+
+        raceskill_updateTable(raceSkills);
+    }
+    void raceskill_updateTable(List<Skill> raceSkills) {
+        int base_itr = 1, adv_itr = 1;
+        int column, row;
+        for (Skill skill : raceSkills) {
+            if (skill.isAdv()) {
+                column = 4;
+                row = adv_itr++;
+            } else {
+                column = 0;
+                row = base_itr++;
+            }
+
+            if (raceskill_skillsPanel.getComponent(column, row) instanceof SearchableJComboBox) {
+                ((SearchableJComboBox) raceskill_skillsPanel.getComponent(column, row)).getModel().setSelectedItem(skill.getName());
+            }
+            ((AdvancedSpinner) raceskill_skillsPanel.getComponent(column + 2, row)).setValue(skill.getAdvValue());
+        }
     }
     void raceskill_updatePoints(Container container, AdvancedSpinner spinner, JIntegerField totalField, Skill skill, boolean paintGreen) {
         int now = (int) spinner.getValue();
-        int last = (int) spinner.getLastValue();
+        int last = skill.getAdvValue();
 
         if (skill.getAdvValue() != now) {
             skill.setAdvValue(now);
@@ -733,6 +763,11 @@ public class CharacterGen {
 
             raceskill_points.put(last, raceskill_points.get(last)-1);
             raceskill_points.put(now, raceskill_points.get(now)+1);
+        } else if (spinner.getValue() != spinner.getLastValue()) {
+            totalField.setValue(skill.getTotalValue());
+
+            raceskill_points.put((Integer) spinner.getLastValue(), raceskill_points.get(last)-1);
+            raceskill_points.put((Integer) spinner.getValue(), raceskill_points.get(now)+1);
         }
 
         if (now == 0 && skill.getBaseSkill().isAdv()) {
@@ -863,7 +898,7 @@ public class CharacterGen {
 //        testField.setText(String.format("%d/%d", talent.getCurrentLvl(), max));
 //    }
     void profskill_createTable() {
-        List<SkillGroup> professionSkills = sheet.getProf().getProfSkills(attributes, raceSkillList);
+        List<SkillGroup> professionSkills = sheet.getProf().getProfSkills(attributes, raceSkills);
         professionSkills.forEach(e -> profSkillList.add(e.getFirstSkill()));
         List<Component> tabOrder = new ArrayList<>();
 
@@ -948,6 +983,7 @@ public class CharacterGen {
     void moveToNextTab(int tab) {
         tabbedPane.setEnabledAt(tab + 1, true);
         tabbedPane.setSelectedIndex(tab + 1);
+        Logger.getLogger(getClass().getName()).log(Level.INFO, String.format("Loaded tab %d", tab + 1));
         switch (tab + 1) {
             case 1:
 //                prof_option4a.addItems(connection.getProfsClasses(sheet.getRace().getID()));
@@ -1046,6 +1082,31 @@ public class CharacterGen {
         returns[1] = sumAttr;
         returns[2] = sumRollAttr;
         return returns;
+    }
+
+    List<Skill> randomizeSkillsWithList(List<SkillGroup> skills, int[] values) {
+        int range = skills.size();
+        List<Integer> usedIndexes = new ArrayList<>();
+        List<Skill> finalSkillList = new ArrayList<>();
+
+        // Cleaning existing advancements
+        for (SkillGroup skillGroup : skills) {
+            skillGroup.cleanSkills();
+            finalSkillList.add(skillGroup.getFirstSkill());
+        }
+
+        // Adding new random advancements
+        for (int value : values) {
+            int index = Dice.randomInt(0, range - 1);
+            while (usedIndexes.contains(index)) {
+                index = (index + 1) % (range - 1);
+            }
+            Skill chosenSkill = skills.get(index).getRndSkill();
+            chosenSkill.setAdvValue(value);
+            finalSkillList.set(index, chosenSkill);
+            usedIndexes.add(index);
+        }
+        return finalSkillList;
     }
     Object[] getRandomTalent() {
         Object[] returns = new Object[2];

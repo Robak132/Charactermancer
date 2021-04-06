@@ -5,6 +5,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.List;
+import tools.Dice;
 
 @Entity
 @Table(name = "SKILLS_GROUPS")
@@ -34,14 +35,24 @@ public class SkillGroup {
     public void setName(String name) {
         this.name = name;
     }
+
+    public Skill getFirstSkill() {
+        return skills.get(0);
+    }
+    public Skill getRndSkill() {
+        return (Skill) Dice.randomItem(skills);
+    }
+
     public List<Skill> getSkills() {
         return skills;
     }
+    public void cleanSkills() {
+        for (Skill skill : skills) {
+            skill.clean();
+        }
+    }
     public int countSkills() {
         return skills.size();
-    }
-    public Skill getFirstSkill() {
-        return skills.get(0);
     }
     public void setSkills(List<Skill> skills) {
         this.skills = skills;

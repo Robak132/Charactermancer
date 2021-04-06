@@ -87,6 +87,10 @@ public class Skill {
         this.linkedAttribute = linkedAttribute;
     }
 
+    public void clean() {
+        advValue = 0;
+    }
+
     private void updateAll() {
         if (isAdv() && advValue == 0) {
             totalValue = 0;
