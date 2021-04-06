@@ -1,3 +1,5 @@
+package main;
+
 import com.intellij.uiDesigner.core.GridConstraints;
 import components.*;
 import mappings.*;
