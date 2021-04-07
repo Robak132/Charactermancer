@@ -2,14 +2,13 @@ package components;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import java.beans.JavaBean;
 import tools.RunnableWithObject;
 import tools.DynamicMatrix2D;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class GridPanel extends JPanel {
     private int columns=1;
@@ -46,11 +45,11 @@ public class GridPanel extends JPanel {
     }
 
     public void build() {
-        build(GridPanel.ALIGNMENT_NOTOP);
+        build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
     public void build(int alignment) {
         removeAll();
-        Logger.getLogger(getClass().getName()).log(Level.INFO, String.format("GridPanel built (col: %d, row: %d)", columns, rows));
+        System.out.printf("GridPanel@%s: Panel built (col: %d, row: %d)\n", this.hashCode(), columns, rows);
         setLayout(new GridLayoutManager(rows+2, columns+2, new Insets(0, 0, 0, 0), -1, -1));
         addSpacers(alignment);
         for (Map.Entry<Component, GridConstraints> pair : items.entrySet()) {

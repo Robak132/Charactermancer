@@ -3,7 +3,7 @@ package main;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import components.SearchableJComboBox;
+import components.SearchableComboBox;
 import mappings.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -28,7 +28,7 @@ public class CharacterSheet {
     private JButton makeCharacterSheetButton;
     private JButton saveButton;
     private JTextField nameField;
-    private SearchableJComboBox raceSelect;
+    private SearchableComboBox raceSelect;
     private JPanel basePanel;
     private JButton exitButton;
     private JTextField raceSelectText;

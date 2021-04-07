@@ -15,12 +15,15 @@ public class SkillGroup {
     private int ID;
     @Column(name = "NAME")
     private String name;
+    @Column(name = "LOCKED")
+    private boolean locked;
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="SKILLS_LINK",
             joinColumns = @JoinColumn(name = "IDGROUP"),
             inverseJoinColumns = @JoinColumn(name = "IDSKILL"))
+    @OrderBy(value="name")
     private List<Skill> skills;
 
     public int getID() {
@@ -34,6 +37,12 @@ public class SkillGroup {
     }
     public void setName(String name) {
         this.name = name;
+    }
+    public boolean isLocked() {
+        return locked;
+    }
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
     public Skill getFirstSkill() {

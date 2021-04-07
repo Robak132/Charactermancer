@@ -12,7 +12,7 @@ import java.awt.event.MouseListener;
 import java.util.*;
 import java.util.List;
 
-public class SearchableJComboBox extends JComboBox<String> {
+public class SearchableComboBox extends JComboBox<String> {
     private final JTextField textField;
     private final Map<AbstractButton, MouseListener[]> componentsMap = new HashMap<>();
     private MouseListener[] mouseListeners;
@@ -26,7 +26,7 @@ public class SearchableJComboBox extends JComboBox<String> {
     private boolean isLocked = false;
     private int caretPosition;
 
-    public SearchableJComboBox() {
+    public SearchableComboBox() {
         super();
         items = new TreeSet<>();
         textField = (JTextField) this.editor.getEditorComponent();
@@ -42,11 +42,11 @@ public class SearchableJComboBox extends JComboBox<String> {
             }
         });
     }
-    public SearchableJComboBox(List<String> items) {
+    public SearchableComboBox(List<String> items) {
         this();
         addItems(items);
     }
-    public SearchableJComboBox(List<String> items, boolean startNull) {
+    public SearchableComboBox(List<String> items, boolean startNull) {
         this();
         addItems(items, startNull);
     }
@@ -90,6 +90,13 @@ public class SearchableJComboBox extends JComboBox<String> {
     }
     public void addItems(List<String> items) {
         addItems(items, true);
+    }
+
+    @Override
+    protected void fireActionEvent() {
+        if (!listenerLock) {
+            super.fireActionEvent();
+        }
     }
 
     @Override

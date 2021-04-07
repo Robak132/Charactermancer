@@ -24,20 +24,20 @@ public class Profession {
     @JoinColumn(name = "IDCAREER")
     private ProfessionCareer career;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany(fetch = FetchType.LAZY)
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @ManyToMany
     @JoinTable(name="PROF_ATTRIBUTES",
             joinColumns = @JoinColumn(name = "IDPROF"),
             inverseJoinColumns = @JoinColumn(name = "IDATTR"))
     private List<BaseAttribute> baseAttributes;
 
-    @Fetch(FetchMode.JOIN)
-    @OneToMany(fetch = FetchType.LAZY)
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @OneToMany
     @JoinColumn(name= "IDPROF")
     private List<ProfSkill> profSkills;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany(fetch = FetchType.LAZY)
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @ManyToMany
     @JoinTable(name="PROF_TALENTS",
             joinColumns = @JoinColumn(name = "IDPROF"),
             inverseJoinColumns = @JoinColumn(name = "IDTAL"))

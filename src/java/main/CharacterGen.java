@@ -27,9 +27,11 @@ public class CharacterGen {
     private JButton exitButton;
     private JLabel rollLabel;
 
+    private JPanel race_rollPanel;
+    private JPanel race_options;
     private JIntegerField race_rollResult;
     private JButton race_option2Button;
-    private SearchableJComboBox race_option2Combo;
+    private SearchableComboBox race_option2Combo;
     private JButton race_option1Button;
     private JTextField race_option1;
     private JButton race_rollButton;
@@ -47,8 +49,8 @@ public class CharacterGen {
     private JTextField prof_option3a;
     private JTextField prof_option3b;
     private JButton prof_option3Button;
-    private SearchableJComboBox prof_option4a;
-    private SearchableJComboBox prof_option4b;
+    private SearchableComboBox prof_option4a;
+    private SearchableComboBox prof_option4b;
     private JButton prof_option4Button;
     private final JTextField[][] prof_options = {
             {prof_option1a, prof_option1b},
@@ -58,7 +60,6 @@ public class CharacterGen {
     private final JButton[] prof_buttons = {
             prof_option1Button, prof_option2Button, prof_option3Button, prof_option4Button
     };
-    private List<Skill> professionSkills;
     private int prof_maxExp = 50;
 
     private List<Attribute> attributes;
@@ -106,20 +107,19 @@ public class CharacterGen {
 
     private Race rollRace;
     private final List<Profession> profList = new ArrayList<>();
-    private final List<Talent> raceTalents = new ArrayList<>();
     private List<SkillGroup> raceSkillGroups = new ArrayList<>();
     private List<Skill> raceSkills = new ArrayList<>();
+    private final List<Talent> raceTalents = new ArrayList<>();
     private final List<TalentGroup> randomTalentGroups = new ArrayList<>();
     private final List<Talent> randomTalents = new ArrayList<>();
-    private final List<Skill> profSkillList = new ArrayList<>();
-
-    private List<TalentGroup> profTalentGroups = new ArrayList<>();
-    private List<Talent> profTalents = new ArrayList<>();
+    private List<SkillGroup> professionSkills = new ArrayList<>();
+    private final List<Skill> profSkillGroups = new ArrayList<>();
+    private final List<TalentGroup> profTalentGroups = new ArrayList<>();
+    private final List<Talent> profTalents = new ArrayList<>();
 
     private final List<JIntegerField> BAttr = new ArrayList<>();
     private final List<JIntegerField> RAttr = new ArrayList<>();
     private final List<JIntegerField> TAttr = new ArrayList<>();
-
 
     public CharacterGen(JFrame _frame, Main _screen, Connection _connection) {
         frame = _frame;
@@ -488,7 +488,6 @@ public class CharacterGen {
         });
     }
 
-
     private void attr_createTable() {
         attributes = sheet.getRace().getAttributes();
 
@@ -652,14 +651,15 @@ public class CharacterGen {
     private void raceskill_createTable() {
         raceSkillGroups = sheet.getRace().getRaceSkills(attributes);
         raceSkillGroups.forEach(e -> raceSkills.add(e.getFirstSkill()));
-        professionSkills = connection.getProfessionSkills(sheet.getProfession());
+
+        professionSkills = sheet.getProfession().getProfSkills(attributes, raceSkills);
+        professionSkills.forEach(e -> profSkillGroups.add(e.getFirstSkill()));
 
         List<Component> tabOrder = new ArrayList<>();
         int base_itr = 1, adv_itr = 1;
         int column, row;
         for (int i = 0; i < raceSkillGroups.size(); i++) {
             Color color = Color.black;
-            int finalI = i;
 
             if (raceSkills.get(i).isAdv()) {
                 column = 4;
@@ -669,7 +669,7 @@ public class CharacterGen {
                 column = 0;
                 row = base_itr++;
             }
-            if (professionSkills.contains(raceSkills.get(i))) {
+            if (profSkillGroups.contains(raceSkills.get(i))) {
                 color = ColorPalette.CustomGreen;
             }
 
@@ -692,7 +692,8 @@ public class CharacterGen {
             sumField.setFocusable(false);
             raceskill_skillsPanel.add(sumField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            jSpinner.addChangeListener(e -> raceskill_updatePoints(nameContainer, jSpinner, sumField, raceSkills.get(finalI), professionSkills.contains(raceSkills.get(finalI))));
+            int finalI = i;
+            jSpinner.addChangeListener(e -> raceskill_updatePoints(nameContainer, jSpinner, sumField, raceSkills.get(finalI), profSkillGroups.contains(raceSkills.get(finalI))));
             tabOrder.add(jSpinner.getTextField());
         }
         if (base_itr != 1) {
@@ -714,16 +715,22 @@ public class CharacterGen {
         int base_itr = 1, adv_itr = 1;
         int column, row;
         for (Skill skill : raceSkills) {
+            Color color = Color.black;
             if (skill.isAdv()) {
                 column = 4;
                 row = adv_itr++;
+                color = Color.red;
             } else {
                 column = 0;
                 row = base_itr++;
             }
 
-            if (raceskill_skillsPanel.getComponent(column, row) instanceof SearchableJComboBox) {
-                ((SearchableJComboBox) raceskill_skillsPanel.getComponent(column, row)).getModel().setSelectedItem(skill.getName());
+            if (profSkillGroups.contains(skill)) {
+                color = ColorPalette.CustomGreen;
+            }
+
+            if (raceskill_skillsPanel.getComponent(column, row) instanceof SearchableComboBox) {
+                ((SearchableComboBox) raceskill_skillsPanel.getComponent(column, row)).getModel().setSelectedItem(skill.getName());
             }
             ((AdvancedSpinner) raceskill_skillsPanel.getComponent(column + 2, row)).setValue(skill.getAdvValue());
         }
@@ -768,12 +775,13 @@ public class CharacterGen {
     }
 
     private void racetalent_createTable() {
-        List<TalentGroup> raceTalentGroups = sheet.getRace().getRaceTalents();
+        List<TalentGroup> raceTalentGroups = sheet.getRace().getRaceTalents(attributes);
         raceTalentGroups.forEach(e -> raceTalents.add(e.getFirstTalent()));
 
         // Constants
         final Dimension[] columnDimensions = new Dimension[]{
                 new Dimension(200, -1),
+                new Dimension(30, -1),
                 new Dimension(30, -1),
                 new Dimension(200, -1)
         };
@@ -786,11 +794,17 @@ public class CharacterGen {
             Container nameContainer = createTalentComboIfNeeded(raceTalentGroups.get(i), raceskill_talentsPanel, i + 1, column, columnDimensions[column]);
             column++;
 
-            JTextField attrField = new JTextField(raceTalents.get(i).getMaxString());
+            JTextField attrField = new JTextField(String.valueOf(raceTalents.get(i).getCurrentLvl()));
             attrField.setHorizontalAlignment(JTextField.CENTER);
             attrField.setEditable(false);
             attrField.setFocusable(false);
             raceskill_talentsPanel.add(attrField, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
+
+            JTextField attrField2 = new JTextField(raceTalents.get(i).getMaxString());
+            attrField2.setHorizontalAlignment(JTextField.CENTER);
+            attrField2.setEditable(false);
+            attrField2.setFocusable(false);
+            raceskill_talentsPanel.add(attrField2, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
 
             JTextArea testArea = new JTextArea(raceTalents.get(i).getBaseTalent().getTest());
             testArea.setFont(new Font(testArea.getFont().getName(), testArea.getFont().getStyle(), 10));
@@ -814,8 +828,8 @@ public class CharacterGen {
             for (int i=0;i<sheet.getRace().getRandomTalents();i++) {
                 int column = 0;
 
-                JComboBox<String> nameField = new JComboBox<>();
-                nameField.setEnabled(false);
+                SearchableComboBox nameField = new SearchableComboBox();
+                nameField.setLocked(true);
                 raceskill_randomTalentsPanel.add(nameField, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
 
                 JTextField attrField = new JTextField();
@@ -823,6 +837,12 @@ public class CharacterGen {
                 attrField.setEditable(false);
                 attrField.setFocusable(false);
                 raceskill_randomTalentsPanel.add(attrField, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
+
+                JTextField attrField2 = new JTextField();
+                attrField2.setHorizontalAlignment(JTextField.CENTER);
+                attrField2.setEditable(false);
+                attrField2.setFocusable(false);
+                raceskill_randomTalentsPanel.add(attrField2, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
 
                 JTextArea testArea = new JTextArea();
                 testArea.setFont(new Font(testArea.getFont().getName(), testArea.getFont().getStyle(), 10));
@@ -853,21 +873,28 @@ public class CharacterGen {
 
         int row = randomTalentGroups.size() - 1;
 
-        @SuppressWarnings("unchecked")
-        JComboBox<String> activeField = (JComboBox<String>) raceskill_randomTalentsPanel.getComponent(0, row);
+        SearchableComboBox activeField = (SearchableComboBox) raceskill_randomTalentsPanel.getComponent(0, row);
         for (Talent talent : rollTalentGroup.getTalents()) {
             activeField.addItem(talent.getName());
         }
-        activeField.setEnabled(activeField.getItemCount() != 1);
+        activeField.refresh();
+        activeField.setLocked(activeField.getItemCount() == 1);
+        activeField.setEditable(!rollTalentGroup.isLocked());
+        String tooltip = rollTalentGroup.getName();
+        if (tooltip != null)
+            activeField.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
         activeField.addActionListener(e -> updateTalentRow(rollTalentGroup, randomTalents, raceskill_randomTalentsPanel, row, e));
 
         JTextField activeField2 = (JTextField) raceskill_randomTalentsPanel.getComponent(1, row);
-        activeField2.setText(rollTalentGroup.getFirstTalent().getMaxString());
+        activeField2.setText(String.valueOf(rollTalentGroup.getFirstTalent().getCurrentLvl()));
 
-        JTextArea activeArea = (JTextArea) raceskill_randomTalentsPanel.getComponent(2, row);
+        JTextField activeField3 = (JTextField) raceskill_randomTalentsPanel.getComponent(2, row);
+        activeField3.setText(rollTalentGroup.getFirstTalent().getMaxString());
+
+        JTextArea activeArea = (JTextArea) raceskill_randomTalentsPanel.getComponent(3, row);
         activeArea.setText(rollTalentGroup.getFirstTalent().getBaseTalent().getTest());
 
-        JLabel activeLabel = (JLabel) raceskill_randomTalentsPanel.getComponent(3, row);
+        JLabel activeLabel = (JLabel) raceskill_randomTalentsPanel.getComponent(4, row);
         activeLabel.setToolTipText(MultiLineTooltip.splitToolTip(rollTalentGroup.getFirstTalent().getBaseTalent().getDesc(), 75, 10));
 
         if (sheet.getRace().getRandomTalents() <= randomTalentGroups.size()) {
@@ -878,8 +905,6 @@ public class CharacterGen {
     }
 
     private void profskill_createTable() {
-        List<SkillGroup> professionSkills = sheet.getProfession().getProfSkills(attributes, raceSkills);
-        professionSkills.forEach(e -> profSkillList.add(e.getFirstSkill()));
         List<Component> tabOrder = new ArrayList<>();
 
         int base_itr = 1;
@@ -889,7 +914,7 @@ public class CharacterGen {
             Color color = Color.black;
             int finalI = i;
 
-            if (profSkillList.get(i).isAdv()) {
+            if (profSkillGroups.get(i).isAdv()) {
                 column = 4;
                 row = adv_itr++;
                 color = Color.red;
@@ -902,22 +927,22 @@ public class CharacterGen {
             nameContainer.setForeground(color);
             column++;
 
-            JTextField attrField = new JTextField(profSkillList.get(i).getAttr().getName());
+            JTextField attrField = new JTextField(profSkillGroups.get(i).getAttr().getName());
             attrField.setHorizontalAlignment(JTextField.CENTER);
             attrField.setEditable(false);
             attrField.setFocusable(false);
             profskill_skillsPanel.add(attrField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            AdvancedSpinner jSpinner = new AdvancedSpinner(new SpinnerNumberModel(profSkillList.get(i).getAdvValue(), profSkillList.get(i).getAdvValue(), 10, 1));
+            AdvancedSpinner jSpinner = new AdvancedSpinner(new SpinnerNumberModel(profSkillGroups.get(i).getAdvValue(), profSkillGroups.get(i).getAdvValue(), 10, 1));
             jSpinner.setHorizontalAlignment(JTextField.CENTER);
             profskill_skillsPanel.add(jSpinner, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            JIntegerField sumField = new JIntegerField(profSkillList.get(i).getTotalValue(), "%d", JTextField.CENTER);
+            JIntegerField sumField = new JIntegerField(profSkillGroups.get(i).getTotalValue(), "%d", JTextField.CENTER);
             sumField.setEditable(false);
             sumField.setFocusable(false);
             profskill_skillsPanel.add(sumField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            jSpinner.addChangeListener(e -> profskill_updatePoints(nameContainer, jSpinner, sumField, profSkillList.get(finalI)));
+            jSpinner.addChangeListener(e -> profskill_updatePoints(nameContainer, jSpinner, sumField, profSkillGroups.get(finalI)));
             tabOrder.add(jSpinner.getTextField());
         }
 
@@ -1056,7 +1081,7 @@ public class CharacterGen {
             panel.add(textField, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
             return textField;
         } else {
-            SearchableJComboBox comboBox = new SearchableJComboBox();
+            SearchableComboBox comboBox = new SearchableComboBox();
             String tooltip = groupSkill.getFirstSkill().getBaseSkill().getDesc();
             if (tooltip != null)
                 comboBox.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
@@ -1064,7 +1089,7 @@ public class CharacterGen {
                 comboBox.addItem(alternateSkill.getName());
             comboBox.setPreferredSize(new Dimension(comboBox.getSize().width, -1));
             comboBox.refresh(false);
-            comboBox.setEditable(false);
+            comboBox.setEditable(!groupSkill.isLocked());
             panel.add(comboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
             return comboBox;
         }
@@ -1074,37 +1099,36 @@ public class CharacterGen {
             Talent singleTalent = groupTalent.getFirstTalent();
 
             JTextField textField = new JTextField(singleTalent.getName());
-            String tooltip = singleTalent.getBaseTalent().getDesc();
-            if (tooltip != null)
-                textField.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
             textField.setFocusable(false);
             textField.setEditable(false);
             panel.add(textField, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions, null), false);
             return textField;
         } else {
-            JComboBox<String> comboBox = new JComboBox<>();
-            String tooltip = groupTalent.getFirstTalent().getBaseTalent().getDesc();
+            SearchableComboBox comboBox = new SearchableComboBox();
+            String tooltip = groupTalent.getName();
             if (tooltip != null)
                 comboBox.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
             for (Talent alternateTalent : groupTalent.getTalents())
                 comboBox.addItem(alternateTalent.getName());
             comboBox.setPreferredSize(new Dimension(comboBox.getSize().width, -1));
-//            comboBox.refresh(false);
-//            comboBox.setEditable(false);
+            comboBox.refresh(false);
+            comboBox.setEditable(false);
             comboBox.addActionListener(e -> updateTalentRow(groupTalent, raceTalents, raceskill_talentsPanel, row, e));
             panel.add(comboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions, null), false);
             return comboBox;
         }
     }
     private void updateTalentRow(TalentGroup talentGroup, List<Talent> finalTalents, GridPanel panel, int row, ActionEvent event) {
-        int index = ((JComboBox<?>) event.getSource()).getSelectedIndex();
+        int index = ((SearchableComboBox) event.getSource()).getSelectedIndex();
         Talent talent = talentGroup.getTalents().get(index);
 
         JTextField testField = (JTextField) panel.getComponent(1, row);
-        testField.setText(talent.getMaxString());
-        JTextArea textArea = (JTextArea) panel.getComponent(2, row);
+        testField.setText(String.valueOf(talent.getCurrentLvl()));
+        JTextField testField2 = (JTextField) panel.getComponent(2, row);
+        testField2.setText(talent.getMaxString());
+        JTextArea textArea = (JTextArea) panel.getComponent(3, row);
         textArea.setText(talent.getBaseTalent().getTest());
-        JLabel desc = (JLabel) panel.getComponent(3, row);
+        JLabel desc = (JLabel) panel.getComponent(4, row);
         desc.setToolTipText(MultiLineTooltip.splitToolTip(talent.getBaseTalent().getDesc()));
 
         finalTalents.set(row-1, talent);

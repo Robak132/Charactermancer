@@ -27,20 +27,20 @@ public class Race {
     @Column(name = "RANDOM_TALENTS")
     private int randomTalents;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(fetch = FetchType.LAZY)
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @OneToMany
     @JoinColumn(name= "IDRACE")
     private List<RaceAttribute> raceAttributes;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany(fetch = FetchType.LAZY)
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @ManyToMany
     @JoinTable(name="RACE_SKILLS",
             joinColumns = @JoinColumn(name = "IDRACE"),
             inverseJoinColumns = @JoinColumn(name = "IDSKILL"))
     private List<SkillGroup> raceSkills;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany(fetch = FetchType.LAZY)
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @ManyToMany
     @JoinTable(name="RACE_TALENTS",
             joinColumns = @JoinColumn(name = "IDRACE"),
             inverseJoinColumns = @JoinColumn(name = "IDTALENT"))
@@ -176,8 +176,9 @@ public class Race {
     public List<TalentGroup> getRaceTalents(List<Attribute> attributes) {
         for (TalentGroup talent : raceTalents) {
             for (Talent singleTalent : talent.getTalents()) {
+                singleTalent.setCurrentLvl(1);
                 for (Attribute attribute : attributes) {
-                    if (singleTalent.getAttr().equals(attribute.getBaseAttribute())) {
+                    if (singleTalent.getAttr() != null && singleTalent.getAttr().equals(attribute.getBaseAttribute())) {
                         singleTalent.setLinkedAttribute(attribute);
                         break;
                     }
