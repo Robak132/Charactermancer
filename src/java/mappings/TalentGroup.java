@@ -51,6 +51,9 @@ public class TalentGroup {
     public Talent getRndTalent() {
         return (Talent) Dice.randomItem(talents);
     }
+    public int getRndTalentIndex() {
+        return Dice.randomInt(0, talents.size() - 1);
+    }
 
     public List<Talent> getTalents() {
         return talents;

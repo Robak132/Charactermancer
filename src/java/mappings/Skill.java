@@ -16,6 +16,8 @@ public class Skill {
     private BaseSkill baseSkill;
 
     @Transient
+    private boolean earning = false;
+    @Transient
     private boolean advanceable = false;
     @Transient
     private Attribute linkedAttribute = null;
@@ -66,6 +68,13 @@ public class Skill {
     public void setAdvanceable(boolean advanceable) {
         this.advanceable = advanceable;
     }
+    public boolean isEarning() {
+        return earning;
+    }
+    public void setEarning(boolean earning) {
+        this.earning = earning;
+    }
+
     public int getStartValue() {
         return linkedAttribute.getTotalValue();
     }

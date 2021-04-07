@@ -75,6 +75,7 @@ public class CharacterGen {
     private int attr_itr=0;
     private int attr_maxExp = 50;
 
+    private JPanel fate_panel;
     private GridPanel fate_attributeTable;
     private JIntegerField fate_attrRemain;
     private JIntegerField fate_fate;
@@ -86,6 +87,7 @@ public class CharacterGen {
     private JButton fate_resilienceDOWN;
     private JButton fate_option1Button;
 
+    private JPanel raceskill_panel;
     private GridPanel raceskill_skillsPanel;
     private GridPanel raceskill_talentsPanel;
     private GridPanel raceskill_randomTalentsPanel;
@@ -109,12 +111,13 @@ public class CharacterGen {
     private final List<Profession> profList = new ArrayList<>();
     private List<SkillGroup> raceSkillGroups = new ArrayList<>();
     private List<Skill> raceSkills = new ArrayList<>();
+    private List<TalentGroup> raceTalentGroups = new ArrayList<>();
     private final List<Talent> raceTalents = new ArrayList<>();
     private final List<TalentGroup> randomTalentGroups = new ArrayList<>();
     private final List<Talent> randomTalents = new ArrayList<>();
-    private List<SkillGroup> professionSkills = new ArrayList<>();
+    private List<SkillGroup> profSkills = new ArrayList<>();
     private final List<Skill> profSkillGroups = new ArrayList<>();
-    private final List<TalentGroup> profTalentGroups = new ArrayList<>();
+    private List<TalentGroup> profTalentGroups = new ArrayList<>();
     private final List<Talent> profTalents = new ArrayList<>();
 
     private final List<JIntegerField> BAttr = new ArrayList<>();
@@ -370,8 +373,7 @@ public class CharacterGen {
 
         // Fate & Resolve //
         /* TODO: Maybe change all buttons to JSpinners :thinking: */
-        KeyStroke escapeKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK);
-        Action action = AbstractActionBuilder.getAction(() -> {
+        createActionMnemonic(fate_panel, KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK), () -> {
             Integer[] slots = new Integer[] {0, 0, 0};
             int remain = 5;
             while (remain > 0) {
@@ -397,9 +399,6 @@ public class CharacterGen {
                 }
             });
         });
-        fate_attributeTable.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "VK_R");
-        fate_attributeTable.getActionMap().put("VK_R", action);
-
         fate_fateUP.addActionListener(e -> {
             fate_extra.setValue(fate_extra.getValue() - 1);
             fate_fate.setValue(fate_fate.getValue() + 1);
@@ -452,14 +451,20 @@ public class CharacterGen {
         fate_option1Button.setMnemonic(KeyEvent.VK_1);
 
         // Race skills & Talents //
-        action = AbstractActionBuilder.getAction(() -> {
-            raceSkills = randomizeSkillsWithList(raceSkillGroups, new int[] {3, 3, 3, 5, 5, 5});
+        createActionMnemonic(raceskill_panel, KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.SHIFT_DOWN_MASK | InputEvent.ALT_DOWN_MASK), () -> {
+            raceSkills = randomizeSkillsWithList(raceSkillGroups, new int[]{3, 3, 3, 5, 5, 5});
             raceskill_updateTable(raceSkills);
-        });
-        raceskill_skillsPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeKeyStroke, "VK_R");
-        raceskill_skillsPanel.getActionMap().put("VK_R", action);
 
+            for (int i = 0; i < raceTalentGroups.size(); i++) {
+                updateTalentRow(raceTalentGroups.get(i), raceTalents, raceskill_talentsPanel, i + 1, raceTalentGroups.get(i).getRndTalentIndex());
+            }
+            for (int i = 0; i < sheet.getRace().getRandomTalents(); i++) {
+                racetalent_roll();
+            }
+        });
         raceskill_rollButton.addActionListener(e -> racetalent_roll());
+        raceskill_rollButton.setMnemonic(KeyEvent.VK_R);
+
         raceskill_option1.addActionListener(e -> {
             List<Skill> tempList = new ArrayList<>();
             for (Skill skill : raceSkills) {
@@ -468,8 +473,11 @@ public class CharacterGen {
                 }
             }
             raceSkills = tempList;
+
             sheet.setSkillList(raceSkills);
             sheet.setTalentList(raceTalents);
+            sheet.addTalents(randomTalents);
+
             System.out.println(sheet);
 
             moveToNextTab(tabbedPane.getSelectedIndex());
@@ -487,6 +495,7 @@ public class CharacterGen {
             frame.validate();
         });
     }
+
 
     private void attr_createTable() {
         attributes = sheet.getRace().getAttributes();
@@ -652,8 +661,8 @@ public class CharacterGen {
         raceSkillGroups = sheet.getRace().getRaceSkills(attributes);
         raceSkillGroups.forEach(e -> raceSkills.add(e.getFirstSkill()));
 
-        professionSkills = sheet.getProfession().getProfSkills(attributes, raceSkills);
-        professionSkills.forEach(e -> profSkillGroups.add(e.getFirstSkill()));
+        profSkills = sheet.getProfession().getProfSkills(attributes, raceSkills);
+        profSkills.forEach(e -> profSkillGroups.add(e.getFirstSkill()));
 
         List<Component> tabOrder = new ArrayList<>();
         int base_itr = 1, adv_itr = 1;
@@ -775,8 +784,11 @@ public class CharacterGen {
     }
 
     private void racetalent_createTable() {
-        List<TalentGroup> raceTalentGroups = sheet.getRace().getRaceTalents(attributes);
+        raceTalentGroups = sheet.getRace().getRaceTalents(attributes);
         raceTalentGroups.forEach(e -> raceTalents.add(e.getFirstTalent()));
+
+        profTalentGroups = sheet.getProfession().getProfTalents(attributes);
+        profTalentGroups.forEach(e -> profTalents.add(e.getFirstTalent()));
 
         // Constants
         final Dimension[] columnDimensions = new Dimension[]{
@@ -859,48 +871,50 @@ public class CharacterGen {
         raceskill_randomTalentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
     private void racetalent_roll() {
-        TalentGroup rollTalent;
-        do {
-            Object[] result = getRandomTalent();
-            int rollResultNumeric = (int) result[0];
-            rollTalent = (TalentGroup) result[1];
+        if (raceskill_rollButton.isEnabled()) {
+            TalentGroup rollTalent;
+            do {
+                Object[] result = getRandomTalent();
+                int rollResultNumeric = (int) result[0];
+                rollTalent = (TalentGroup) result[1];
 
-            raceskill_rollResult.setValue(rollResultNumeric);
-        } while (randomTalentGroups.contains(rollTalent));
-        TalentGroup rollTalentGroup = rollTalent;
-        randomTalentGroups.add(rollTalentGroup);
-        randomTalents.add(rollTalentGroup.getFirstTalent());
+                raceskill_rollResult.setValue(rollResultNumeric);
+            } while (randomTalentGroups.contains(rollTalent));
+            TalentGroup rollTalentGroup = rollTalent;
+            randomTalentGroups.add(rollTalentGroup);
+            randomTalents.add(rollTalentGroup.getFirstTalent());
 
-        int row = randomTalentGroups.size() - 1;
+            int row = randomTalentGroups.size() - 1;
 
-        SearchableComboBox activeField = (SearchableComboBox) raceskill_randomTalentsPanel.getComponent(0, row);
-        for (Talent talent : rollTalentGroup.getTalents()) {
-            activeField.addItem(talent.getName());
-        }
-        activeField.refresh();
-        activeField.setLocked(activeField.getItemCount() == 1);
-        activeField.setEditable(!rollTalentGroup.isLocked());
-        String tooltip = rollTalentGroup.getName();
-        if (tooltip != null)
-            activeField.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
-        activeField.addActionListener(e -> updateTalentRow(rollTalentGroup, randomTalents, raceskill_randomTalentsPanel, row, e));
+            SearchableComboBox activeField = (SearchableComboBox) raceskill_randomTalentsPanel.getComponent(0, row);
+            for (Talent talent : rollTalentGroup.getTalents()) {
+                activeField.addItem(talent.getName());
+            }
+            activeField.refresh();
+            activeField.setLocked(activeField.getItemCount() == 1);
+            activeField.setEditable(!rollTalentGroup.isLocked());
+            String tooltip = rollTalentGroup.getName();
+            if (tooltip != null)
+                activeField.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
+            activeField.addActionListener(e -> updateTalentRow(rollTalentGroup, randomTalents, raceskill_randomTalentsPanel, row, ((SearchableComboBox) e.getSource()).getSelectedIndex()));
 
-        JTextField activeField2 = (JTextField) raceskill_randomTalentsPanel.getComponent(1, row);
-        activeField2.setText(String.valueOf(rollTalentGroup.getFirstTalent().getCurrentLvl()));
+            JTextField activeField2 = (JTextField) raceskill_randomTalentsPanel.getComponent(1, row);
+            activeField2.setText(String.valueOf(rollTalentGroup.getFirstTalent().getCurrentLvl()));
 
-        JTextField activeField3 = (JTextField) raceskill_randomTalentsPanel.getComponent(2, row);
-        activeField3.setText(rollTalentGroup.getFirstTalent().getMaxString());
+            JTextField activeField3 = (JTextField) raceskill_randomTalentsPanel.getComponent(2, row);
+            activeField3.setText(rollTalentGroup.getFirstTalent().getMaxString());
 
-        JTextArea activeArea = (JTextArea) raceskill_randomTalentsPanel.getComponent(3, row);
-        activeArea.setText(rollTalentGroup.getFirstTalent().getBaseTalent().getTest());
+            JTextArea activeArea = (JTextArea) raceskill_randomTalentsPanel.getComponent(3, row);
+            activeArea.setText(rollTalentGroup.getFirstTalent().getBaseTalent().getTest());
 
-        JLabel activeLabel = (JLabel) raceskill_randomTalentsPanel.getComponent(4, row);
-        activeLabel.setToolTipText(MultiLineTooltip.splitToolTip(rollTalentGroup.getFirstTalent().getBaseTalent().getDesc(), 75, 10));
+            JLabel activeLabel = (JLabel) raceskill_randomTalentsPanel.getComponent(4, row);
+            activeLabel.setToolTipText(MultiLineTooltip.splitToolTip(rollTalentGroup.getFirstTalent().getBaseTalent().getDesc(), 75, 10));
 
-        if (sheet.getRace().getRandomTalents() <= randomTalentGroups.size()) {
-            raceskill_rollButton.setEnabled(false);
-            raceskill_rollResult.setEditable(false);
-            raceskill_OKButton.setEnabled(false);
+            if (sheet.getRace().getRandomTalents() <= randomTalentGroups.size()) {
+                raceskill_rollButton.setEnabled(false);
+                raceskill_rollResult.setEditable(false);
+                raceskill_OKButton.setEnabled(false);
+            }
         }
     }
 
@@ -910,7 +924,7 @@ public class CharacterGen {
         int base_itr = 1;
         int adv_itr = 1;
         int column, row;
-        for (int i = 0; i < professionSkills.size(); i++) {
+        for (int i = 0; i < profSkills.size(); i++) {
             Color color = Color.black;
             int finalI = i;
 
@@ -923,7 +937,7 @@ public class CharacterGen {
                 row = base_itr++;
             }
 
-            Container nameContainer = createSkillComboIfNeeded(professionSkills.get(i), profskill_skillsPanel, row, column);
+            Container nameContainer = createSkillComboIfNeeded(profSkills.get(i), profskill_skillsPanel, row, column);
             nameContainer.setForeground(color);
             column++;
 
@@ -974,8 +988,6 @@ public class CharacterGen {
     }
 
     private void proftalent_createTable() {
-        List<TalentGroup> profTalentGroups = sheet.getProfession().getProfTalents(attributes);
-        profTalentGroups.forEach(e -> profTalents.add(e.getFirstTalent()));
         ButtonGroup buttonGroup = new ButtonGroup();
 
         // Constants
@@ -1076,8 +1088,11 @@ public class CharacterGen {
             String tooltip = singleSkill.getBaseSkill().getDesc();
             if (tooltip != null)
                 textField.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
+            if (groupSkill.getFirstSkill().isEarning())
+                textField.setFont(textField.getFont().deriveFont(Font.BOLD));
             textField.setFocusable(false);
             textField.setEditable(false);
+
             panel.add(textField, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
             return textField;
         } else {
@@ -1113,25 +1128,33 @@ public class CharacterGen {
             comboBox.setPreferredSize(new Dimension(comboBox.getSize().width, -1));
             comboBox.refresh(false);
             comboBox.setEditable(false);
-            comboBox.addActionListener(e -> updateTalentRow(groupTalent, raceTalents, raceskill_talentsPanel, row, e));
+            comboBox.addActionListener(e -> updateTalentRow(groupTalent, raceTalents, raceskill_talentsPanel, row, ((SearchableComboBox) e.getSource()).getSelectedIndex()));
             panel.add(comboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions, null), false);
             return comboBox;
         }
     }
-    private void updateTalentRow(TalentGroup talentGroup, List<Talent> finalTalents, GridPanel panel, int row, ActionEvent event) {
-        int index = ((SearchableComboBox) event.getSource()).getSelectedIndex();
+    private void updateTalentRow(TalentGroup talentGroup, List<Talent> finalTalents, GridPanel panel, int row, int index) {
         Talent talent = talentGroup.getTalents().get(index);
 
+        if (talentGroup.countTalents() != 1) {
+            SearchableComboBox comboBox = (SearchableComboBox) panel.getComponent(0, row);
+            comboBox.setSelectedItem(talent.getName());
+            JTextArea textArea = (JTextArea) panel.getComponent(3, row);
+            textArea.setText(talent.getBaseTalent().getTest());
+            JLabel desc = (JLabel) panel.getComponent(4, row);
+            desc.setToolTipText(MultiLineTooltip.splitToolTip(talent.getBaseTalent().getDesc()));
+
+            finalTalents.set(row-1, talent);
+        }
         JTextField testField = (JTextField) panel.getComponent(1, row);
         testField.setText(String.valueOf(talent.getCurrentLvl()));
         JTextField testField2 = (JTextField) panel.getComponent(2, row);
         testField2.setText(talent.getMaxString());
-        JTextArea textArea = (JTextArea) panel.getComponent(3, row);
-        textArea.setText(talent.getBaseTalent().getTest());
-        JLabel desc = (JLabel) panel.getComponent(4, row);
-        desc.setToolTipText(MultiLineTooltip.splitToolTip(talent.getBaseTalent().getDesc()));
+    }
 
-        finalTalents.set(row-1, talent);
+    private void createActionMnemonic(JPanel panel, KeyStroke keyStroke, Runnable runnable) {
+        panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStroke.toString());
+        panel.getActionMap().put(keyStroke.toString(), AbstractActionBuilder.getAction(runnable));
     }
 
     // Base functions to use with GUI and text //
@@ -1199,6 +1222,13 @@ public class CharacterGen {
             usedIndexes.add(index);
         }
         return finalSkillList;
+    }
+    private List<Talent> randomizeTalents(List<TalentGroup> talents) {
+        List<Talent> returnList = new ArrayList<>();
+        for (TalentGroup talent : talents) {
+            returnList.add(talent.getRndTalent());
+        }
+        return returnList;
     }
     private Object[] getRandomTalent() {
         Object[] returns = new Object[2];

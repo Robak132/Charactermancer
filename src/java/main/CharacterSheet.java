@@ -137,6 +137,9 @@ public class CharacterSheet {
     public void setTalentList(List<Talent> talentList) {
         this.talentList = talentList;
     }
+    public void addTalents(List<Talent> talents) {
+        this.talentList.addAll(talents);
+    }
 
     public int getExp() {
         return exp;

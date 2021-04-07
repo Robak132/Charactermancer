@@ -1,7 +1,5 @@
 package mappings;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -34,6 +32,7 @@ public class Profession {
     @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany
     @JoinColumn(name= "IDPROF")
+    @OrderBy("S DESC")
     private List<ProfSkill> profSkills;
 
     @LazyCollection(LazyCollectionOption.TRUE)
@@ -125,6 +124,7 @@ public class Profession {
             tempList.add(tempSkill);
             for (int i = 0; i < tempSkill.getSkills().size(); i++) {
                 Skill singleSkill = tempSkill.getSkills().get(i);
+                singleSkill.setEarning(skill.isS());
                 for (Skill compareSkill : skills) {
                     if (compareSkill.equals(singleSkill)) {
                         tempSkill.getSkills().set(i, compareSkill);
