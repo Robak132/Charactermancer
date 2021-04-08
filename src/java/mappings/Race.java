@@ -32,13 +32,11 @@ public class Race {
     private int extra;
     @Column(name = "SIZE")
     private int size;
-    @Column(name = "RANDOM_TALENTS")
-    private int randomTalents;
 
     @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany
     @JoinColumn(name= "IDRACE")
-    @OrderBy("def DESC")
+    @OrderBy("def DESC, name")
     private List<Subrace> subraces;
 
     @LazyCollection(LazyCollectionOption.TRUE)
@@ -86,8 +84,7 @@ public class Race {
         }
     }
 
-    public Race() {}
-    public Race(int ID, String name, int m, int fate, int resilience, int extra, int size, int randomTalents) {
+    public Race(int ID, String name, int m, int fate, int resilience, int extra, int size) {
         this.ID = ID;
         this.name = name;
         this.m = m;
@@ -95,7 +92,6 @@ public class Race {
         this.resilience = resilience;
         this.extra = extra;
         this.size = size;
-        this.randomTalents = randomTalents;
     }
 
     public int getID() {
@@ -139,12 +135,6 @@ public class Race {
     }
     public void setSize(Size size) {
         this.size = size.ordinal();
-    }
-    public int getRandomTalents() {
-        return randomTalents;
-    }
-    public void setRandomTalents(int randomTalents) {
-        this.randomTalents = randomTalents;
     }
 
     public List<Subrace> getSubraces() {

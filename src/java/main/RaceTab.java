@@ -3,7 +3,6 @@ package main;
 import components.JIntegerField;
 import components.SearchableComboBox;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -11,7 +10,7 @@ import javax.swing.JTextField;
 import mappings.Race;
 import mappings.Subrace;
 
-public class RaceTab {
+public final class RaceTab {
     private CharacterSheet sheet;
     private Connection connection;
     private CharacterGen parent;
@@ -23,13 +22,13 @@ public class RaceTab {
     private JButton raceOption2Button;
     private SearchableComboBox raceOption2Combo;
     private JTextField raceOption1;
-    private JPanel mainPanel;
     private SearchableComboBox subraceOptionCombo;
     private JButton subraceOptionButton;
 
     private List<Subrace> subraces;
 
     public RaceTab() {
+        // Needed for GUI Designer
     }
     public RaceTab(CharacterGen parent, CharacterSheet sheet, Connection connection) {
         initialise(parent, sheet, connection);
@@ -48,7 +47,6 @@ public class RaceTab {
             Race rollRace = (Race) result[1];
             subraces = rollRace.getSubraces();
 
-            sheet.setRace(rollRace);
             raceRollResult.setValue(rollResultNumeric);
             raceOption1.setText(rollRace.getName());
 
@@ -67,8 +65,6 @@ public class RaceTab {
                 if (raceRollResult.getValue() > 0 && raceRollResult.getValue() <= 100) {
                     int rollResultNumeric = raceRollResult.getValue();
                     Race rollRace = connection.getRaceFromTable(rollResultNumeric);
-
-                    sheet.setRace(rollRace);
                     subraces = rollRace.getSubraces();
                     raceOption1.setText(rollRace.getName());
 
@@ -96,13 +92,16 @@ public class RaceTab {
             raceOption2Button.setEnabled(false);
             raceOption2Combo.setLocked(true);
 
-            if (subraces.size() != 1) {
-                subraces.forEach(ev -> subraceOptionCombo.addItem(ev.getName()));
-                subraceOptionCombo.refresh(false);
+            if (subraces.size() == 1) {
+                sheet.setSubrace(subraces.get(0));
+                parent.moveToNextTab();
+            } else {
+                for (Subrace subrace : subraces) {
+                    subraceOptionCombo.addItem(subrace.getName());
+                }
+                subraceOptionCombo.refresh();
                 subraceOptionButton.setEnabled(true);
                 subraceOptionCombo.setEnabled(true);
-            } else {
-                parent.moveToNextTab();
             }
         });
         raceOption1Button.setMnemonic(KeyEvent.VK_1);
@@ -117,13 +116,16 @@ public class RaceTab {
                 raceOption2Button.setEnabled(false);
                 raceOption2Combo.setLocked(true);
 
-                if (subraces.size() != 1) {
-                    subraces.forEach(ev -> subraceOptionCombo.addItem(ev.getName()));
-                    subraceOptionCombo.refresh(false);
+                if (subraces.size() == 1) {
+                    sheet.setSubrace(subraces.get(0));
+                    parent.moveToNextTab();
+                } else {
+                    for (Subrace subrace : subraces) {
+                        subraceOptionCombo.addItem(subrace.getName());
+                    }
+                    subraceOptionCombo.refresh();
                     subraceOptionButton.setEnabled(true);
                     subraceOptionCombo.setEnabled(true);
-                } else {
-                    parent.moveToNextTab();
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -132,6 +134,8 @@ public class RaceTab {
         raceOption2Button.setMnemonic(KeyEvent.VK_2);
 
         subraceOptionButton.addActionListener(e -> {
+            sheet.setSubrace(subraces.get(subraceOptionCombo.getSelectedIndex()));
+
             subraceOptionButton.setEnabled(false);
             subraceOptionCombo.setLocked(true);
             parent.moveToNextTab();

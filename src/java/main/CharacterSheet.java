@@ -4,7 +4,12 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import components.SearchableComboBox;
-import mappings.*;
+import mappings.Attribute;
+import mappings.Profession;
+import mappings.Race;
+import mappings.Skill;
+import mappings.Subrace;
+import mappings.Talent;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -25,36 +30,28 @@ public class CharacterSheet {
     private Main previousScreen;
     private Connection connection;
 
-    private JButton createPlayerCharacterButton;
-    private JButton makeCharacterSheetButton;
-    private JButton saveButton;
-    private JTextField nameField;
     private SearchableComboBox raceSelect;
     private JPanel basePanel;
     private JButton exitButton;
-    private JTextField raceSelectText;
     private final List<JTextField> attributesTextFields = new ArrayList<>();
     private int move;
     private int maxhp;
     private int hp;
 
-    private Race race;
+    private Subrace subrace;
     private Profession prof;
     private List<Attribute> attributeList;
     private List<Skill> skillList;
     private List<Talent> talentList;
     private int exp;
 
-    public CharacterSheet(JFrame _frame, Main _screen, Connection _connection) {
-        frame = _frame;
-        previousScreen = _screen;
-        connection = _connection;
-        exp = 0;
-
-        createAll();
-    }
     public CharacterSheet() {
-        exp = 0;
+        // Needed for GUI Designer
+    }
+    public CharacterSheet(JFrame frame, Main parent, Connection connection) {
+        this.frame = frame;
+        previousScreen = parent;
+        this.connection = connection;
     }
 
     private void createAll() {
@@ -76,7 +73,6 @@ public class CharacterSheet {
             JTextField chartext = new JTextField();
             chartext.setHorizontalAlignment(0);
             attributesTextFields.add(chartext);
-//            chartext.getDocument().addDocumentListener((SimpleDocumentListener) e -> checkCharValue());
             basePanel.add(chartext, new GridConstraints(1, i+1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null, 0, false));
         }
 
@@ -107,10 +103,13 @@ public class CharacterSheet {
     }
 
     public Race getRace() {
-        return race;
+        return subrace.getBaseRace();
     }
-    public void setRace(Race race) {
-        this.race = race;
+    public Subrace getSubrace() {
+        return subrace;
+    }
+    public void setSubrace(Subrace subrace) {
+        this.subrace = subrace;
     }
     public Profession getProfession() {
         return prof;
@@ -173,30 +172,27 @@ public class CharacterSheet {
 
     @Override
     public String toString() {
-        String ret = "";
-        ret += "CharacterSheet {\n";
-        ret += "exp = " + exp + "\n";
-        ret += race + "\n";
-        ret += prof + "\n";
-
-        ret += "Attributes = [\n";
+        StringBuilder ret = new StringBuilder();
+        ret.append("CharacterSheet {\n")
+            .append("exp = ").append(exp).append("\n")
+            .append(subrace).append("\n")
+            .append(prof).append("\n")
+            .append("Attributes = [\n");
         for (Attribute attribute : attributeList) {
-            ret += "\t" + attribute + "\n";
+            ret.append("\t").append(attribute).append("\n");
         }
-        ret += "]\n";
-
-        ret += "Skills = [\n";
+        ret.append("]\n")
+            .append("Skills = [\n");
         for (Skill skill : skillList) {
-            ret += "\t" + skill + "\n";
+            ret.append("\t").append(skill).append("\n");
         }
-        ret += "]\n";
-
-        ret += "Talents = [\n";
+        ret.append("]\n")
+            .append("Talents = [\n");
         for (Talent talent : talentList) {
-            ret += "\t" + talent + "\n";
+            ret.append("\t").append(talent).append("\n");
         }
-        ret += "]";
+        ret.append("]");
 
-        return ret;
+        return ret.toString();
     }
 }

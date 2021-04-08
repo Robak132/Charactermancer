@@ -11,24 +11,26 @@ import java.awt.*;
 import java.awt.event.MouseListener;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import org.apache.commons.collections4.set.ListOrderedSet;
 
-public class SearchableComboBox extends JComboBox<String> {
+public final class SearchableComboBox extends JComboBox<String> {
     private final JTextField textField;
-    private final Map<AbstractButton, MouseListener[]> componentsMap = new HashMap<>();
+    private final Map<AbstractButton, MouseListener[]> componentsMap = new ConcurrentHashMap<>();
+    private final ListOrderedSet<String> items;
     private MouseListener[] mouseListeners;
-    private TreeSet<String> items;
 
     private String safeValue;
     private String unsafeValue;
 
     private Color goodColor = Color.BLACK;
     private boolean listenerLock;
-    private boolean isLocked = false;
+    private boolean isLocked;
     private int caretPosition;
 
     public SearchableComboBox() {
         super();
-        items = new TreeSet<>();
+        items = new ListOrderedSet<>();
         textField = (JTextField) this.editor.getEditorComponent();
         textField.getDocument().addDocumentListener((SimpleDocumentListener) e -> {
             if (!listenerLock) {
@@ -51,14 +53,25 @@ public class SearchableComboBox extends JComboBox<String> {
         addItems(items, startNull);
     }
 
-    public void refresh() {refresh(true);}
+    public void refresh() {refresh(false, false);}
     public void refresh(boolean startNull) {
+        refresh(startNull, false);
+    }
+    public void refresh(boolean startNull, boolean sort) {
+        if (sort) {
+            List<String> temp = new ArrayList<>(items);
+            temp.sort(String::compareTo);
+            items.clear();
+            items.addAll(temp);
+        }
+
         if (!startNull && items.size()!=0) {
-            fill(items.first());
+            fill(items.get(0));
         } else {
             fill("");
         }
     }
+
     private void fill(String text) {
         if (items.contains(text)) {
             fill("");
@@ -70,23 +83,28 @@ public class SearchableComboBox extends JComboBox<String> {
             this.removeAllItems();
             editor.getEditorComponent().setForeground(Color.red);
             for (String name : items) {
-                if (name.toUpperCase().contains(text.toUpperCase()))
+                String nameUpper = name.toUpperCase(Locale.ROOT);
+                String textUpper = text.toUpperCase(Locale.ROOT);
+                if (nameUpper.contains(textUpper)) {
                     super.addItem(name);
+                }
             }
             unsafeValue = text;
         }
         this.setSelectedItem(text);
-        if (text.length() < caretPosition)
+        if (text.length() < caretPosition) {
             caretPosition = text.length();
+        }
         textField.setCaretPosition(caretPosition);
     }
 
-    public void addItems(List<String> items, boolean startNull) {
-        this.items = new TreeSet<>(items);
-        if (startNull)
+    public void addItems(List<String> givenItems, boolean startNull) {
+        items.addAll(givenItems);
+        if (startNull) {
             fill("");
-        else
+        } else {
             fill(items.get(0));
+        }
     }
     public void addItems(List<String> items) {
         addItems(items, true);
@@ -123,37 +141,43 @@ public class SearchableComboBox extends JComboBox<String> {
         }
 
         textField.setEditable(!aFlag);
-        if (!aFlag) {
-            for (MouseListener listener : mouseListeners) {
-                this.addMouseListener(listener);
-            }
-
-            for (Component c : getComponents()) {
-                if (c instanceof AbstractButton) {
-                    c.setEnabled(true);
-
-                    MouseListener[] innerMouseListeners = componentsMap.get(c);
-                    for (MouseListener listener : innerMouseListeners) {
-                        c.addMouseListener(listener);
-                    }
-                }
-            }
+        if (aFlag) {
+            lock();
         } else {
-            isLocked = true;
-            mouseListeners = this.getMouseListeners();
-            for (MouseListener listener : mouseListeners) {
-                this.removeMouseListener(listener);
+            unlock();
+        }
+    }
+    private void lock() {
+        isLocked = true;
+        mouseListeners = this.getMouseListeners();
+        for (MouseListener listener : mouseListeners) {
+            this.removeMouseListener(listener);
+        }
+
+        for (Component c : getComponents()) {
+            if (c instanceof AbstractButton) {
+                c.setEnabled(false);
+
+                MouseListener[] innerMouseListeners = c.getMouseListeners();
+                for (MouseListener listener : innerMouseListeners) {
+                    c.removeMouseListener(listener);
+                }
+                componentsMap.put((AbstractButton) c, innerMouseListeners);
             }
+        }
+    }
+    private void unlock() {
+        for (MouseListener listener : mouseListeners) {
+            this.addMouseListener(listener);
+        }
 
-            for (Component c : getComponents()) {
-                if (c instanceof AbstractButton) {
-                    c.setEnabled(false);
+        for (Component c : getComponents()) {
+            if (c instanceof AbstractButton) {
+                c.setEnabled(true);
 
-                    MouseListener[] innerMouseListeners = c.getMouseListeners();
-                    for (MouseListener listener : innerMouseListeners) {
-                        c.removeMouseListener(listener);
-                    }
-                    componentsMap.put((AbstractButton) c, innerMouseListeners);
+                MouseListener[] innerMouseListeners = componentsMap.get(c);
+                for (MouseListener listener : innerMouseListeners) {
+                    c.addMouseListener(listener);
                 }
             }
         }

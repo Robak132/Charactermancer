@@ -3,6 +3,8 @@ package mappings;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -13,16 +15,20 @@ public class Subrace {
     private int ID;
     @Column(name = "NAME")
     private String name;
-    @Column(name = "EXTRA_TALENTS")
-    private int extraTalents;
+    @Column(name = "RANDOM_TALENTS")
+    private int randomTalents;
     @Column
-    private Integer def;
+    private boolean def;
+
+    @ManyToOne
+    @JoinColumn(name = "IDRACE")
+    private Race baseRace;
 
     public Subrace() {}
-    public Subrace(int ID, String name, int extraTalents, Integer def) {
+    public Subrace(int ID, String name, int randomTalents, boolean def) {
         this.ID = ID;
         this.name = name;
-        this.extraTalents = extraTalents;
+        this.randomTalents = randomTalents;
         this.def = def;
     }
 
@@ -38,16 +44,31 @@ public class Subrace {
     public void setName(String name) {
         this.name = name;
     }
-    public int getExtraTalents() {
-        return extraTalents;
+    public int getRandomTalents() {
+        return randomTalents;
     }
-    public void setExtraTalents(int extraTalents) {
-        this.extraTalents = extraTalents;
+    public void setRandomTalents(int extraTalents) {
+        this.randomTalents = extraTalents;
     }
     public boolean isDef() {
-        return def==1;
+        return def;
     }
-    public void setDef(Integer def) {
+    public void setDef(boolean def) {
         this.def = def;
+    }
+
+    public Race getBaseRace() {
+        return baseRace;
+    }
+    public void setBaseRace(Race baseRace) {
+        this.baseRace = baseRace;
+    }
+
+    @Override
+    public String toString() {
+        if (name.equals(baseRace.getName())) {
+            return String.format("Race {ID = %d, name = %s}", ID, name);
+        }
+        return String.format("Talent {ID = %d, name = %s [%s]}", ID, name, baseRace.getName());
     }
 }

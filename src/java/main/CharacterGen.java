@@ -112,7 +112,6 @@ public class CharacterGen {
     private Color mouseColor;
     private boolean attrLocked = true;
 
-    private Race rollRace;
     private final List<Profession> profList = new ArrayList<>();
     private List<SkillGroup> raceSkillGroups = new ArrayList<>();
     private List<Skill> raceSkills = new ArrayList<>();
@@ -129,14 +128,14 @@ public class CharacterGen {
     private final List<JIntegerField> RAttr = new ArrayList<>();
     private final List<JIntegerField> TAttr = new ArrayList<>();
 
-    public CharacterGen(JFrame _frame, Main _screen, Connection _connection) {
-        frame = _frame;
-        previousScreen = _screen;
-        connection = _connection;
+    public CharacterGen(JFrame frame, Main screen, Connection connection) {
+        this.frame = frame;
+        previousScreen = screen;
+        this.connection = connection;
         sheet = new CharacterSheet();
 
         // Race //
-        raceTab.initialise(this, sheet, connection);
+        raceTab.initialise(this, sheet, this.connection);
 
         // Profession //
         profRollButton.addActionListener(e -> {
@@ -169,7 +168,7 @@ public class CharacterGen {
             try {
                 if (Integer.parseInt(profRollResult.getText()) > 0 && Integer.parseInt(profRollResult.getText()) <= 100) {
                     int rollResultNumeric = Integer.parseInt(profRollResult.getText());
-                    Profession prof = connection.getProfFromTable(sheet.getRace().getID(), rollResultNumeric);
+                    Profession prof = this.connection.getProfFromTable(sheet.getRace().getID(), rollResultNumeric);
                     if (profList.contains(prof)) {
                         rollLabel.setVisible(true);
                         throw new Exception();
@@ -393,7 +392,7 @@ public class CharacterGen {
             for (int i = 0; i < raceTalentGroups.size(); i++) {
                 updateTalentRow(raceTalentGroups.get(i), raceTalents, raceskillTalentsPanel, i + 1, raceTalentGroups.get(i).getRndTalentIndex());
             }
-            for (int i = 0; i < sheet.getRace().getRandomTalents(); i++) {
+            for (int i = 0; i < sheet.getSubrace().getRandomTalents(); i++) {
                 racetalentRoll();
             }
         });
@@ -426,8 +425,8 @@ public class CharacterGen {
             imageLabel.setIcon(icon);
         });
         exitButton.addActionListener(e -> {
-            frame.setContentPane(previousScreen.mainPanel);
-            frame.validate();
+            this.frame.setContentPane(previousScreen.mainPanel);
+            this.frame.validate();
         });
     }
 
@@ -784,10 +783,10 @@ public class CharacterGen {
         raceskillTalentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
 
         // Talents - Random Talents
-        if (sheet.getRace().getRandomTalents() != 0) {
+        if (sheet.getSubrace().getRandomTalents() != 0) {
             raceskillRandomTalentsLabel.setVisible(true);
             raceskillRollPanel.setVisible(true);
-            for (int i=0;i<sheet.getRace().getRandomTalents();i++) {
+            for (int i=0;i<sheet.getSubrace().getRandomTalents();i++) {
                 int column = 0;
 
                 SearchableComboBox nameField = new SearchableComboBox();
@@ -861,7 +860,7 @@ public class CharacterGen {
             JLabel activeLabel = (JLabel) raceskillRandomTalentsPanel.getComponent(4, row);
             activeLabel.setToolTipText(MultiLineTooltip.splitToolTip(rollTalentGroup.getFirstTalent().getBaseTalent().getDesc(), 75, 10));
 
-            if (sheet.getRace().getRandomTalents() <= randomTalentGroups.size()) {
+            if (sheet.getSubrace().getRandomTalents() <= randomTalentGroups.size()) {
                 raceskillRollButton.setEnabled(false);
                 raceskillRollResult.setEditable(false);
                 raceskillOKButton.setEnabled(false);
@@ -1064,7 +1063,7 @@ public class CharacterGen {
             for (Skill alternateSkill : groupSkill.getSkills())
                 comboBox.addItem(alternateSkill.getName());
             comboBox.setPreferredSize(new Dimension(comboBox.getSize().width, -1));
-            comboBox.refresh(false);
+            comboBox.refresh();
             comboBox.setEditable(!groupSkill.isLocked());
             panel.add(comboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
             return comboBox;
@@ -1087,7 +1086,7 @@ public class CharacterGen {
             for (Talent alternateTalent : groupTalent.getTalents())
                 comboBox.addItem(alternateTalent.getName());
             comboBox.setPreferredSize(new Dimension(comboBox.getSize().width, -1));
-            comboBox.refresh(false);
+            comboBox.refresh();
             comboBox.setEditable(false);
             comboBox.addActionListener(e -> updateTalentRow(groupTalent, raceTalents, raceskillTalentsPanel, row, ((SearchableComboBox) e.getSource()).getSelectedIndex()));
             panel.add(comboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions, null), false);
