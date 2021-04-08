@@ -84,6 +84,9 @@ public class Race {
         }
     }
 
+    public Race() {
+        // Needed for Hibernate/JPA
+    }
     public Race(int ID, String name, int m, int fate, int resilience, int extra, int size) {
         this.ID = ID;
         this.name = name;

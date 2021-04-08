@@ -3,7 +3,7 @@ package tools;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public abstract class AbstractActionBuilder {
+public final class AbstractActionBuilder {
     public static Action getAction(Runnable runnable) {
         return new AbstractAction() {
             @Override

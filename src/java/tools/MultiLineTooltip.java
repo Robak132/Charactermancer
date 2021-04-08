@@ -6,7 +6,7 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class MultiLineTooltip {
+public final class MultiLineTooltip {
     private static final int DIALOG_TOOLTIP_MAX_SIZE = 75;
 
     private MultiLineTooltip() {
