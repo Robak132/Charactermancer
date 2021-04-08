@@ -30,7 +30,7 @@ import tools.MultiLineTooltip;
 
 public class CharacterGen {
     public JPanel mainPanel;
-    public final Main previous_screen;
+    public final Main previousScreen;
 
     private final JFrame frame;
     private final Connection connection;
@@ -41,85 +41,85 @@ public class CharacterGen {
     private JButton exitButton;
     private JLabel rollLabel;
 
-    private JPanel race_rollPanel;
-    private JPanel race_options;
-    private JIntegerField race_rollResult;
-    private JButton race_option2Button;
-    private SearchableComboBox race_option2Combo;
-    private JButton race_option1Button;
-    private JTextField race_option1;
-    private JButton race_rollButton;
-    private JButton race_OKButton;
+    private JPanel raceRollPanel;
+    private JPanel raceOptions;
+    private JButton raceRollButton;
+    private JIntegerField raceRollResult;
+    private JButton raceOKButton;
+    private JTextField raceOption1;
+    private JButton raceOption1Button;
+    private SearchableComboBox raceOption2Combo;
+    private JButton raceOption2Button;
 
-    private JButton prof_OKButton;
-    private JIntegerField prof_rollResult;
-    private JButton prof_rollButton;
-    private JTextField prof_option1a;
-    private JTextField prof_option1b;
-    private JButton prof_option1Button;
-    private JTextField prof_option2a;
-    private JTextField prof_option2b;
-    private JButton prof_option2Button;
-    private JTextField prof_option3a;
-    private JTextField prof_option3b;
-    private JButton prof_option3Button;
-    private SearchableComboBox prof_option4a;
-    private SearchableComboBox prof_option4b;
-    private JButton prof_option4Button;
-    private final JTextField[][] prof_options = {
-            {prof_option1a, prof_option1b},
-            {prof_option2a, prof_option2b},
-            {prof_option3a, prof_option3b}
+    private JButton profOKButton;
+    private JIntegerField profRollResult;
+    private JButton profRollButton;
+    private JTextField profOption1a;
+    private JTextField profOption1b;
+    private JButton profOption1Button;
+    private JTextField profOption2a;
+    private JTextField profOption2b;
+    private JButton profOption2Button;
+    private JTextField profOption3a;
+    private JTextField profOption3b;
+    private JButton profOption3Button;
+    private SearchableComboBox profOption4a;
+    private SearchableComboBox profOption4b;
+    private JButton profOption4Button;
+    private final JTextField[][] profOptions = {
+            {profOption1a, profOption1b},
+            {profOption2a, profOption2b},
+            {profOption3a, profOption3b}
     };
-    private final JButton[] prof_buttons = {
-            prof_option1Button, prof_option2Button, prof_option3Button, prof_option4Button
+    private final JButton[] profButtons = {
+            profOption1Button, profOption2Button, profOption3Button, profOption4Button
     };
-    private int prof_maxExp = 50;
+    private int profMaxExp = 50;
 
     private List<Attribute> attributes;
-    private GridPanel attributesTable;
-    private JButton attr_rollButton;
-    private JButton attr_OKButton;
-    private JIntegerField attr_sumField;
-    private JButton attr_rollAllButton;
-    private JButton a3PutOwnValuesButton;
-    private JButton attr_option1Button;
-    private JIntegerField attr_move;
-    private JIntegerField attr_hp;
-    private int attr_itr=0;
-    private int attr_maxExp = 50;
+    private GridPanel attrAttributesTable;
+    private JButton attrRollButton;
+    private JButton attrOKButton;
+    private JIntegerField attrSumField;
+    private JButton attrRollAllButton;
+    private JButton attrOption3Button;
+    private JButton attrOption1Button;
+    private JIntegerField attrMove;
+    private JIntegerField attrHP;
+    private int attrItr = 0;
+    private int attrMaxExp = 50;
 
-    private JPanel fate_panel;
-    private GridPanel fate_attributeTable;
-    private JIntegerField fate_attrRemain;
-    private JIntegerField fate_fate;
-    private JIntegerField fate_resilience;
-    private JButton fate_fateUP;
-    private JButton fate_fateDOWN;
-    private JIntegerField fate_extra;
-    private JButton fate_resilienceUP;
-    private JButton fate_resilienceDOWN;
-    private JButton fate_option1Button;
+    private JPanel fatePanel;
+    private GridPanel fateAttributeTable;
+    private JIntegerField fateAttrRemain;
+    private JIntegerField fateFate;
+    private JIntegerField fateResilience;
+    private JButton fateFateUP;
+    private JButton fateFateDOWN;
+    private JIntegerField fateExtra;
+    private JButton fateResilienceUP;
+    private JButton fateResilienceDOWN;
+    private JButton fateOption1Button;
 
-    private JPanel raceskill_panel;
-    private GridPanel raceskill_skillsPanel;
-    private GridPanel raceskill_talentsPanel;
-    private GridPanel raceskill_randomTalentsPanel;
-    private JPanel raceskill_rollPanel;
-    private JLabel raceskill_randomTalentsLabel;
-    private JButton raceskill_rollButton;
-    private JIntegerField raceskill_rollResult;
-    private JButton raceskill_OKButton;
-    private JButton raceskill_option1;
-    private Map<Integer, Integer> raceskill_points;
+    private JPanel raceskillPanel;
+    private GridPanel raceskillSkillsPanel;
+    private GridPanel raceskillTalentsPanel;
+    private GridPanel raceskillRandomTalentsPanel;
+    private JPanel raceskillRollPanel;
+    private JLabel raceskillRandomTalentsLabel;
+    private JButton raceskillRollButton;
+    private JIntegerField raceskillRollResult;
+    private JButton raceskillOKButton;
+    private JButton raceskillOption1;
+    private Map<Integer, Integer> raceskillPoints;
 
-    private GridPanel profskill_skillsPanel;
-    private GridPanel profskill_talentsPanel;
-    private JButton profskill_option1;
+    private GridPanel profskillSkillsPanel;
+    private GridPanel profskillTalentsPanel;
+    private JButton profskillOption1;
 
-    private JIntegerField mouse_source = null;
-    private Color mouse_color;
-    private boolean attr_locked = true;
+    private JIntegerField mouseSource = null;
+    private Color mouseColor;
+    private boolean attrLocked = true;
 
     private Race rollRace;
     private final List<Profession> profList = new ArrayList<>();
@@ -140,114 +140,114 @@ public class CharacterGen {
 
     public CharacterGen(JFrame _frame, Main _screen, Connection _connection) {
         frame = _frame;
-        previous_screen = _screen;
+        previousScreen = _screen;
         connection = _connection;
         sheet = new CharacterSheet();
 
         // Race //
-        race_option2Combo.addItems(connection.getRacesNames(), false);
+        raceOption2Combo.addItems(connection.getRacesNames(), false);
 
-        race_rollButton.addActionListener(e -> {
+        raceRollButton.addActionListener(e -> {
             Object[] result = getRandomRace();
             int rollResultNumeric = (int) result[0];
             rollRace = (Race) result[1];
 
-            race_rollResult.setValue(rollResultNumeric);
-            race_option1.setText(rollRace.getName());
+            raceRollResult.setValue(rollResultNumeric);
+            raceOption1.setText(rollRace.getName());
 
-            race_rollButton.setEnabled(false);
-            race_rollResult.setEditable(false);
-            race_OKButton.setEnabled(false);
+            raceRollButton.setEnabled(false);
+            raceRollResult.setEditable(false);
+            raceOKButton.setEnabled(false);
 
-            race_option1.setEnabled(true);
-            race_option1Button.setEnabled(true);
-            race_option2Combo.setEnabled(true);
-            race_option2Button.setEnabled(true);
+            raceOption1.setEnabled(true);
+            raceOption1Button.setEnabled(true);
+            raceOption2Combo.setEnabled(true);
+            raceOption2Button.setEnabled(true);
         });
-        race_rollButton.setMnemonic(KeyEvent.VK_R);
-        race_OKButton.addActionListener(e -> {
+        raceRollButton.setMnemonic(KeyEvent.VK_R);
+        raceOKButton.addActionListener(e -> {
             try {
-                if (race_rollResult.getValue() > 0 && race_rollResult.getValue() <= 100) {
-                    int rollResultNumeric = race_rollResult.getValue();
+                if (raceRollResult.getValue() > 0 && raceRollResult.getValue() <= 100) {
+                    int rollResultNumeric = raceRollResult.getValue();
                     rollRace = connection.getRaceFromTable(rollResultNumeric);
-                    race_option1.setText(rollRace.getName());
+                    raceOption1.setText(rollRace.getName());
 
-                    race_rollButton.setEnabled(false);
-                    race_rollResult.setEditable(false);
-                    race_OKButton.setEnabled(false);
+                    raceRollButton.setEnabled(false);
+                    raceRollResult.setEditable(false);
+                    raceOKButton.setEnabled(false);
 
-                    race_option1.setEnabled(true);
-                    race_option1Button.setEnabled(true);
-                    race_option2Combo.setEnabled(true);
-                    race_option2Button.setEnabled(true);
+                    raceOption1.setEnabled(true);
+                    raceOption1Button.setEnabled(true);
+                    raceOption2Combo.setEnabled(true);
+                    raceOption2Button.setEnabled(true);
                 }
             } catch (Exception ex) {
-                race_rollResult.setText("");
+                raceRollResult.setText("");
             }
         });
-        race_OKButton.setMnemonic(KeyEvent.VK_O);
+        raceOKButton.setMnemonic(KeyEvent.VK_O);
 
-        race_option1Button.addActionListener(e -> {
-            race_option2Combo.setSelectedItem(race_option1.getText());
+        raceOption1Button.addActionListener(e -> {
+            raceOption2Combo.setSelectedItem(raceOption1.getText());
             sheet.setRace(rollRace);
             expField.changeValue(20);
 
-            race_option1Button.setEnabled(false);
-            race_option1.setEditable(false);
-            race_option2Button.setEnabled(false);
-            race_option2Combo.setLocked(true);
+            raceOption1Button.setEnabled(false);
+            raceOption1.setEditable(false);
+            raceOption2Button.setEnabled(false);
+            raceOption2Combo.setLocked(true);
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
-        race_option1Button.setMnemonic(KeyEvent.VK_1);
-        race_option2Button.addActionListener(e -> {
+        raceOption1Button.setMnemonic(KeyEvent.VK_1);
+        raceOption2Button.addActionListener(e -> {
             try {
-                race_option1.setText((String) race_option2Combo.getSelectedItem());
-                sheet.setRace(connection.getRace((String) race_option2Combo.getSelectedItem()));
+                raceOption1.setText((String) raceOption2Combo.getSelectedItem());
+                sheet.setRace(connection.getRace((String) raceOption2Combo.getSelectedItem()));
 
-                race_option1Button.setEnabled(false);
-                race_option1.setEditable(false);
-                race_option2Button.setEnabled(false);
-                race_option2Combo.setLocked(true);
+                raceOption1Button.setEnabled(false);
+                raceOption1.setEditable(false);
+                raceOption2Button.setEnabled(false);
+                raceOption2Combo.setLocked(true);
 
                 moveToNextTab(tabbedPane.getSelectedIndex());
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         });
-        race_option2Button.setMnemonic(KeyEvent.VK_2);
+        raceOption2Button.setMnemonic(KeyEvent.VK_2);
 
         // Profession //
-        prof_rollButton.addActionListener(e -> {
+        profRollButton.addActionListener(e -> {
             Profession rollProf;
             do {
                 Object[] result = getRandomProf(sheet.getRace());
                 int rollResultNumeric = (int) result[0];
                 rollProf = (Profession) result[1];
 
-                prof_rollResult.setValue(rollResultNumeric);
+                profRollResult.setValue(rollResultNumeric);
             } while (profList.contains(rollProf));
             profList.add(rollProf);
-            prof_options[profList.size() - 1][0].setText(rollProf.getCareer().getName());
-            prof_options[profList.size() - 1][1].setText(rollProf.getName());
-            prof_buttons[profList.size() - 1].setEnabled(true);
+            profOptions[profList.size() - 1][0].setText(rollProf.getCareer().getName());
+            profOptions[profList.size() - 1][1].setText(rollProf.getName());
+            profButtons[profList.size() - 1].setEnabled(true);
             if (profList.size() > 1)
-                prof_maxExp = 25;
+                profMaxExp = 25;
             if (profList.size() >= 3) {
-                prof_rollButton.setEnabled(false);
-                prof_rollResult.setEditable(false);
-                prof_OKButton.setEnabled(false);
+                profRollButton.setEnabled(false);
+                profRollResult.setEditable(false);
+                profOKButton.setEnabled(false);
 
-                prof_option4Button.setEnabled(true);
-                prof_option4a.setEnabled(true);
-                prof_option4b.setEnabled(true);
+                profOption4Button.setEnabled(true);
+                profOption4a.setEnabled(true);
+                profOption4b.setEnabled(true);
             }
         });
-        prof_rollButton.setMnemonic(KeyEvent.VK_R);
-        prof_OKButton.addActionListener(e -> {
+        profRollButton.setMnemonic(KeyEvent.VK_R);
+        profOKButton.addActionListener(e -> {
             try {
-                if (Integer.parseInt(prof_rollResult.getText()) > 0 && Integer.parseInt(prof_rollResult.getText()) <= 100) {
-                    int rollResultNumeric = Integer.parseInt(prof_rollResult.getText());
+                if (Integer.parseInt(profRollResult.getText()) > 0 && Integer.parseInt(profRollResult.getText()) <= 100) {
+                    int rollResultNumeric = Integer.parseInt(profRollResult.getText());
                     Profession prof = connection.getProfFromTable(sheet.getRace().getID(), rollResultNumeric);
                     if (profList.contains(prof)) {
                         rollLabel.setVisible(true);
@@ -255,99 +255,99 @@ public class CharacterGen {
                     } else {
                         rollLabel.setVisible(false);
                         profList.add(prof);
-                        prof_options[profList.size() - 1][0].setText(prof.getCareer().getName());
-                        prof_options[profList.size() - 1][1].setText(prof.getName());
-                        prof_buttons[profList.size() - 1].setEnabled(true);
+                        profOptions[profList.size() - 1][0].setText(prof.getCareer().getName());
+                        profOptions[profList.size() - 1][1].setText(prof.getName());
+                        profButtons[profList.size() - 1].setEnabled(true);
                     }
                     if (profList.size() >= 3) {
-                        prof_rollButton.setEnabled(false);
-                        prof_rollResult.setEditable(false);
-                        prof_OKButton.setEnabled(false);
+                        profRollButton.setEnabled(false);
+                        profRollResult.setEditable(false);
+                        profOKButton.setEnabled(false);
                     }
                 }
             } catch (Exception ex) {
-                prof_rollResult.setText("");
+                profRollResult.setText("");
             }
         });
-        prof_option1Button.addActionListener(e -> {
+        profOption1Button.addActionListener(e -> {
             sheet.setProfession(profList.get(0));
-            expField.changeValue(prof_maxExp);
+            expField.changeValue(profMaxExp);
 
-            prof_rollButton.setEnabled(false);
-            prof_rollResult.setEditable(false);
-            prof_OKButton.setEnabled(false);
-            for (JButton button : prof_buttons)
+            profRollButton.setEnabled(false);
+            profRollResult.setEditable(false);
+            profOKButton.setEnabled(false);
+            for (JButton button : profButtons)
                 button.setEnabled(false);
-            prof_option4a.setLocked(true);
-            prof_option4b.setLocked(true);
+            profOption4a.setLocked(true);
+            profOption4b.setLocked(true);
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
-        prof_option1Button.setMnemonic(KeyEvent.VK_1);
-        prof_option2Button.addActionListener(e -> {
+        profOption1Button.setMnemonic(KeyEvent.VK_1);
+        profOption2Button.addActionListener(e -> {
             sheet.setProfession(profList.get(1));
-            expField.changeValue(prof_maxExp);
+            expField.changeValue(profMaxExp);
 
-            prof_rollButton.setEnabled(false);
-            prof_rollResult.setEditable(false);
-            prof_OKButton.setEnabled(false);
-            for (JButton button : prof_buttons)
+            profRollButton.setEnabled(false);
+            profRollResult.setEditable(false);
+            profOKButton.setEnabled(false);
+            for (JButton button : profButtons)
                 button.setEnabled(false);
-            prof_option4a.setLocked(true);
-            prof_option4b.setLocked(true);
+            profOption4a.setLocked(true);
+            profOption4b.setLocked(true);
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
-        prof_option2Button.setMnemonic(KeyEvent.VK_2);
-        prof_option3Button.addActionListener(e -> {
+        profOption2Button.setMnemonic(KeyEvent.VK_2);
+        profOption3Button.addActionListener(e -> {
             sheet.setProfession(profList.get(2));
-            expField.changeValue(prof_maxExp);
+            expField.changeValue(profMaxExp);
 
-            prof_rollButton.setEnabled(false);
-            prof_rollResult.setEditable(false);
-            prof_OKButton.setEnabled(false);
-            for (JButton button : prof_buttons)
+            profRollButton.setEnabled(false);
+            profRollResult.setEditable(false);
+            profOKButton.setEnabled(false);
+            for (JButton button : profButtons)
                 button.setEnabled(false);
-            prof_option4a.setLocked(true);
-            prof_option4b.setLocked(true);
+            profOption4a.setLocked(true);
+            profOption4b.setLocked(true);
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
-        prof_option3Button.setMnemonic(KeyEvent.VK_3);
+        profOption3Button.setMnemonic(KeyEvent.VK_3);
 
         /* TODO: Make prof_option4Button works */
         /* FIXME: Optimise SearchableJComboBoxes */
         // prof_option4a.addActionListener(e -> prof_option4b.addItems(connection.getProfsNames(sheet.getRace().getID(), prof_option4a.getValue())));
 
         // Attributes //
-        attr_rollButton.addActionListener(e -> {
-            Object[] result = getOneRandomAttr(attr_itr, sheet.getRace());
+        attrRollButton.addActionListener(e -> {
+            Object[] result = getOneRandomAttr(attrItr, sheet.getRace());
             int rollAttr = (int) result[0];
             int sumAttr = (int) result[1];
 
-            RAttr.get(attr_itr).setValue(rollAttr);
-            RAttr.get(attr_itr).setEditable(false);
-            TAttr.get(attr_itr).setValue(sumAttr);
-            attr_sumField.changeValue(rollAttr);
-            attr_itr++;
+            RAttr.get(attrItr).setValue(rollAttr);
+            RAttr.get(attrItr).setEditable(false);
+            TAttr.get(attrItr).setValue(sumAttr);
+            attrSumField.changeValue(rollAttr);
+            attrItr++;
 
-            if (attr_itr==9) {
+            if (attrItr ==9) {
                 calculateHP();
             }
-            if (attr_itr==10) {
+            if (attrItr ==10) {
                 calculateHP();
-                attr_locked = false;
-                attr_rollButton.setEnabled(false);
-                attr_rollAllButton.setEnabled(false);
-                attr_OKButton.setEnabled(false);
-                attr_option1Button.setEnabled(true);
+                attrLocked = false;
+                attrRollButton.setEnabled(false);
+                attrRollAllButton.setEnabled(false);
+                attrOKButton.setEnabled(false);
+                attrOption1Button.setEnabled(true);
             }
         });
-        attr_rollAllButton.addActionListener(e -> {
+        attrRollAllButton.addActionListener(e -> {
             Object[] result = getAllRandomAttr(sheet.getRace());
             Integer[] rollAttr = (Integer[]) result[0];
             Integer[] sumAttr = (Integer[]) result[1];
-            attr_sumField.setValue((int) result[2]);
+            attrSumField.setValue((int) result[2]);
 
             for (int i=0;i<10;i++) {
                 RAttr.get(i).setValue(rollAttr[i]);
@@ -356,38 +356,38 @@ public class CharacterGen {
             }
             calculateHP();
 
-            attr_locked = false;
-            attr_rollButton.setEnabled(false);
-            attr_rollAllButton.setEnabled(false);
-            attr_OKButton.setEnabled(false);
-            attr_option1Button.setEnabled(true);
+            attrLocked = false;
+            attrRollButton.setEnabled(false);
+            attrRollAllButton.setEnabled(false);
+            attrOKButton.setEnabled(false);
+            attrOption1Button.setEnabled(true);
         });
-        attr_rollAllButton.setMnemonic(KeyEvent.VK_R);
-        attr_OKButton.addActionListener(e -> {
+        attrRollAllButton.setMnemonic(KeyEvent.VK_R);
+        attrOKButton.addActionListener(e -> {
             //TODO Add custom values given by user
         });
-        attr_option1Button.addActionListener(e -> {
+        attrOption1Button.addActionListener(e -> {
             for (int i = 0; i < RAttr.size(); i++) {
                 attributes.get(i).setRndValue(RAttr.get(i).getValue());
             }
             sheet.setAttributeList(attributes);
-            sheet.setMove(attr_move.getValue());
-            sheet.setMaxHP(attr_hp.getValue());
+            sheet.setMove(attrMove.getValue());
+            sheet.setMaxHP(attrHP.getValue());
             sheet.setHP();
 
-            attr_option1Button.setEnabled(false);
-            attr_locked = true;
-            expField.changeValue(attr_maxExp);
+            attrOption1Button.setEnabled(false);
+            attrLocked = true;
+            expField.changeValue(attrMaxExp);
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
-        attr_option1Button.setMnemonic(KeyEvent.VK_1);
-        a3PutOwnValuesButton.addActionListener(e -> {
+        attrOption1Button.setMnemonic(KeyEvent.VK_1);
+        attrOption3Button.addActionListener(e -> {
             //TODO: Make a3PutOwnValuesButton work and probably change the name
         });
 
         // Fate & Resolve //
         /* TODO: Maybe change all buttons to JSpinners :thinking: */
-        createActionMnemonic(fate_panel, KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK), () -> {
+        createActionMnemonic(fatePanel, KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK), () -> {
             Integer[] slots = new Integer[] {0, 0, 0};
             int remain = 5;
             while (remain > 0) {
@@ -406,80 +406,80 @@ public class CharacterGen {
                 }
             }
 
-            fate_attributeTable.iterateThroughColumns(2, (o, i) -> {
+            fateAttributeTable.iterateThroughColumns(2, (o, i) -> {
                 AdvancedSpinner spinner = (AdvancedSpinner) o;
                 if (spinner.isEnabled()) {
                     spinner.setValue(attributes[i]);
                 }
             });
         });
-        fate_fateUP.addActionListener(e -> {
-            fate_extra.setValue(fate_extra.getValue() - 1);
-            fate_fate.setValue(fate_fate.getValue() + 1);
+        fateFateUP.addActionListener(e -> {
+            fateExtra.setValue(fateExtra.getValue() - 1);
+            fateFate.setValue(fateFate.getValue() + 1);
 
-            fate_fateUP.setEnabled(Integer.parseInt(fate_extra.getText())!=0);
-            fate_fateDOWN.setEnabled(true);
-            fate_resilienceUP.setEnabled(Integer.parseInt(fate_extra.getText())!=0);
-            fate_resilienceDOWN.setEnabled(Integer.parseInt(fate_resilience.getText())!=sheet.getRace().getResilience());
+            fateFateUP.setEnabled(Integer.parseInt(fateExtra.getText())!=0);
+            fateFateDOWN.setEnabled(true);
+            fateResilienceUP.setEnabled(Integer.parseInt(fateExtra.getText())!=0);
+            fateResilienceDOWN.setEnabled(Integer.parseInt(fateResilience.getText())!=sheet.getRace().getResilience());
 
-            fate_option1Button.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
+            fateOption1Button.setEnabled(fateExtra.getValue() == 0 && fateAttrRemain.getValue() == 0);
         });
-        fate_fateDOWN.addActionListener(e -> {
-            fate_extra.setValue(fate_extra.getValue()+1);
-            fate_fate.setValue(fate_fate.getValue()-1);
+        fateFateDOWN.addActionListener(e -> {
+            fateExtra.setValue(fateExtra.getValue()+1);
+            fateFate.setValue(fateFate.getValue()-1);
 
-            fate_fateUP.setEnabled(true);
-            fate_fateDOWN.setEnabled(Integer.parseInt(fate_fate.getText())!=sheet.getRace().getFate());
-            fate_resilienceUP.setEnabled(true);
-            fate_resilienceDOWN.setEnabled(Integer.parseInt(fate_resilience.getText())!=sheet.getRace().getResilience());
+            fateFateUP.setEnabled(true);
+            fateFateDOWN.setEnabled(Integer.parseInt(fateFate.getText())!=sheet.getRace().getFate());
+            fateResilienceUP.setEnabled(true);
+            fateResilienceDOWN.setEnabled(Integer.parseInt(fateResilience.getText())!=sheet.getRace().getResilience());
 
-            fate_option1Button.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
+            fateOption1Button.setEnabled(fateExtra.getValue() == 0 && fateAttrRemain.getValue() == 0);
         });
-        fate_resilienceUP.addActionListener(e -> {
-            fate_extra.setValue(fate_extra.getValue() - 1);
-            fate_resilience.setValue(fate_resilience.getValue() + 1);
+        fateResilienceUP.addActionListener(e -> {
+            fateExtra.setValue(fateExtra.getValue() - 1);
+            fateResilience.setValue(fateResilience.getValue() + 1);
 
-            fate_fateUP.setEnabled(Integer.parseInt(fate_extra.getText())!=0);
-            fate_fateDOWN.setEnabled(Integer.parseInt(fate_fate.getText())!=sheet.getRace().getFate());
-            fate_resilienceUP.setEnabled(Integer.parseInt(fate_extra.getText())!=0);
-            fate_resilienceDOWN.setEnabled(true);
+            fateFateUP.setEnabled(Integer.parseInt(fateExtra.getText())!=0);
+            fateFateDOWN.setEnabled(Integer.parseInt(fateFate.getText())!=sheet.getRace().getFate());
+            fateResilienceUP.setEnabled(Integer.parseInt(fateExtra.getText())!=0);
+            fateResilienceDOWN.setEnabled(true);
 
-            fate_option1Button.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
+            fateOption1Button.setEnabled(fateExtra.getValue() == 0 && fateAttrRemain.getValue() == 0);
         });
-        fate_resilienceDOWN.addActionListener(e -> {
-            fate_extra.setValue(fate_extra.getValue() + 1);
-            fate_resilience.setValue(fate_resilience.getValue() - 1);
+        fateResilienceDOWN.addActionListener(e -> {
+            fateExtra.setValue(fateExtra.getValue() + 1);
+            fateResilience.setValue(fateResilience.getValue() - 1);
 
-            fate_fateUP.setEnabled(true);
-            fate_fateDOWN.setEnabled(Integer.parseInt(fate_fate.getText())!=sheet.getRace().getFate());
-            fate_resilienceUP.setEnabled(true);
-            fate_resilienceDOWN.setEnabled(Integer.parseInt(fate_resilience.getText())!=sheet.getRace().getResilience());
+            fateFateUP.setEnabled(true);
+            fateFateDOWN.setEnabled(Integer.parseInt(fateFate.getText())!=sheet.getRace().getFate());
+            fateResilienceUP.setEnabled(true);
+            fateResilienceDOWN.setEnabled(Integer.parseInt(fateResilience.getText())!=sheet.getRace().getResilience());
 
-            fate_option1Button.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
+            fateOption1Button.setEnabled(fateExtra.getValue() == 0 && fateAttrRemain.getValue() == 0);
         });
-        fate_option1Button.addActionListener(e -> { //
+        fateOption1Button.addActionListener(e -> { //
             sheet.setAttributeList(attributes);
 
             moveToNextTab(tabbedPane.getSelectedIndex());
         });
-        fate_option1Button.setMnemonic(KeyEvent.VK_1);
+        fateOption1Button.setMnemonic(KeyEvent.VK_1);
 
         // Race skills & Talents //
-        createActionMnemonic(raceskill_panel, KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.SHIFT_DOWN_MASK | InputEvent.ALT_DOWN_MASK), () -> {
+        createActionMnemonic(raceskillPanel, KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.SHIFT_DOWN_MASK | InputEvent.ALT_DOWN_MASK), () -> {
             raceSkills = randomizeSkillsWithList(raceSkillGroups, new int[]{3, 3, 3, 5, 5, 5});
-            raceskill_updateTable(raceSkills);
+            raceskillUpdateTable(raceSkills);
 
             for (int i = 0; i < raceTalentGroups.size(); i++) {
-                updateTalentRow(raceTalentGroups.get(i), raceTalents, raceskill_talentsPanel, i + 1, raceTalentGroups.get(i).getRndTalentIndex());
+                updateTalentRow(raceTalentGroups.get(i), raceTalents, raceskillTalentsPanel, i + 1, raceTalentGroups.get(i).getRndTalentIndex());
             }
             for (int i = 0; i < sheet.getRace().getRandomTalents(); i++) {
-                racetalent_roll();
+                racetalentRoll();
             }
         });
-        raceskill_rollButton.addActionListener(e -> racetalent_roll());
-        raceskill_rollButton.setMnemonic(KeyEvent.VK_R);
+        raceskillRollButton.addActionListener(e -> racetalentRoll());
+        raceskillRollButton.setMnemonic(KeyEvent.VK_R);
 
-        raceskill_option1.addActionListener(e -> {
+        raceskillOption1.addActionListener(e -> {
             List<Skill> tempList = new ArrayList<>();
             for (Skill skill : raceSkills) {
                 if (skill.getAdvValue() != 0) {
@@ -505,97 +505,102 @@ public class CharacterGen {
             imageLabel.setIcon(icon);
         });
         exitButton.addActionListener(e -> {
-            frame.setContentPane(previous_screen.mainPanel);
+            frame.setContentPane(previousScreen.mainPanel);
             frame.validate();
         });
     }
 
 
-    private void attr_createTable() {
+    private void attrCreateTable() {
         attributes = sheet.getRace().getAttributes();
 
-        attr_move = new JIntegerField(sheet.getRace().getM());
-        attr_move.setHorizontalAlignment(JTextField.CENTER);
-        attr_move.setEditable(false);
-        attr_move.setFont(new Font(attr_move.getFont().getName(),Font.ITALIC+Font.BOLD,attr_move.getFont().getSize()+2));
-        attributesTable.add(attr_move, new GridConstraints(1, 0, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null), false);
+        attrMove = new JIntegerField(sheet.getRace().getM());
+        attrMove.setHorizontalAlignment(JTextField.CENTER);
+        attrMove.setEditable(false);
+        attrMove.setFont(new Font(attrMove.getFont().getName(),Font.ITALIC+Font.BOLD, attrMove.getFont().getSize()+2));
+        attrAttributesTable
+                .add(attrMove, new GridConstraints(1, 0, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null), false);
 
         for (int i = 0; i < attributes.size(); i++) {
             boolean changeBackground = (sheet.getRace().getSize()== Size.NORMAL && i == 2) || i == 3 || i == 8;
             Color foregroundColor = Color.black;
             if (sheet.getProfession().hasAttribute(i+1)) {
-                foregroundColor = ColorPalette.CustomGreen;
+                foregroundColor = ColorPalette.HALF_GREEN;
             }
 
             JLabel charLabel = new JLabel();
             charLabel.setHorizontalAlignment(JLabel.CENTER);
             charLabel.setHorizontalTextPosition(0);
             charLabel.setText(attributes.get(i).getName());
-            attributesTable.add(charLabel, new GridConstraints(0, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
+            attrAttributesTable
+                    .add(charLabel, new GridConstraints(0, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
 
             JIntegerField baseAttr = new JIntegerField(attributes.get(i).getBaseValue());
             baseAttr.setForeground(foregroundColor);
             if (changeBackground) {
-                baseAttr.setBackground(ColorPalette.CustomWhiteBlue);
+                baseAttr.setBackground(ColorPalette.WHITE_BLUE);
             }
             baseAttr.setHorizontalAlignment(JTextField.CENTER);
             baseAttr.setEditable(false);
-            attributesTable.add(baseAttr, new GridConstraints(1, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
+            attrAttributesTable
+                    .add(baseAttr, new GridConstraints(1, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
             BAttr.add(baseAttr);
 
             JIntegerField attr = new JIntegerField();
             attr.setForeground(foregroundColor);
             if (changeBackground) {
-                attr.setBackground(ColorPalette.CustomWhiteBlue);
+                attr.setBackground(ColorPalette.WHITE_BLUE);
             }
             attr.setHorizontalAlignment(JTextField.CENTER);
-            attr.addMouseListener((MouseClickedAdapter) this::attr_replaceValues);
-            attributesTable.add(attr, new GridConstraints(2, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
+            attr.addMouseListener((MouseClickedAdapter) this::attrReplaceValues);
+            attrAttributesTable
+                    .add(attr, new GridConstraints(2, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
             RAttr.add(attr);
 
             JIntegerField sumAttr = new JIntegerField(attributes.get(i).getTotalValue());
             sumAttr.setForeground(foregroundColor);
             if (changeBackground) {
-                sumAttr.setBackground(ColorPalette.CustomWhiteBlue);
+                sumAttr.setBackground(ColorPalette.WHITE_BLUE);
             }
             sumAttr.setHorizontalAlignment(JTextField.CENTER);
             sumAttr.setEditable(false);
             sumAttr.setFont(new Font(sumAttr.getFont().getName(),Font.ITALIC+Font.BOLD,sumAttr.getFont().getSize()+2));
-            attributesTable.add(sumAttr, new GridConstraints(3, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
+            attrAttributesTable
+                    .add(sumAttr, new GridConstraints(3, i + 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
             TAttr.add(sumAttr);
         }
 
-        attr_hp = new JIntegerField();
-        attr_hp.setHorizontalAlignment(JTextField.CENTER);
-        attr_hp.setEditable(false);
-        attr_hp.setFont(new Font(attr_hp.getFont().getName(),Font.ITALIC+Font.BOLD,attr_hp.getFont().getSize()+2));
-        attr_hp.setBackground(ColorPalette.CustomWhiteBlue);
-        attributesTable.add(attr_hp, new GridConstraints(1, attributes.size()+1, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null), false);
-        attributesTable.build(GridPanel.ALIGNMENT_HORIZONTAL);
+        attrHP = new JIntegerField();
+        attrHP.setHorizontalAlignment(JTextField.CENTER);
+        attrHP.setEditable(false);
+        attrHP.setFont(new Font(attrHP.getFont().getName(),Font.ITALIC+Font.BOLD, attrHP.getFont().getSize()+2));
+        attrHP.setBackground(ColorPalette.WHITE_BLUE);
+        attrAttributesTable.add(attrHP, new GridConstraints(1, attributes.size()+1, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null), false);
+        attrAttributesTable.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
-    private void attr_replaceValues(MouseEvent e) {
-        if (!attr_locked) {
-            if (mouse_source == null) {
-                mouse_source = (JIntegerField) e.getSource();
-                mouse_color = mouse_source.getForeground();
-                mouse_source.setForeground(Color.red);
-                mouse_source.setFont(new Font(mouse_source.getFont().getName(),Font.BOLD, mouse_source.getFont().getSize()));
+    private void attrReplaceValues(MouseEvent e) {
+        if (!attrLocked) {
+            if (mouseSource == null) {
+                mouseSource = (JIntegerField) e.getSource();
+                mouseColor = mouseSource.getForeground();
+                mouseSource.setForeground(Color.red);
+                mouseSource.setFont(new Font(mouseSource.getFont().getName(),Font.BOLD, mouseSource.getFont().getSize()));
             }
             else {
                 JIntegerField target = (JIntegerField) e.getSource();
                 int temp = target.getValue();
-                target.setValue(mouse_source.getValue());
-                mouse_source.setValue(temp);
-                mouse_source.setForeground(mouse_color);
-                mouse_source.setFont(new Font(mouse_source.getFont().getName(),Font.PLAIN, mouse_source.getFont().getSize()));
-                mouse_source = null;
+                target.setValue(mouseSource.getValue());
+                mouseSource.setValue(temp);
+                mouseSource.setForeground(mouseColor);
+                mouseSource.setFont(new Font(mouseSource.getFont().getName(),Font.PLAIN, mouseSource.getFont().getSize()));
+                mouseSource = null;
             }
-            attr_maxExp = 25;
+            attrMaxExp = 25;
             calculateTotal();
         }
     }
 
-    private void fate_createTable() {
+    private void fateCreateTable() {
         List<JIntegerField> values = List.copyOf(TAttr);
         List<Component> tabOrder = new ArrayList<>();
         BAttr.clear();
@@ -605,13 +610,15 @@ public class CharacterGen {
         String[] columns = {"WW", "US", "S", "Wt", "I", "Zw", "Zr", "Int", "SW", "Ogd", "Żyw"};
         for (int i = 0; i < columns.length; i++) {
             JLabel charLabel = new JLabel(columns[i], JLabel.CENTER);
-            fate_attributeTable.add(charLabel, new GridConstraints(0, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
+            fateAttributeTable
+                    .add(charLabel, new GridConstraints(0, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
         }
 
-        attr_hp = new JIntegerField(attr_hp.getValue());
-        attr_hp.setHorizontalAlignment(JTextField.CENTER);
-        attr_hp.setEditable(false);
-        fate_attributeTable.add(attr_hp, new GridConstraints(1, columns.length-1, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null), false);
+        attrHP = new JIntegerField(attrHP.getValue());
+        attrHP.setHorizontalAlignment(JTextField.CENTER);
+        attrHP.setEditable(false);
+        fateAttributeTable.add(
+                attrHP, new GridConstraints(1, columns.length-1, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null), false);
 
         for (int i = 0; i < columns.length-1; i++) {
             int finalI = i;
@@ -620,7 +627,7 @@ public class CharacterGen {
             attr.setHorizontalAlignment(JTextField.CENTER);
             attr.setEditable(false);
             BAttr.add(attr);
-            fate_attributeTable.add(attr, new GridConstraints(1, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
+            fateAttributeTable.add(attr, new GridConstraints(1, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
 
             AdvancedSpinner adv = new AdvancedSpinner(new SpinnerNumberModel(0, 0, 5, 1));
             adv.setEnabled(false);
@@ -628,50 +635,50 @@ public class CharacterGen {
                 adv.setEnabled(true);
                 tabOrder.add(adv.getTextField());
             }
-            fate_attributeTable.add(adv,new GridConstraints(2, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
+            fateAttributeTable.add(adv,new GridConstraints(2, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
 
             JIntegerField sumAttr = new JIntegerField(BAttr.get(i).getValue());
             sumAttr.setHorizontalAlignment(JTextField.CENTER);
             sumAttr.setEditable(false);
             sumAttr.setFont(new Font(sumAttr.getFont().getName(), Font.ITALIC + Font.BOLD, sumAttr.getFont().getSize() + 2));
             TAttr.add(sumAttr);
-            fate_attributeTable.add(sumAttr, new GridConstraints(3, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
+            fateAttributeTable.add(sumAttr, new GridConstraints(3, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null), false);
 
-            adv.addChangeListener(e -> fate_updatePoints(adv, finalI, sumAttr));
+            adv.addChangeListener(e -> fateUpdatePoints(adv, finalI, sumAttr));
         }
-        fate_attributeTable.setFocusCycleRoot(true);
-        fate_attributeTable.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
+        fateAttributeTable.setFocusCycleRoot(true);
+        fateAttributeTable.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
         tabOrder.get(0).requestFocusInWindow();
 
-        fate_attributeTable.build(GridPanel.ALIGNMENT_HORIZONTAL);
+        fateAttributeTable.build(GridPanel.ALIGNMENT_HORIZONTAL);
 
-        fate_fate.setValue(sheet.getRace().getFate());
-        fate_resilience.setValue(sheet.getRace().getResilience());
-        fate_extra.setValue(sheet.getRace().getExtra());
+        fateFate.setValue(sheet.getRace().getFate());
+        fateResilience.setValue(sheet.getRace().getResilience());
+        fateExtra.setValue(sheet.getRace().getExtra());
     }
-    private void fate_updatePoints(AdvancedSpinner activeSpinner, int finalI, JIntegerField field) {
+    private void fateUpdatePoints(AdvancedSpinner activeSpinner, int finalI, JIntegerField field) {
         int now = (int) (activeSpinner.getValue());
         int adv = attributes.get(finalI).getAdvValue();
 
         if (adv != now) {
-            fate_attrRemain.changeValue(adv - now);
+            fateAttrRemain.changeValue(adv - now);
             field.changeValue(now - adv);
             attributes.get(finalI).setAdvValue(now);
             calculateHP();
 
-            fate_attributeTable.iterateThroughColumns(2, (o, i) -> {
+            fateAttributeTable.iterateThroughColumns(2, (o, i) -> {
                 AdvancedSpinner spinner = (AdvancedSpinner) o;
                 if (activeSpinner != o) {
                     SpinnerNumberModel model = (SpinnerNumberModel) spinner.getModel();
-                    model.setMaximum((int) model.getValue() + fate_attrRemain.getValue());
+                    model.setMaximum((int) model.getValue() + fateAttrRemain.getValue());
                 }
             });
         }
 
-        fate_option1Button.setEnabled(fate_extra.getValue() == 0 && fate_attrRemain.getValue() == 0);
+        fateOption1Button.setEnabled(fateExtra.getValue() == 0 && fateAttrRemain.getValue() == 0);
     }
 
-    private void raceskill_createTable() {
+    private void raceskillCreateTable() {
         raceSkillGroups = sheet.getRace().getRaceSkills(attributes);
         raceSkillGroups.forEach(e -> raceSkills.add(e.getFirstSkill()));
 
@@ -693,10 +700,10 @@ public class CharacterGen {
                 row = base_itr++;
             }
             if (profSkillGroups.contains(raceSkills.get(i))) {
-                color = ColorPalette.CustomGreen;
+                color = ColorPalette.HALF_GREEN;
             }
 
-            Container nameContainer = createSkillComboIfNeeded(raceSkillGroups.get(i), raceskill_skillsPanel, row, column);
+            Container nameContainer = createSkillComboIfNeeded(raceSkillGroups.get(i), raceskillSkillsPanel, row, column);
             nameContainer.setForeground(color);
             column++;
 
@@ -704,37 +711,42 @@ public class CharacterGen {
             attrField.setHorizontalAlignment(JTextField.CENTER);
             attrField.setEditable(false);
             attrField.setFocusable(false);
-            raceskill_skillsPanel.add(attrField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
+            raceskillSkillsPanel
+                    .add(attrField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
             AdvancedSpinner jSpinner = new AdvancedSpinner(new SpinnerTypeListModel<>(new Integer[]{0, 3, 5}));
             jSpinner.setHorizontalAlignment(JTextField.CENTER);
-            raceskill_skillsPanel.add(jSpinner, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
+            raceskillSkillsPanel
+                    .add(jSpinner, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
             JIntegerField sumField = new JIntegerField(raceSkills.get(i).getTotalValue(), "%d", JTextField.CENTER);
             sumField.setEditable(false);
             sumField.setFocusable(false);
-            raceskill_skillsPanel.add(sumField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
+            raceskillSkillsPanel
+                    .add(sumField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
             int finalI = i;
-            jSpinner.addChangeListener(e -> raceskill_updatePoints(nameContainer, jSpinner, sumField, raceSkills.get(finalI), profSkillGroups.contains(raceSkills.get(finalI))));
+            jSpinner.addChangeListener(e -> raceskillUpdatePoints(nameContainer, jSpinner, sumField, raceSkills.get(finalI), profSkillGroups.contains(raceSkills.get(finalI))));
             tabOrder.add(jSpinner.getTextField());
         }
         if (base_itr != 1) {
-            raceskill_skillsPanel.add(new JLabel("Basic skills", JLabel.CENTER), new GridConstraints(0, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
+            raceskillSkillsPanel
+                    .add(new JLabel("Basic skills", JLabel.CENTER), new GridConstraints(0, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
         }
         if (adv_itr != 1) {
-            raceskill_skillsPanel.add(new JLabel("Advanced skills", JLabel.CENTER), new GridConstraints(0, 4, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
+            raceskillSkillsPanel
+                    .add(new JLabel("Advanced skills", JLabel.CENTER), new GridConstraints(0, 4, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
         }
 
-        raceskill_skillsPanel.setFocusCycleRoot(true);
-        raceskill_skillsPanel.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
+        raceskillSkillsPanel.setFocusCycleRoot(true);
+        raceskillSkillsPanel.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
         tabOrder.get(0).requestFocusInWindow();
 
-        raceskill_skillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
+        raceskillSkillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
 
-        raceskill_updateTable(raceSkills);
+        raceskillUpdateTable(raceSkills);
     }
-    private void raceskill_updateTable(List<Skill> raceSkills) {
+    private void raceskillUpdateTable(List<Skill> raceSkills) {
         int base_itr = 1, adv_itr = 1;
         int column, row;
         for (Skill skill : raceSkills) {
@@ -749,16 +761,16 @@ public class CharacterGen {
             }
 
             if (profSkillGroups.contains(skill)) {
-                color = ColorPalette.CustomGreen;
+                color = ColorPalette.HALF_GREEN;
             }
 
-            if (raceskill_skillsPanel.getComponent(column, row) instanceof SearchableComboBox) {
-                ((SearchableComboBox) raceskill_skillsPanel.getComponent(column, row)).getModel().setSelectedItem(skill.getName());
+            if (raceskillSkillsPanel.getComponent(column, row) instanceof SearchableComboBox) {
+                ((SearchableComboBox) raceskillSkillsPanel.getComponent(column, row)).getModel().setSelectedItem(skill.getName());
             }
-            ((AdvancedSpinner) raceskill_skillsPanel.getComponent(column + 2, row)).setValue(skill.getAdvValue());
+            ((AdvancedSpinner) raceskillSkillsPanel.getComponent(column + 2, row)).setValue(skill.getAdvValue());
         }
     }
-    private void raceskill_updatePoints(Container container, AdvancedSpinner spinner, JIntegerField totalField, Skill skill, boolean paintGreen) {
+    private void raceskillUpdatePoints(Container container, AdvancedSpinner spinner, JIntegerField totalField, Skill skill, boolean paintGreen) {
         int now = (int) spinner.getValue();
         int last = skill.getAdvValue();
 
@@ -766,13 +778,13 @@ public class CharacterGen {
             skill.setAdvValue(now);
             totalField.setValue(skill.getTotalValue());
 
-            raceskill_points.put(last, raceskill_points.get(last)-1);
-            raceskill_points.put(now, raceskill_points.get(now)+1);
+            raceskillPoints.put(last, raceskillPoints.get(last)-1);
+            raceskillPoints.put(now, raceskillPoints.get(now)+1);
         } else if (spinner.getValue() != spinner.getLastValue()) {
             totalField.setValue(skill.getTotalValue());
 
-            raceskill_points.put((Integer) spinner.getLastValue(), raceskill_points.get(last)-1);
-            raceskill_points.put((Integer) spinner.getValue(), raceskill_points.get(now)+1);
+            raceskillPoints.put((Integer) spinner.getLastValue(), raceskillPoints.get(last)-1);
+            raceskillPoints.put((Integer) spinner.getValue(), raceskillPoints.get(now)+1);
         }
 
         if (now == 0 && skill.getBaseSkill().isAdv()) {
@@ -782,22 +794,22 @@ public class CharacterGen {
         }
 
         if (paintGreen) {
-            container.setForeground(ColorPalette.CustomGreen);
+            container.setForeground(ColorPalette.HALF_GREEN);
         }
 
 //        raceskill_skillsPanel.iterateThroughRows(2, 1, baseSkills.size(), this::raceskill_changeColor);
 //        raceskill_skillsPanel.iterateThroughRows(6, 1, advSkills.size(), this::raceskill_changeColor);
     }
-    private void raceskill_changeColor(Object object) {
+    private void raceskillChangeColor(Object object) {
         AdvancedSpinner active = (AdvancedSpinner) object;
-        if (raceskill_points.get((int) active.getValue()) > 3) {
+        if (raceskillPoints.get((int) active.getValue()) > 3) {
             active.getTextField().setForeground(Color.RED);
         } else {
             active.getTextField().setForeground(Color.BLACK);
         }
     }
 
-    private void racetalent_createTable() {
+    private void racetalentCreateTable() {
         raceTalentGroups = sheet.getRace().getRaceTalents(attributes);
         raceTalentGroups.forEach(e -> raceTalents.add(e.getFirstTalent()));
 
@@ -813,86 +825,91 @@ public class CharacterGen {
         };
 
         // Talents - Header
-        raceskill_talentsPanel.add(new JLabel("Talents", JLabel.CENTER), new GridConstraints(0, 0, 1, -1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
+        raceskillTalentsPanel
+                .add(new JLabel("Talents", JLabel.CENTER), new GridConstraints(0, 0, 1, -1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
         for (int i = 0; i < raceTalentGroups.size(); i++) {
             int column = 0;
 
-            Container nameContainer = createTalentComboIfNeeded(raceTalentGroups.get(i), raceskill_talentsPanel, i + 1, column, columnDimensions[column]);
+            Container nameContainer = createTalentComboIfNeeded(raceTalentGroups.get(i), raceskillTalentsPanel, i + 1, column, columnDimensions[column]);
             column++;
 
             JTextField attrField = new JTextField(String.valueOf(raceTalents.get(i).getCurrentLvl()));
             attrField.setHorizontalAlignment(JTextField.CENTER);
             attrField.setEditable(false);
             attrField.setFocusable(false);
-            raceskill_talentsPanel.add(attrField, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
+            raceskillTalentsPanel
+                    .add(attrField, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
 
             JTextField attrField2 = new JTextField(raceTalents.get(i).getMaxString());
             attrField2.setHorizontalAlignment(JTextField.CENTER);
             attrField2.setEditable(false);
             attrField2.setFocusable(false);
-            raceskill_talentsPanel.add(attrField2, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
+            raceskillTalentsPanel.add(attrField2, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
 
             JTextArea testArea = new JTextArea(raceTalents.get(i).getBaseTalent().getTest());
             testArea.setFont(new Font(testArea.getFont().getName(), testArea.getFont().getStyle(), 10));
             testArea.setLineWrap(true);
             testArea.setWrapStyleWord(true);
             testArea.setEditable(false);
-            raceskill_talentsPanel.add(testArea, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
+            raceskillTalentsPanel
+                    .add(testArea, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
 
             String tooltip = raceTalents.get(i).getBaseTalent().getDesc();
             JLabel desc = new JLabel(new ImageIcon("src/resources/images/info.png"));
             desc.setToolTipText(MultiLineTooltip.splitToolTip(tooltip, 75, 10));
-            raceskill_talentsPanel.add(desc, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null), false);
+            raceskillTalentsPanel
+                    .add(desc, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null), false);
         }
 
-        raceskill_talentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
+        raceskillTalentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
 
         // Talents - Random Talents
         if (sheet.getRace().getRandomTalents() != 0) {
-            raceskill_randomTalentsLabel.setVisible(true);
-            raceskill_rollPanel.setVisible(true);
+            raceskillRandomTalentsLabel.setVisible(true);
+            raceskillRollPanel.setVisible(true);
             for (int i=0;i<sheet.getRace().getRandomTalents();i++) {
                 int column = 0;
 
                 SearchableComboBox nameField = new SearchableComboBox();
                 nameField.setLocked(true);
-                raceskill_randomTalentsPanel.add(nameField, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
+                raceskillRandomTalentsPanel.add(nameField, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
 
                 JTextField attrField = new JTextField();
                 attrField.setHorizontalAlignment(JTextField.CENTER);
                 attrField.setEditable(false);
                 attrField.setFocusable(false);
-                raceskill_randomTalentsPanel.add(attrField, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
+                raceskillRandomTalentsPanel.add(attrField, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
 
                 JTextField attrField2 = new JTextField();
                 attrField2.setHorizontalAlignment(JTextField.CENTER);
                 attrField2.setEditable(false);
                 attrField2.setFocusable(false);
-                raceskill_randomTalentsPanel.add(attrField2, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
+                raceskillRandomTalentsPanel.add(attrField2, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
 
                 JTextArea testArea = new JTextArea();
                 testArea.setFont(new Font(testArea.getFont().getName(), testArea.getFont().getStyle(), 10));
                 testArea.setLineWrap(true);
                 testArea.setWrapStyleWord(true);
                 testArea.setEditable(false);
-                raceskill_randomTalentsPanel.add(testArea, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
+                raceskillRandomTalentsPanel.add(testArea, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
 
                 JLabel desc = new JLabel(new ImageIcon("src/resources/images/info.png"));
-                raceskill_randomTalentsPanel.add(desc, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null), false);
+                raceskillRandomTalentsPanel
+                        .add(desc, new GridConstraints(i, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null), false);
             }
         }
 
-        raceskill_randomTalentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
+        raceskillRandomTalentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
-    private void racetalent_roll() {
-        if (raceskill_rollButton.isEnabled()) {
+    private void racetalentRoll() {
+        if (raceskillRollButton.isEnabled()) {
             TalentGroup rollTalent;
             do {
                 Object[] result = getRandomTalent();
                 int rollResultNumeric = (int) result[0];
                 rollTalent = (TalentGroup) result[1];
 
-                raceskill_rollResult.setValue(rollResultNumeric);
+                raceskillRollResult.setValue(rollResultNumeric);
             } while (randomTalentGroups.contains(rollTalent));
             TalentGroup rollTalentGroup = rollTalent;
             randomTalentGroups.add(rollTalentGroup);
@@ -900,7 +917,7 @@ public class CharacterGen {
 
             int row = randomTalentGroups.size() - 1;
 
-            SearchableComboBox activeField = (SearchableComboBox) raceskill_randomTalentsPanel.getComponent(0, row);
+            SearchableComboBox activeField = (SearchableComboBox) raceskillRandomTalentsPanel.getComponent(0, row);
             for (Talent talent : rollTalentGroup.getTalents()) {
                 activeField.addItem(talent.getName());
             }
@@ -910,29 +927,29 @@ public class CharacterGen {
             String tooltip = rollTalentGroup.getName();
             if (tooltip != null)
                 activeField.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
-            activeField.addActionListener(e -> updateTalentRow(rollTalentGroup, randomTalents, raceskill_randomTalentsPanel, row, ((SearchableComboBox) e.getSource()).getSelectedIndex()));
+            activeField.addActionListener(e -> updateTalentRow(rollTalentGroup, randomTalents, raceskillRandomTalentsPanel, row, ((SearchableComboBox) e.getSource()).getSelectedIndex()));
 
-            JTextField activeField2 = (JTextField) raceskill_randomTalentsPanel.getComponent(1, row);
+            JTextField activeField2 = (JTextField) raceskillRandomTalentsPanel.getComponent(1, row);
             activeField2.setText(String.valueOf(rollTalentGroup.getFirstTalent().getCurrentLvl()));
 
-            JTextField activeField3 = (JTextField) raceskill_randomTalentsPanel.getComponent(2, row);
+            JTextField activeField3 = (JTextField) raceskillRandomTalentsPanel.getComponent(2, row);
             activeField3.setText(rollTalentGroup.getFirstTalent().getMaxString());
 
-            JTextArea activeArea = (JTextArea) raceskill_randomTalentsPanel.getComponent(3, row);
+            JTextArea activeArea = (JTextArea) raceskillRandomTalentsPanel.getComponent(3, row);
             activeArea.setText(rollTalentGroup.getFirstTalent().getBaseTalent().getTest());
 
-            JLabel activeLabel = (JLabel) raceskill_randomTalentsPanel.getComponent(4, row);
+            JLabel activeLabel = (JLabel) raceskillRandomTalentsPanel.getComponent(4, row);
             activeLabel.setToolTipText(MultiLineTooltip.splitToolTip(rollTalentGroup.getFirstTalent().getBaseTalent().getDesc(), 75, 10));
 
             if (sheet.getRace().getRandomTalents() <= randomTalentGroups.size()) {
-                raceskill_rollButton.setEnabled(false);
-                raceskill_rollResult.setEditable(false);
-                raceskill_OKButton.setEnabled(false);
+                raceskillRollButton.setEnabled(false);
+                raceskillRollResult.setEditable(false);
+                raceskillOKButton.setEnabled(false);
             }
         }
     }
 
-    private void profskill_createTable() {
+    private void profskillCreateTable() {
         List<Component> tabOrder = new ArrayList<>();
 
         int base_itr = 1;
@@ -951,7 +968,7 @@ public class CharacterGen {
                 row = base_itr++;
             }
 
-            Container nameContainer = createSkillComboIfNeeded(profSkills.get(i), profskill_skillsPanel, row, column);
+            Container nameContainer = createSkillComboIfNeeded(profSkills.get(i), profskillSkillsPanel, row, column);
             nameContainer.setForeground(color);
             column++;
 
@@ -959,34 +976,39 @@ public class CharacterGen {
             attrField.setHorizontalAlignment(JTextField.CENTER);
             attrField.setEditable(false);
             attrField.setFocusable(false);
-            profskill_skillsPanel.add(attrField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
+            profskillSkillsPanel
+                    .add(attrField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
             AdvancedSpinner jSpinner = new AdvancedSpinner(new SpinnerNumberModel(profSkillGroups.get(i).getAdvValue(), profSkillGroups.get(i).getAdvValue(), 10, 1));
             jSpinner.setHorizontalAlignment(JTextField.CENTER);
-            profskill_skillsPanel.add(jSpinner, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
+            profskillSkillsPanel
+                    .add(jSpinner, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
             JIntegerField sumField = new JIntegerField(profSkillGroups.get(i).getTotalValue(), "%d", JTextField.CENTER);
             sumField.setEditable(false);
             sumField.setFocusable(false);
-            profskill_skillsPanel.add(sumField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
+            profskillSkillsPanel
+                    .add(sumField, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            jSpinner.addChangeListener(e -> profskill_updatePoints(nameContainer, jSpinner, sumField, profSkillGroups.get(finalI)));
+            jSpinner.addChangeListener(e -> profskillUpdatePoints(nameContainer, jSpinner, sumField, profSkillGroups.get(finalI)));
             tabOrder.add(jSpinner.getTextField());
         }
 
         if (base_itr != 1) {
-            profskill_skillsPanel.add(new JLabel("Basic skills", JLabel.CENTER), new GridConstraints(0, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
+            profskillSkillsPanel
+                    .add(new JLabel("Basic skills", JLabel.CENTER), new GridConstraints(0, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
         }
         if (adv_itr != 1) {
-            profskill_skillsPanel.add(new JLabel("Advanced skills", JLabel.CENTER), new GridConstraints(0, 4, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
+            profskillSkillsPanel
+                    .add(new JLabel("Advanced skills", JLabel.CENTER), new GridConstraints(0, 4, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
         }
-        profskill_skillsPanel.setFocusCycleRoot(true);
-        profskill_skillsPanel.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
+        profskillSkillsPanel.setFocusCycleRoot(true);
+        profskillSkillsPanel.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
         tabOrder.get(0).requestFocusInWindow();
 
-        profskill_skillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
+        profskillSkillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
-    private void profskill_updatePoints(Container container, AdvancedSpinner spinner, JIntegerField totalField, Skill skill) {
+    private void profskillUpdatePoints(Container container, AdvancedSpinner spinner, JIntegerField totalField, Skill skill) {
         int now = (int) spinner.getValue();
 
         if (skill.getAdvValue() != now) {
@@ -1001,7 +1023,7 @@ public class CharacterGen {
         }
     }
 
-    private void proftalent_createTable() {
+    private void proftalentCreateTable() {
         ButtonGroup buttonGroup = new ButtonGroup();
 
         // Constants
@@ -1012,43 +1034,47 @@ public class CharacterGen {
         };
 
         // Talents - Header
-        profskill_talentsPanel.add(new JLabel("Talents", JLabel.CENTER), new GridConstraints(0, 0, 1, -1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
+        profskillTalentsPanel
+                .add(new JLabel("Talents", JLabel.CENTER), new GridConstraints(0, 0, 1, -1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null), false);
         for (int i = 0; i < profTalentGroups.size(); i++) {
             int column = 0;
 
-            Container nameContainer = createTalentComboIfNeeded(profTalentGroups.get(i), profskill_talentsPanel, i + 1, column, columnDimensions[column]);
+            Container nameContainer = createTalentComboIfNeeded(profTalentGroups.get(i), profskillTalentsPanel, i + 1, column, columnDimensions[column]);
             column++;
 
             JTextField attrField = new JTextField(profTalents.get(i).getMaxString());
             attrField.setHorizontalAlignment(JTextField.CENTER);
             attrField.setEditable(false);
             attrField.setFocusable(false);
-            profskill_talentsPanel.add(attrField, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
+            profskillTalentsPanel
+                    .add(attrField, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
 
             JTextArea testArea = new JTextArea(profTalents.get(i).getBaseTalent().getTest());
             testArea.setFont(new Font(testArea.getFont().getName(), testArea.getFont().getStyle(), 10));
             testArea.setLineWrap(true);
             testArea.setWrapStyleWord(true);
             testArea.setEditable(false);
-            profskill_talentsPanel.add(testArea, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
+            profskillTalentsPanel
+                    .add(testArea, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions[column-1], null), false);
 
             String tooltip = profTalents.get(i).getBaseTalent().getDesc();
             JLabel desc = new JLabel(new ImageIcon("src/resources/images/info.png"));
             desc.setToolTipText(MultiLineTooltip.splitToolTip(tooltip, 75, 10));
-            profskill_talentsPanel.add(desc, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null), false);
+            profskillTalentsPanel
+                    .add(desc, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null), false);
 
             JRadioButton radioButton = new JRadioButton();
             buttonGroup.add(radioButton);
-            profskill_talentsPanel.add(radioButton, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null), false);
+            profskillTalentsPanel.add(radioButton, new GridConstraints(i+1, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null), false);
         }
-        profskill_talentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
+        profskillTalentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
 
     private void calculateHP() {
         int value = (TAttr.get(3).getValue() / 10) * 2 + TAttr.get(8).getValue() / 10;
         if (sheet.getRace().getSize() == Race.Size.NORMAL)
             value += TAttr.get(2).getValue() / 10;
-        attr_hp.setValue(value);
+        attrHP.setValue(value);
     }
     private void calculateTotal() {
         for (int i=0;i<10;i++)
@@ -1066,18 +1092,18 @@ public class CharacterGen {
 //                prof_option4b.addItems(connection.getProfsNames(sheet.getRace().getID(), prof_option4a.getValue()));
                 break;
             case 2:
-                attr_createTable();
+                attrCreateTable();
                 break;
             case 3:
-                fate_createTable();
+                fateCreateTable();
                 break;
             case 4:
-                raceskill_createTable();
-                racetalent_createTable();
+                raceskillCreateTable();
+                racetalentCreateTable();
                 break;
             case 5:
-                profskill_createTable();
-                proftalent_createTable();
+                profskillCreateTable();
+                proftalentCreateTable();
                 break;
             default:
                 break;
@@ -1087,11 +1113,11 @@ public class CharacterGen {
         expField = new JIntegerField(0);
         expField.setRunnable((o, i) -> sheet.setExp(((JIntegerField) o).getValue()));
 
-        fate_attrRemain = new JIntegerField(5);
-        raceskill_points = new HashMap<>();
-        raceskill_points.put(0, 0);
-        raceskill_points.put(3, 0);
-        raceskill_points.put(5, 0);
+        fateAttrRemain = new JIntegerField(5);
+        raceskillPoints = new HashMap<>();
+        raceskillPoints.put(0, 0);
+        raceskillPoints.put(3, 0);
+        raceskillPoints.put(5, 0);
     }
 
     private Container createSkillComboIfNeeded(SkillGroup groupSkill, GridPanel panel, int row, int column) {
@@ -1142,7 +1168,7 @@ public class CharacterGen {
             comboBox.setPreferredSize(new Dimension(comboBox.getSize().width, -1));
             comboBox.refresh(false);
             comboBox.setEditable(false);
-            comboBox.addActionListener(e -> updateTalentRow(groupTalent, raceTalents, raceskill_talentsPanel, row, ((SearchableComboBox) e.getSource()).getSelectedIndex()));
+            comboBox.addActionListener(e -> updateTalentRow(groupTalent, raceTalents, raceskillTalentsPanel, row, ((SearchableComboBox) e.getSource()).getSelectedIndex()));
             panel.add(comboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions, null), false);
             return comboBox;
         }

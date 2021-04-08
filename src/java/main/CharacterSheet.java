@@ -22,7 +22,7 @@ public class CharacterSheet {
     public JPanel mainPanel;
 
     private JFrame frame;
-    private Main previous_screen;
+    private Main previousScreen;
     private Connection connection;
 
     private JButton createPlayerCharacterButton;
@@ -47,7 +47,7 @@ public class CharacterSheet {
 
     public CharacterSheet(JFrame _frame, Main _screen, Connection _connection) {
         frame = _frame;
-        previous_screen = _screen;
+        previousScreen = _screen;
         connection = _connection;
         exp = 0;
 
@@ -81,7 +81,7 @@ public class CharacterSheet {
         }
 
         exitButton.addActionListener(e -> {
-            frame.setContentPane(previous_screen.mainPanel);
+            frame.setContentPane(previousScreen.mainPanel);
             frame.validate();
         });
     }
