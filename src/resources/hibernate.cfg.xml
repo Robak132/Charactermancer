@@ -26,5 +26,6 @@
         <mapping class="mappings.BaseSkill" />
         <mapping class="mappings.SkillGroup" />
         <mapping class="mappings.BaseTalent" />
+        <mapping class="mappings.Subrace" />
     </session-factory>
 </hibernate-configuration>

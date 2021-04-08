@@ -31,25 +31,15 @@ import tools.MultiLineTooltip;
 public class CharacterGen {
     public JPanel mainPanel;
     public final Main previousScreen;
+    public JIntegerField expField;
 
     private final JFrame frame;
     private final Connection connection;
     private final CharacterSheet sheet;
     private JLabel imageLabel;
-    private JIntegerField expField;
     private JTabbedPane tabbedPane;
     private JButton exitButton;
     private JLabel rollLabel;
-
-    private JPanel raceRollPanel;
-    private JPanel raceOptions;
-    private JButton raceRollButton;
-    private JIntegerField raceRollResult;
-    private JButton raceOKButton;
-    private JTextField raceOption1;
-    private JButton raceOption1Button;
-    private SearchableComboBox raceOption2Combo;
-    private JButton raceOption2Button;
 
     private JButton profOKButton;
     private JIntegerField profRollResult;
@@ -116,6 +106,7 @@ public class CharacterGen {
     private GridPanel profskillSkillsPanel;
     private GridPanel profskillTalentsPanel;
     private JButton profskillOption1;
+    private RaceTab raceTab;
 
     private JIntegerField mouseSource = null;
     private Color mouseColor;
@@ -145,77 +136,7 @@ public class CharacterGen {
         sheet = new CharacterSheet();
 
         // Race //
-        raceOption2Combo.addItems(connection.getRacesNames(), false);
-
-        raceRollButton.addActionListener(e -> {
-            Object[] result = getRandomRace();
-            int rollResultNumeric = (int) result[0];
-            rollRace = (Race) result[1];
-
-            raceRollResult.setValue(rollResultNumeric);
-            raceOption1.setText(rollRace.getName());
-
-            raceRollButton.setEnabled(false);
-            raceRollResult.setEditable(false);
-            raceOKButton.setEnabled(false);
-
-            raceOption1.setEnabled(true);
-            raceOption1Button.setEnabled(true);
-            raceOption2Combo.setEnabled(true);
-            raceOption2Button.setEnabled(true);
-        });
-        raceRollButton.setMnemonic(KeyEvent.VK_R);
-        raceOKButton.addActionListener(e -> {
-            try {
-                if (raceRollResult.getValue() > 0 && raceRollResult.getValue() <= 100) {
-                    int rollResultNumeric = raceRollResult.getValue();
-                    rollRace = connection.getRaceFromTable(rollResultNumeric);
-                    raceOption1.setText(rollRace.getName());
-
-                    raceRollButton.setEnabled(false);
-                    raceRollResult.setEditable(false);
-                    raceOKButton.setEnabled(false);
-
-                    raceOption1.setEnabled(true);
-                    raceOption1Button.setEnabled(true);
-                    raceOption2Combo.setEnabled(true);
-                    raceOption2Button.setEnabled(true);
-                }
-            } catch (Exception ex) {
-                raceRollResult.setText("");
-            }
-        });
-        raceOKButton.setMnemonic(KeyEvent.VK_O);
-
-        raceOption1Button.addActionListener(e -> {
-            raceOption2Combo.setSelectedItem(raceOption1.getText());
-            sheet.setRace(rollRace);
-            expField.changeValue(20);
-
-            raceOption1Button.setEnabled(false);
-            raceOption1.setEditable(false);
-            raceOption2Button.setEnabled(false);
-            raceOption2Combo.setLocked(true);
-
-            moveToNextTab(tabbedPane.getSelectedIndex());
-        });
-        raceOption1Button.setMnemonic(KeyEvent.VK_1);
-        raceOption2Button.addActionListener(e -> {
-            try {
-                raceOption1.setText((String) raceOption2Combo.getSelectedItem());
-                sheet.setRace(connection.getRace((String) raceOption2Combo.getSelectedItem()));
-
-                raceOption1Button.setEnabled(false);
-                raceOption1.setEditable(false);
-                raceOption2Button.setEnabled(false);
-                raceOption2Combo.setLocked(true);
-
-                moveToNextTab(tabbedPane.getSelectedIndex());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        });
-        raceOption2Button.setMnemonic(KeyEvent.VK_2);
+        raceTab.initialise(this, sheet, connection);
 
         // Profession //
         profRollButton.addActionListener(e -> {
@@ -281,7 +202,7 @@ public class CharacterGen {
             profOption4a.setLocked(true);
             profOption4b.setLocked(true);
 
-            moveToNextTab(tabbedPane.getSelectedIndex());
+            moveToNextTab();
         });
         profOption1Button.setMnemonic(KeyEvent.VK_1);
         profOption2Button.addActionListener(e -> {
@@ -296,7 +217,7 @@ public class CharacterGen {
             profOption4a.setLocked(true);
             profOption4b.setLocked(true);
 
-            moveToNextTab(tabbedPane.getSelectedIndex());
+            moveToNextTab();
         });
         profOption2Button.setMnemonic(KeyEvent.VK_2);
         profOption3Button.addActionListener(e -> {
@@ -311,7 +232,7 @@ public class CharacterGen {
             profOption4a.setLocked(true);
             profOption4b.setLocked(true);
 
-            moveToNextTab(tabbedPane.getSelectedIndex());
+            moveToNextTab();
         });
         profOption3Button.setMnemonic(KeyEvent.VK_3);
 
@@ -378,7 +299,7 @@ public class CharacterGen {
             attrOption1Button.setEnabled(false);
             attrLocked = true;
             expField.changeValue(attrMaxExp);
-            moveToNextTab(tabbedPane.getSelectedIndex());
+            moveToNextTab();
         });
         attrOption1Button.setMnemonic(KeyEvent.VK_1);
         attrOption3Button.addActionListener(e -> {
@@ -460,7 +381,7 @@ public class CharacterGen {
         fateOption1Button.addActionListener(e -> { //
             sheet.setAttributeList(attributes);
 
-            moveToNextTab(tabbedPane.getSelectedIndex());
+            moveToNextTab();
         });
         fateOption1Button.setMnemonic(KeyEvent.VK_1);
 
@@ -494,7 +415,7 @@ public class CharacterGen {
 
             System.out.println(sheet);
 
-            moveToNextTab(tabbedPane.getSelectedIndex());
+            moveToNextTab();
         });
 
         // Pane controls //
@@ -509,7 +430,6 @@ public class CharacterGen {
             frame.validate();
         });
     }
-
 
     private void attrCreateTable() {
         attributes = sheet.getRace().getAttributes();
@@ -1082,7 +1002,8 @@ public class CharacterGen {
         calculateHP();
     }
 
-    private void moveToNextTab(int tab) {
+    public void moveToNextTab() {
+        int tab = tabbedPane.getSelectedIndex();
         tabbedPane.setEnabledAt(tab + 1, true);
         tabbedPane.setSelectedIndex(tab + 1);
         Logger.getLogger(getClass().getName()).log(Level.INFO, String.format("Loaded tab %d", tab + 1));
@@ -1198,21 +1119,21 @@ public class CharacterGen {
     }
 
     // Base functions to use with GUI and text //
-    private Object[] getRandomRace() {
+    public static Object[] getRandomRace(Connection connection) {
         Object[] returns = new Object[2];
         int numeric = Dice.randomDice(1, 100);
         returns[0] = numeric;
         returns[1] = connection.getRaceFromTable(numeric);
         return returns;
     }
-    private Object[] getRandomProf(Race race) {
+    public Object[] getRandomProf(Race race) {
         Object[] returns = new Object[2];
         int numeric = Dice.randomDice(1, 100);
         returns[0] = numeric;
         returns[1] = connection.getProfFromTable(race.getID(), numeric);
         return returns;
     }
-    private Object[] getOneRandomAttr(int index, Race race) {
+    public Object[] getOneRandomAttr(int index, Race race) {
         Object[] returns = new Object[2];
         int raceAttr = race.getRaceAttribute(index+1).getValue();
         int rollAttr = Dice.randomDice(2, 10);
@@ -1222,7 +1143,7 @@ public class CharacterGen {
         returns[1] = sumAttr;
         return returns;
     }
-    private Object[] getAllRandomAttr(Race race) {
+    public Object[] getAllRandomAttr(Race race) {
         Integer[] rollAttr = new Integer[10];
         Integer[] sumAttr = new Integer[10];
         Object[] returns = new Object[3];
@@ -1239,7 +1160,7 @@ public class CharacterGen {
         return returns;
     }
 
-    private List<Skill> randomizeSkillsWithList(List<SkillGroup> skills, int[] values) {
+    public List<Skill> randomizeSkillsWithList(List<SkillGroup> skills, int[] values) {
         int range = skills.size();
         List<Integer> usedIndexes = new ArrayList<>();
         List<Skill> finalSkillList = new ArrayList<>();
@@ -1263,14 +1184,14 @@ public class CharacterGen {
         }
         return finalSkillList;
     }
-    private List<Talent> randomizeTalents(List<TalentGroup> talents) {
+    public List<Talent> randomizeTalents(List<TalentGroup> talents) {
         List<Talent> returnList = new ArrayList<>();
         for (TalentGroup talent : talents) {
             returnList.add(talent.getRndTalent());
         }
         return returnList;
     }
-    private Object[] getRandomTalent() {
+    public Object[] getRandomTalent() {
         Object[] returns = new Object[2];
         int numeric = Dice.randomDice(1, 100);
         returns[0] = numeric;

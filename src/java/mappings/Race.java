@@ -1,8 +1,16 @@
 package mappings;
 
 import java.util.*;
-import javax.persistence.*;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -26,6 +34,12 @@ public class Race {
     private int size;
     @Column(name = "RANDOM_TALENTS")
     private int randomTalents;
+
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @OneToMany
+    @JoinColumn(name= "IDRACE")
+    @OrderBy("def DESC")
+    private List<Subrace> subraces;
 
     @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany
@@ -131,6 +145,13 @@ public class Race {
     }
     public void setRandomTalents(int randomTalents) {
         this.randomTalents = randomTalents;
+    }
+
+    public List<Subrace> getSubraces() {
+        return subraces;
+    }
+    public void setSubraces(List<Subrace> subraces) {
+        this.subraces = subraces;
     }
 
     public List<RaceAttribute> getRaceAttributes() {

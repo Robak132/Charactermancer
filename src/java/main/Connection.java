@@ -20,7 +20,7 @@ public class Connection {
     private StandardServiceRegistry registry;
     private SessionFactory factory;
 
-    Connection() {
+    public Connection() {
         refresh();
     }
 
@@ -74,8 +74,7 @@ public class Connection {
         List<Race> races = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("FROM Race");
-            races = SQLQuery.list();
+            races = list(session.createQuery("FROM Race"));
             session.close();
         } catch (Exception ex) {
             abort();
@@ -91,37 +90,6 @@ public class Connection {
             Query SQLQuery = session.createQuery("SELECT t.prof FROM ProfTable t WHERE t.indexDOWN <= :param1 AND :param1 <= t.indexUP AND t.race.id = :param2");
             SQLQuery.setParameter("param1", n);
             SQLQuery.setParameter("param2", race);
-            prof = SQLQuery.list().size()==0 ? null : (Profession) SQLQuery.list().get(0);
-            session.close();
-        } catch (Exception ex) {
-            abort();
-            ex.printStackTrace();
-        }
-        return prof;
-    }
-    public Profession getProf(String clss, String profession, int level) {
-        Profession prof = null;
-        try {
-            Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("FROM Profession p WHERE p.career.professionClass =:param1 AND name =:param2 AND level =:param3");
-            SQLQuery.setParameter("param1", clss);
-            SQLQuery.setParameter("param2", profession);
-            SQLQuery.setParameter("param3", level);
-            prof = SQLQuery.list().size()==0 ? null : (Profession) SQLQuery.list().get(0);
-            session.close();
-        } catch (Exception ex) {
-            abort();
-            ex.printStackTrace();
-        }
-        return prof;
-    }
-    public Profession getProf(String profession, int level) {
-        Profession prof = null;
-        try {
-            Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("FROM Profession WHERE name =:param2 AND level =:param3");
-            SQLQuery.setParameter("param2", profession);
-            SQLQuery.setParameter("param3", level);
             prof = SQLQuery.list().size()==0 ? null : (Profession) SQLQuery.list().get(0);
             session.close();
         } catch (Exception ex) {
@@ -175,21 +143,6 @@ public class Connection {
         return profs;
     }
 
-    public List<Skill> getProfessionSkills(Profession prof) {
-        List<Skill> skills = new ArrayList<>();
-        try {
-            Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT p.skill FROM ProfSkill p WHERE p.profession.ID =:param ORDER BY p.skill.name");
-            SQLQuery.setParameter("param", prof.getID());
-            skills = SQLQuery.list();
-            session.close();
-        } catch (Exception ex) {
-            abort();
-            ex.printStackTrace();
-        }
-        return skills;
-    }
-
     public TalentGroup getRandomTalent(int n) {
         TalentGroup talent = null;
         try {
@@ -204,23 +157,15 @@ public class Connection {
         }
         return talent;
     }
-
-    public List<String> getProfsClasses(int race) {
-        List<String> result = new ArrayList<>();
-        for (ProfessionClass prof: getProfessionClass())
-            result.add(prof.getName());
-        return result;
-    }
-    public List<String> getProfsNames(int race, String clss) {
-        List<String> result = new ArrayList<>();
-        for (Profession prof : getProfs(race, clss))
-            result.add(prof.getName());
-        return result;
-    }
     public List<String> getRacesNames() {
         List<String> result = new ArrayList<>();
         for (Race prof : getRaces())
             result.add(prof.getName());
         return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> List<T> list(Query q){
+        return q.list();
     }
 }
