@@ -1,6 +1,10 @@
 package main;
 
-import mappings.*;
+import mappings.Profession;
+import mappings.ProfessionClass;
+import mappings.Race;
+import mappings.Skill;
+import mappings.TalentGroup;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
@@ -209,14 +213,14 @@ public class Connection {
     }
     public List<String> getProfsNames(int race, String clss) {
         List<String> result = new ArrayList<>();
-        for (Object prof : getProfs(race, clss))
-            result.add(((Profession) prof).getName());
+        for (Profession prof : getProfs(race, clss))
+            result.add(prof.getName());
         return result;
     }
     public List<String> getRacesNames() {
         List<String> result = new ArrayList<>();
-        for (Object prof : getRaces())
-            result.add(((Race) prof).getName());
+        for (Race prof : getRaces())
+            result.add(prof.getName());
         return result;
     }
 }

@@ -1,22 +1,36 @@
 package main;
 
 import com.intellij.uiDesigner.core.GridConstraints;
-import components.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import mappings.*;
-import mappings.Race.Size;
-import tools.*;
-
-import javax.swing.*;
+import components.AdvancedSpinner;
+import components.CustomFocusTraversalPolicy;
+import components.GridPanel;
+import components.JIntegerField;
+import components.SearchableComboBox;
+import components.SpinnerTypeListModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.*;
+import mappings.Attribute;
+import mappings.Profession;
+import mappings.Race.Size;
+import mappings.Race;
+import mappings.Skill;
+import mappings.SkillGroup;
+import mappings.Talent;
+import mappings.TalentGroup;
+import tools.AbstractActionBuilder;
+import tools.ColorPalette;
+import tools.Dice;
+import tools.MouseClickedAdapter;
+import tools.MultiLineTooltip;
 
 public class CharacterGen {
     public JPanel mainPanel;
-    public Main previous_screen;
+    public final Main previous_screen;
 
     private final JFrame frame;
     private final Connection connection;

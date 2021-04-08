@@ -19,10 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CharacterSheet {
-    JFrame frame;
-    JPanel mainPanel;
-    Main previous_screen;
-    Connection connection;
+    public JPanel mainPanel;
+
+    private JFrame frame;
+    private Main previous_screen;
+    private Connection connection;
 
     private JButton createPlayerCharacterButton;
     private JButton makeCharacterSheetButton;
@@ -32,9 +33,10 @@ public class CharacterSheet {
     private JPanel basePanel;
     private JButton exitButton;
     private JTextField raceSelectText;
-    private List<JTextField> attributesTextFields = new ArrayList<>();
-    private int move, maxhp, hp;
-
+    private final List<JTextField> attributesTextFields = new ArrayList<>();
+    private int move;
+    private int maxhp;
+    private int hp;
 
     private Race race;
     private Profession prof;
@@ -99,12 +101,9 @@ public class CharacterSheet {
             file.write(jsonObject.toJSONString());
             file.flush();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
+        } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
-
     }
 
     public Race getRace() {

@@ -1,9 +1,18 @@
 package mappings;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,12 +159,10 @@ public class Profession {
         for (TalentGroup talentGroup : profTalents) {
             for (Talent singleTalent : talentGroup.getTalents()) {
                 for (Attribute attribute : attributes) {
-                    if (singleTalent.getAttr() != null) {
-                        if (singleTalent.getAttr().equals(attribute.getBaseAttribute())) {
-                            singleTalent.setLinkedAttribute(attribute);
-                            singleTalent.setAdvanceable(true);
-                            break;
-                        }
+                    if (singleTalent.getAttr() != null && singleTalent.getAttr().equals(attribute.getBaseAttribute())) {
+                        singleTalent.setLinkedAttribute(attribute);
+                        singleTalent.setAdvanceable(true);
+                        break;
                     }
                 }
             }

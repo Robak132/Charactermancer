@@ -53,8 +53,8 @@ public class BaseSkill {
     public String getDesc() {
         return desc;
     }
-    public void setDesc(String descr) {
-        this.desc = descr;
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
     public boolean isAdv() {
         return adv;

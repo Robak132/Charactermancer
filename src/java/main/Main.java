@@ -43,9 +43,7 @@ public class Main {
             frame.validate();
         });
         createsheetButton.setMnemonic(KeyEvent.VK_2);
-        comboBox1.addActionListener(e -> {
-            Locale.setDefault(languages[comboBox1.getSelectedIndex()]);
-        });
+        comboBox1.addActionListener(e -> Locale.setDefault(languages[comboBox1.getSelectedIndex()]));
         frame.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent componentEvent) {
                 if (activeDimension == null || !activeDimension.equals(new Dimension(frame.getWidth(), frame.getHeight()))) {

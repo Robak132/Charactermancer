@@ -31,17 +31,17 @@ public abstract class MultiLineTooltip {
         String[] splitWords = toolTip.split(" ", -1);
         int j=0;
         while (j < splitWords.length) {
-            String word = splitWords[j];
+            StringBuilder word = new StringBuilder(splitWords[j]);
             while (j < splitWords.length - 1 && splitWords[j].length() == 1) {
-                word += " " + splitWords[j+1];
+                word.append(" ").append(splitWords[j + 1]);
                 j++;
             }
-            words.add(word);
+            words.add(word.toString());
             if (font == null) {
                 lengths.add(new int[] {word.length()});
 //                System.out.printf("%s: %d\n", word, word.length());
             } else {
-                lengths.add(new int[] {word.length(), getRealLength(word, font)});
+                lengths.add(new int[] {word.length(), getRealLength(word.toString(), font)});
 //                System.out.printf("%s: %d, %d\n", word, word.length(), getRealLength(word, font));
             }
             j++;
