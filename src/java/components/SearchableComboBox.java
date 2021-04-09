@@ -80,7 +80,7 @@ public final class SearchableComboBox extends JComboBox<String> {
             editor.getEditorComponent().setForeground(goodColor);
         } else {
             caretPosition = textField.getCaretPosition();
-            this.removeAllItems();
+            super.removeAllItems();
             editor.getEditorComponent().setForeground(Color.red);
             for (String name : items) {
                 String nameUpper = name.toUpperCase(Locale.ROOT);
@@ -120,6 +120,12 @@ public final class SearchableComboBox extends JComboBox<String> {
     @Override
     public void addItem(String item) {
         items.add(item);
+    }
+
+    @Override
+    public void removeAllItems() {
+        super.removeAllItems();
+        items.clear();
     }
 
     public String getValue() {

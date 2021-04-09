@@ -54,19 +54,17 @@ public final class RaceTab {
         });
         raceRollButton.setMnemonic(KeyEvent.VK_R);
         raceOKButton.addActionListener(e -> {
-            try {
-                int rollResultNumeric = raceRollResult.getValue();
-                if (rollResultNumeric > 0 && rollResultNumeric <= 100) {
-                    Race rollRace = connection.getRaceFromTable(rollResultNumeric);
-                    subraces = rollRace.getSubraces();
-
-                    setRace(rollResultNumeric, rollRace.getName());
-                    moveToOptions();
-                }
-            } catch (ClassCastException ex) {
+            int rollResultNumeric = raceRollResult.getValue();
+            if (rollResultNumeric <= 0 || rollResultNumeric > 100) {
                 raceRollResult.setText("");
-                ex.printStackTrace();
+                return;
             }
+
+            Race rollRace = connection.getRaceFromTable(rollResultNumeric);
+            subraces = rollRace.getSubraces();
+
+            setRace(rollResultNumeric, rollRace.getName());
+            moveToOptions();
         });
         raceOKButton.setMnemonic(KeyEvent.VK_O);
 

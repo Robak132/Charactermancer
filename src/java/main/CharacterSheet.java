@@ -55,8 +55,6 @@ public class CharacterSheet {
     }
 
     private void createAll() {
-        raceSelect.addItems(connection.getRacesNames());
-
         String[] columns = {"M", "WW", "US", "S", "Wt", "I", "Zw", "Zr", "Int", "SW", "Ogd", "Żyw"};
         basePanel.setLayout(new GridLayoutManager(2, columns.length + 2, new Insets(0, 0, 0, 0), -1, -1));
         Spacer spacer1 = new Spacer();

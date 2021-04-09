@@ -1,6 +1,7 @@
 package main;
 
 import mappings.Profession;
+import mappings.ProfessionCareer;
 import mappings.ProfessionClass;
 import mappings.Race;
 import mappings.TalentGroup;
@@ -45,9 +46,9 @@ public class Connection {
         Race race = null;
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT t.race FROM RaceTable t WHERE t.indexDOWN <= :param AND :param <= t.indexUP");
-            SQLQuery.setParameter("param", n);
-            race = SQLQuery.list().size()==0 ? null : (Race) SQLQuery.list().get(0);
+            Query query = session.createQuery("SELECT t.race FROM RaceTable t WHERE t.indexDOWN <= :param AND :param <= t.indexUP");
+            query.setParameter("param", n);
+            race = query.list().size()==0 ? null : (Race) query.list().get(0);
             session.close();
         } catch (Exception ex) {
             abort();
@@ -59,9 +60,9 @@ public class Connection {
         Race race = null;
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("FROM Race WHERE name = :param");
-            SQLQuery.setParameter("param", name);
-            race = SQLQuery.list().size()==0 ? null : (Race) SQLQuery.list().get(0);
+            Query query = session.createQuery("FROM Race WHERE name = :param");
+            query.setParameter("param", name);
+            race = query.list().size()==0 ? null : (Race) query.list().get(0);
             session.close();
         } catch (Exception ex) {
             abort();
@@ -82,14 +83,14 @@ public class Connection {
         return races;
     }
 
-    public Profession getProfFromTable(int race, int n) {
+    public Profession getProfFromTable(Race race, int n) {
         Profession prof = null;
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT t.prof FROM ProfTable t WHERE t.indexDOWN <= :param1 AND :param1 <= t.indexUP AND t.race.id = :param2");
-            SQLQuery.setParameter("param1", n);
-            SQLQuery.setParameter("param2", race);
-            prof = SQLQuery.list().size()==0 ? null : (Profession) SQLQuery.list().get(0);
+            Query query = session.createQuery("SELECT t.prof FROM ProfTable t WHERE t.indexDOWN <= :param1 AND :param1 <= t.indexUP AND t.race.id = :param2");
+            query.setParameter("param1", n);
+            query.setParameter("param2", race.getID());
+            prof = query.list().size()==0 ? null : (Profession) query.list().get(0);
             session.close();
         } catch (Exception ex) {
             abort();
@@ -97,26 +98,39 @@ public class Connection {
         }
         return prof;
     }
-    public List<ProfessionClass> getProfessionClass() {
-        List<ProfessionClass> profs = new ArrayList<>();
+    public List<ProfessionClass> getProfessionClasses() {
+        List<ProfessionClass> classes = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("FROM ProfessionClass");
-            profs = SQLQuery.list();
+            Query query = session.createQuery("FROM ProfessionClass");
+            classes = query.list();
             session.close();
         } catch (Exception ex) {
             abort();
             ex.printStackTrace();
         }
-        return profs;
+        return classes;
+    }
+    public List<ProfessionCareer> getProfessionCareers() {
+        List<ProfessionCareer> careers = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query query = session.createQuery("FROM ProfessionCareer ");
+            careers = query.list();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return careers;
     }
     public List<Profession> getProfs(int race) {
         List<Profession> profs = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.race.id =:param AND t.prof.career.professionClass!='Zwierzęta'");
-            SQLQuery.setParameter("param", race);
-            profs = SQLQuery.list();
+            Query query = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.race.id =:param AND t.prof.career.professionClass!='Zwierzęta'");
+            query.setParameter("param", race);
+            profs = query.list();
             session.close();
         } catch (Exception ex) {
             abort();
@@ -130,10 +144,10 @@ public class Connection {
         List<Profession> profs = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.prof.career.professionClass = :param2 AND t.race.id =:param");
-            SQLQuery.setParameter("param", race);
-            SQLQuery.setParameter("param2", clss);
-            profs = SQLQuery.list();
+            Query query = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.prof.career.professionClass = :param2 AND t.race.id =:param");
+            query.setParameter("param", race);
+            query.setParameter("param2", clss);
+            profs = query.list();
             session.close();
         } catch (Exception ex) {
             abort();
@@ -146,21 +160,15 @@ public class Connection {
         TalentGroup talent = null;
         try {
             Session session = factory.openSession();
-            Query SQLQuery = session.createQuery("SELECT r.talent FROM TalentRandom r WHERE r.indexDOWN <= :param AND :param <= r.indexUP");
-            SQLQuery.setParameter("param", n);
-            talent = SQLQuery.list().size()==0 ? null : (TalentGroup) SQLQuery.list().get(0);
+            Query query = session.createQuery("SELECT r.talent FROM TalentRandom r WHERE r.indexDOWN <= :param AND :param <= r.indexUP");
+            query.setParameter("param", n);
+            talent = query.list().size()==0 ? null : (TalentGroup) query.list().get(0);
             session.close();
         } catch (Exception ex) {
             abort();
             ex.printStackTrace();
         }
         return talent;
-    }
-    public List<String> getRacesNames() {
-        List<String> result = new ArrayList<>();
-        for (Race prof : getRaces())
-            result.add(prof.getName());
-        return result;
     }
 
     @SuppressWarnings("unchecked")
