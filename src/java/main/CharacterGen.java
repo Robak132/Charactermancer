@@ -11,8 +11,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 import mappings.Attribute;
 import mappings.Profession;
@@ -22,7 +20,8 @@ import mappings.Skill;
 import mappings.SkillGroup;
 import mappings.Talent;
 import mappings.TalentGroup;
-import tools.AbstractActionBuilder;
+import org.apache.logging.log4j.LogManager;
+import tools.AbstractActionHelper;
 import tools.ColorPalette;
 import tools.Dice;
 import tools.MouseClickedAdapter;
@@ -638,7 +637,8 @@ public class CharacterGen {
             raceskillSkillsPanel
                     .add(jSpinner, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            JIntegerField sumField = new JIntegerField(raceSkills.get(i).getTotalValue(), "%d", JTextField.CENTER);
+            JIntegerField sumField = new JIntegerField(raceSkills.get(i).getTotalValue(), "%d");
+            sumField.setHorizontalAlignment(JTextField.CENTER);
             sumField.setEditable(false);
             sumField.setFocusable(false);
             raceskillSkillsPanel
@@ -903,7 +903,8 @@ public class CharacterGen {
             profskillSkillsPanel
                     .add(jSpinner, new GridConstraints(row, column++, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(35, -1), null), false);
 
-            JIntegerField sumField = new JIntegerField(profSkillGroups.get(i).getTotalValue(), "%d", JTextField.CENTER);
+            JIntegerField sumField = new JIntegerField(profSkillGroups.get(i).getTotalValue(), "%d");
+            sumField.setHorizontalAlignment(JTextField.CENTER);
             sumField.setEditable(false);
             sumField.setFocusable(false);
             profskillSkillsPanel
@@ -1005,7 +1006,7 @@ public class CharacterGen {
         int tab = tabbedPane.getSelectedIndex();
         tabbedPane.setEnabledAt(tab + 1, true);
         tabbedPane.setSelectedIndex(tab + 1);
-        Logger.getLogger(getClass().getName()).log(Level.INFO, String.format("Loaded tab %d", tab + 1));
+        LogManager.getLogger(getClass().getName()).info(String.format("Loaded tab %d", tab + 1));
         switch (tab + 1) {
             case 1:
 //                prof_option4a.addItems(connection.getProfsClasses(sheet.getRace().getID()));
@@ -1114,7 +1115,7 @@ public class CharacterGen {
 
     private void createActionMnemonic(JPanel panel, KeyStroke keyStroke, Runnable runnable) {
         panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStroke.toString());
-        panel.getActionMap().put(keyStroke.toString(), AbstractActionBuilder.getAction(runnable));
+        panel.getActionMap().put(keyStroke.toString(), AbstractActionHelper.getAction(runnable));
     }
 
     // Base functions to use with GUI and text //

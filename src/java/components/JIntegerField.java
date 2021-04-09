@@ -1,6 +1,7 @@
 package components;
 
 import javax.swing.*;
+import org.apache.logging.log4j.LogManager;
 import tools.RunnableWithObject;
 
 public class JIntegerField extends JTypeField<Integer> {
@@ -11,12 +12,8 @@ public class JIntegerField extends JTypeField<Integer> {
         this(value,"%d");
     }
     public JIntegerField(int value, String format) {
-        this(value, format, JTextField.LEFT);
-    }
-    public JIntegerField(int value, String format, int alignment) {
         super(format);
         setValue(value);
-        setHorizontalAlignment(alignment);
     }
 
     public void decrement() {
@@ -28,8 +25,19 @@ public class JIntegerField extends JTypeField<Integer> {
     public void increment() {
         changeValue(1);
     }
+
+    @Override
+    public Integer getValue() {
+        try {
+            value = Integer.valueOf(getText());
+        } catch (NumberFormatException ex) {
+            LogManager.getLogger(getClass().getName()).error(String.format("Parse error: %s", ex.getMessage()));
+            setText("");
+        }
+        return value;
+    }
 }
-class JTypeField<T> extends JTextField {
+abstract class JTypeField<T> extends JTextField {
     protected T value;
     private String format;
     private RunnableWithObject runnable = null;
@@ -51,10 +59,7 @@ class JTypeField<T> extends JTextField {
             runnable.run(this, null);
         }
     }
-
-    public T getValue() {
-        return value;
-    }
+    public abstract T getValue();
 
     public RunnableWithObject getRunnable() {
         return runnable;

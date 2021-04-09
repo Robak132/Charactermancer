@@ -9,10 +9,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import mappings.Race;
 import mappings.Subrace;
+import org.apache.logging.log4j.LogManager;
 
 public final class RaceTab {
     private CharacterSheet sheet;
-    private Connection connection;
     private CharacterGen parent;
 
     private JButton raceRollButton;
@@ -24,7 +24,9 @@ public final class RaceTab {
     private JTextField raceOption1;
     private SearchableComboBox subraceOptionCombo;
     private JButton subraceOptionButton;
+    private JPanel mainPanel;
 
+    private Race race;
     private List<Subrace> subraces;
 
     public RaceTab() {
@@ -36,49 +38,35 @@ public final class RaceTab {
 
     public void initialise(CharacterGen parent, CharacterSheet sheet, Connection connection) {
         this.sheet = sheet;
-        this.connection = connection;
         this.parent = parent;
 
-        raceOption2Combo.addItems(connection.getRacesNames(), false);
+        List<Race> races = connection.getRaces();
+        races.forEach(e -> raceOption2Combo.addItem(e.getName()));
+        raceOption2Combo.refresh();
 
         raceRollButton.addActionListener(e -> {
             Object[] result = CharacterGen.getRandomRace(connection);
             int rollResultNumeric = (int) result[0];
-            Race rollRace = (Race) result[1];
-            subraces = rollRace.getSubraces();
+            race = (Race) result[1];
+            subraces = race.getSubraces();
 
-            raceRollResult.setValue(rollResultNumeric);
-            raceOption1.setText(rollRace.getName());
-
-            raceRollButton.setEnabled(false);
-            raceRollResult.setEditable(false);
-            raceOKButton.setEnabled(false);
-
-            raceOption1.setEnabled(true);
-            raceOption1Button.setEnabled(true);
-            raceOption2Combo.setEnabled(true);
-            raceOption2Button.setEnabled(true);
+            setRace(rollResultNumeric, race.getName());
+            moveToOptions();
         });
         raceRollButton.setMnemonic(KeyEvent.VK_R);
         raceOKButton.addActionListener(e -> {
             try {
-                if (raceRollResult.getValue() > 0 && raceRollResult.getValue() <= 100) {
-                    int rollResultNumeric = raceRollResult.getValue();
+                int rollResultNumeric = raceRollResult.getValue();
+                if (rollResultNumeric > 0 && rollResultNumeric <= 100) {
                     Race rollRace = connection.getRaceFromTable(rollResultNumeric);
                     subraces = rollRace.getSubraces();
-                    raceOption1.setText(rollRace.getName());
 
-                    raceRollButton.setEnabled(false);
-                    raceRollResult.setEditable(false);
-                    raceOKButton.setEnabled(false);
-
-                    raceOption1.setEnabled(true);
-                    raceOption1Button.setEnabled(true);
-                    raceOption2Combo.setEnabled(true);
-                    raceOption2Button.setEnabled(true);
+                    setRace(rollResultNumeric, rollRace.getName());
+                    moveToOptions();
                 }
-            } catch (Exception ex) {
+            } catch (ClassCastException ex) {
                 raceRollResult.setText("");
+                ex.printStackTrace();
             }
         });
         raceOKButton.setMnemonic(KeyEvent.VK_O);
@@ -87,49 +75,15 @@ public final class RaceTab {
             raceOption2Combo.setSelectedItem(raceOption1.getText());
             parent.expField.changeValue(20);
 
-            raceOption1Button.setEnabled(false);
-            raceOption1.setEditable(false);
-            raceOption2Button.setEnabled(false);
-            raceOption2Combo.setLocked(true);
-
-            if (subraces.size() == 1) {
-                sheet.setSubrace(subraces.get(0));
-                parent.moveToNextTab();
-            } else {
-                for (Subrace subrace : subraces) {
-                    subraceOptionCombo.addItem(subrace.getName());
-                }
-                subraceOptionCombo.refresh();
-                subraceOptionButton.setEnabled(true);
-                subraceOptionCombo.setEnabled(true);
-            }
+            moveToSubraces();
         });
         raceOption1Button.setMnemonic(KeyEvent.VK_1);
         raceOption2Button.addActionListener(e -> {
-            try {
-                raceOption1.setText((String) raceOption2Combo.getSelectedItem());
-                Race rollRace = connection.getRace((String) raceOption2Combo.getSelectedItem());
-                subraces = rollRace.getSubraces();
+            Race rollRace = races.get(raceOption2Combo.getSelectedIndex());
+            raceOption1.setText(rollRace.getName());
+            subraces = rollRace.getSubraces();
 
-                raceOption1Button.setEnabled(false);
-                raceOption1.setEditable(false);
-                raceOption2Button.setEnabled(false);
-                raceOption2Combo.setLocked(true);
-
-                if (subraces.size() == 1) {
-                    sheet.setSubrace(subraces.get(0));
-                    parent.moveToNextTab();
-                } else {
-                    for (Subrace subrace : subraces) {
-                        subraceOptionCombo.addItem(subrace.getName());
-                    }
-                    subraceOptionCombo.refresh();
-                    subraceOptionButton.setEnabled(true);
-                    subraceOptionCombo.setEnabled(true);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+            moveToSubraces();
         });
         raceOption2Button.setMnemonic(KeyEvent.VK_2);
 
@@ -141,5 +95,37 @@ public final class RaceTab {
             parent.moveToNextTab();
         });
         subraceOptionButton.setMnemonic(KeyEvent.VK_3);
+    }
+    private void setRace(int rollResultNumeric, String name) {
+        raceRollResult.setValue(rollResultNumeric);
+        raceOption1.setText(name);
+    }
+    private void moveToSubraces() {
+        raceOption1Button.setEnabled(false);
+        raceOption1.setEditable(false);
+        raceOption2Button.setEnabled(false);
+        raceOption2Combo.setLocked(true);
+
+        if (subraces.size() == 1) {
+            sheet.setSubrace(subraces.get(0));
+            parent.moveToNextTab();
+        } else {
+            for (Subrace subrace : subraces) {
+                subraceOptionCombo.addItem(subrace.getName());
+            }
+            subraceOptionCombo.refresh();
+            subraceOptionButton.setEnabled(true);
+            subraceOptionCombo.setEnabled(true);
+        }
+    }
+    private void moveToOptions() {
+        raceRollButton.setEnabled(false);
+        raceRollResult.setEditable(false);
+        raceOKButton.setEnabled(false);
+
+        raceOption1.setEnabled(true);
+        raceOption1Button.setEnabled(true);
+        raceOption2Combo.setEnabled(true);
+        raceOption2Button.setEnabled(true);
     }
 }

@@ -3,6 +3,10 @@ package tools;
 import java.util.List;
 
 public final class Toolbox {
+    private Toolbox() {
+        // To prevent instantiation
+    }
+
     public static int avg(List<Integer> list) {
         int sum = 0;
         for (int value : list) {

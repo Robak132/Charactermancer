@@ -2,10 +2,13 @@ package main;
 
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Locale;
+import org.apache.logging.log4j.LogManager;
 
 public class Main {
     private static JFrame frame;
@@ -29,7 +32,10 @@ public class Main {
     }
 
     Main() {
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setLevel(Level.ALL);
         Locale.setDefault(Locale.ENGLISH);
+
         connection = new Connection();
         comboBox1.addItem(new ImageIcon("src/resources/images/eng.gif"));
         comboBox1.addItem(new ImageIcon("src/resources/images/pl.gif"));
@@ -48,7 +54,7 @@ public class Main {
             public void componentResized(ComponentEvent componentEvent) {
                 if (activeDimension == null || !activeDimension.equals(new Dimension(frame.getWidth(), frame.getHeight()))) {
                     activeDimension = new Dimension(frame.getWidth(), frame.getHeight());
-                    System.out.printf("%d, %d\n", frame.getWidth(), frame.getHeight());
+                    LogManager.getLogger(getClass().getName()).debug(String.format("Dimensions changed: (%d, %d)", frame.getWidth(), frame.getHeight()));
                 }
             }
         });

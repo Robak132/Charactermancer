@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class Dice {
+    private Dice() {
+        // To prevent instantiation
+    }
+
     public static int randomDice(int sides) {
         return 1 + randomThread().nextInt(sides);
     }

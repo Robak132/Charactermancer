@@ -3,7 +3,11 @@ package tools;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public final class AbstractActionBuilder {
+public final class AbstractActionHelper {
+    private AbstractActionHelper() {
+        // To prevent instantiation
+    }
+
     public static Action getAction(Runnable runnable) {
         return new AbstractAction() {
             @Override

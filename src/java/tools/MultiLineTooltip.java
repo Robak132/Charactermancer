@@ -10,6 +10,7 @@ public final class MultiLineTooltip {
     private static final int DIALOG_TOOLTIP_MAX_SIZE = 75;
 
     private MultiLineTooltip() {
+        // To prevent instantiation
     }
 
     public static String splitToolTip(final String toolTip) {
