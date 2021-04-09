@@ -87,7 +87,7 @@ public class Profession {
         return baseAttributes;
     }
     public Integer[] getSimpleAttributes() {
-        Integer[] intAttributes = new Integer[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        Integer[] intAttributes = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         for (BaseAttribute baseAttribute : baseAttributes) {
             intAttributes[baseAttribute.getID()-1] = 1;
         }

@@ -3,7 +3,6 @@ package main;
 import mappings.Profession;
 import mappings.ProfessionClass;
 import mappings.Race;
-import mappings.Skill;
 import mappings.TalentGroup;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

@@ -40,7 +40,7 @@ public class JIntegerField extends JTypeField<Integer> {
 abstract class JTypeField<T> extends JTextField {
     protected T value;
     private String format;
-    private RunnableWithObject runnable = null;
+    private RunnableWithObject runnable;
 
     public JTypeField(String format) {
         super();

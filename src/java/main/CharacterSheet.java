@@ -81,7 +81,7 @@ public class CharacterSheet {
             frame.validate();
         });
     }
-    public static void ReadJSONExample() {
+    public static void readJSONExample() {
         JSONParser parser = new JSONParser();
         try {
             JSONObject jsonObject = (JSONObject) parser.parse(new FileReader("src/resources/Nowy.json"));

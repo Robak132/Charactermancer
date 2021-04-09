@@ -1,7 +1,13 @@
 package mappings;
 
-import javax.persistence.*;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "TALENTS")
@@ -17,11 +23,11 @@ public class Talent {
     private BaseTalent baseTalent;
 
     @Transient
-    private int currentLvl = 0;
+    private int currentLvl;
     @Transient
-    private boolean advanceable = false;
+    private boolean advanceable;
     @Transient
-    private Attribute linkedAttribute = null;
+    private Attribute linkedAttribute;
 
     public Talent() {}
     public Talent(int ID, String name, int currentLvl, BaseTalent baseTalent) {

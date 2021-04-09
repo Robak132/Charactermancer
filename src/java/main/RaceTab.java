@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import mappings.Race;
 import mappings.Subrace;
-import org.apache.logging.log4j.LogManager;
 
 public final class RaceTab {
     private CharacterSheet sheet;

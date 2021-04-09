@@ -1,9 +1,16 @@
 package mappings;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
-import javax.persistence.*;
 import java.util.List;
 import tools.Dice;
 
@@ -18,8 +25,8 @@ public class SkillGroup {
     @Column(name = "LOCKED")
     private boolean locked;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @ManyToMany(fetch = FetchType.LAZY)
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @ManyToMany
     @JoinTable(name="SKILLS_LINK",
             joinColumns = @JoinColumn(name = "IDGROUP"),
             inverseJoinColumns = @JoinColumn(name = "IDSKILL"))

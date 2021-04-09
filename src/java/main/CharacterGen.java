@@ -75,7 +75,7 @@ public class CharacterGen {
     private JButton attrOption1Button;
     private JIntegerField attrMove;
     private JIntegerField attrHP;
-    private int attrItr = 0;
+    private int attrItr;
     private int attrMaxExp = 50;
 
     private JPanel fatePanel;
@@ -107,7 +107,7 @@ public class CharacterGen {
     private JButton profskillOption1;
     private RaceTab raceTab;
 
-    private JIntegerField mouseSource = null;
+    private JIntegerField mouseSource;
     private Color mouseColor;
     private boolean attrLocked = true;
 
@@ -307,7 +307,7 @@ public class CharacterGen {
         // Fate & Resolve //
         /* TODO: Maybe change all buttons to JSpinners :thinking: */
         createActionMnemonic(fatePanel, KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK), () -> {
-            Integer[] slots = new Integer[] {0, 0, 0};
+            Integer[] slots = {0, 0, 0};
             int remain = 5;
             while (remain > 0) {
                 int value = Dice.randomInt(0, remain);

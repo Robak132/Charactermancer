@@ -1,9 +1,9 @@
 package mappings;
 
 public class Attribute {
-    private int rndValue = 0;
-    private int advValue = 0;
-    private int totalValue = 0;
+    private int rndValue;
+    private int advValue;
+    private int totalValue;
     private RaceAttribute raceAttribute;
     private BaseAttribute baseAttribute;
 

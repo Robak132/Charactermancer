@@ -18,7 +18,7 @@ public class Main {
     private JComboBox<ImageIcon> comboBox1;
     private JButton createcharButton;
     private JButton createsheetButton;
-    private final Locale[] languages = new Locale[] {Locale.ENGLISH, new Locale("pl", "PL")};
+    private final Locale[] languages = {Locale.ENGLISH, new Locale("pl", "PL")};
     private Dimension activeDimension = null;
 
     public static void main(String[] args) {

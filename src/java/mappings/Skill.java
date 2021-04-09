@@ -1,6 +1,12 @@
 package mappings;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "SKILLS")
@@ -16,15 +22,15 @@ public class Skill {
     private BaseSkill baseSkill;
 
     @Transient
-    private boolean earning = false;
+    private boolean earning;
     @Transient
-    private boolean advanceable = false;
+    private boolean advanceable;
     @Transient
-    private Attribute linkedAttribute = null;
+    private Attribute linkedAttribute;
     @Transient
-    private int advValue = 0;
+    private int advValue;
     @Transient
-    private int totalValue = 0;
+    private int totalValue;
 
     public Skill() {}
     public Skill(int ID, String name, BaseSkill baseSkill) {

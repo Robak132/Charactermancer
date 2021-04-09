@@ -5,12 +5,12 @@ import javax.swing.*;
 public class SpinnerTypeListModel<T> extends SpinnerNumberModel {
     private final T[] validValues;
     private T lastValue;
-    private int index = 0;
+    private int index;
     private int lastIndex;
 
     public SpinnerTypeListModel(T[] validValues) {
         super();
-        this.validValues = validValues;
+        this.validValues = validValues.clone();
         this.lastValue = validValues[index];
         this.lastIndex = index;
     }

@@ -1,7 +1,12 @@
 package mappings;
 
-import javax.persistence.*;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "RACE_TABLE")
@@ -13,6 +18,7 @@ public class RaceTable {
     private int indexDOWN;
     @Column(name = "IDXUP")
     private int indexUP;
+
     @ManyToOne
     @JoinColumn(name = "IDRACE")
     private Race race;
