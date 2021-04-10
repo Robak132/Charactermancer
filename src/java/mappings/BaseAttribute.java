@@ -14,6 +14,8 @@ public class BaseAttribute {
     private int ID;
     @Column(name = "NAME")
     private String name;
+    @Column(name = "ROLLABLE")
+    private boolean rollable;
 
     public BaseAttribute(int ID, String name) {
         this.ID = ID;
@@ -32,6 +34,12 @@ public class BaseAttribute {
     }
     public void setName(String name) {
         this.name = name;
+    }
+    public boolean isRollable() {
+        return rollable;
+    }
+    public void setRollable(boolean rollable) {
+        this.rollable = rollable;
     }
 
     @Override

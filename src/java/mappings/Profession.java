@@ -1,5 +1,6 @@
 package mappings;
 
+import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -108,13 +109,13 @@ public class Profession {
     public List<ProfSkill> getProfSkills() {
         return profSkills;
     }
-    public List<SkillGroup> getProfSkills(List<Attribute> attributes) {
+    public List<SkillGroup> getProfSkills(Map<Integer, Attribute> attributes) {
         List<SkillGroup> tempList = new ArrayList<>();
         for (ProfSkill skill : profSkills) {
             SkillGroup tempSkill = skill.getSkill();
             tempList.add(tempSkill);
             for (Skill singleSkill : tempSkill.getSkills()) {
-                for (Attribute attribute : attributes) {
+                for (Attribute attribute : attributes.values()) {
                     if (singleSkill.getAttr().equals(attribute.getBaseAttribute())) {
                         singleSkill.setLinkedAttribute(attribute);
                         singleSkill.setAdvanceable(true);
@@ -126,7 +127,7 @@ public class Profession {
         return tempList;
     }
 
-    public List<SkillGroup> getProfSkills(List<Attribute> attributes, List<Skill> skills) {
+    public List<SkillGroup> getProfSkills(Map<Integer, Attribute> attributes, List<Skill> skills) {
         List<SkillGroup> tempList = new ArrayList<>();
         for (ProfSkill skill : profSkills) {
             SkillGroup tempSkill = skill.getSkill();
@@ -140,7 +141,7 @@ public class Profession {
                         break;
                     }
                 }
-                for (Attribute attribute : attributes) {
+                for (Attribute attribute : attributes.values()) {
                     if (singleSkill.getAttr().equals(attribute.getBaseAttribute())) {
                         tempSkill.getSkills().get(i).setLinkedAttribute(attribute);
                         tempSkill.getSkills().get(i).setAdvanceable(true);
@@ -155,10 +156,10 @@ public class Profession {
         this.profSkills = profSkills;
     }
 
-    public List<TalentGroup> getProfTalents(List<Attribute> attributes) {
+    public List<TalentGroup> getProfTalents(Map<Integer, Attribute> attributes) {
         for (TalentGroup talentGroup : profTalents) {
             for (Talent singleTalent : talentGroup.getTalents()) {
-                for (Attribute attribute : attributes) {
+                for (Attribute attribute : attributes.values()) {
                     if (singleTalent.getAttr() != null && singleTalent.getAttr().equals(attribute.getBaseAttribute())) {
                         singleTalent.setLinkedAttribute(attribute);
                         singleTalent.setAdvanceable(true);

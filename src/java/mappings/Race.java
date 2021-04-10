@@ -2,6 +2,7 @@ package mappings;
 
 import java.util.*;
 
+import java.util.concurrent.ConcurrentHashMap;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -11,6 +12,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -32,6 +34,9 @@ public class Race {
     private int extra;
     @Column(name = "SIZE")
     private int size;
+
+    @Transient
+    private Map<Integer, Attribute> attributesMap;
 
     @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany
@@ -159,21 +164,28 @@ public class Race {
         return null;
     }
 
-    public List<Attribute> getAttributes() {
-        List<Attribute> attributeList = new ArrayList<>();
-        for (RaceAttribute raceAttribute : raceAttributes) {
-            attributeList.add(new Attribute(raceAttribute));
+    public Map<Integer, Attribute> getAttributes() {
+        if (attributesMap == null) {
+            createAttributeMap();
         }
-        return attributeList;
+
+        return attributesMap;
+    }
+    public Attribute getAttribute(int index) {
+        if (attributesMap == null) {
+            createAttributeMap();
+        }
+
+        return attributesMap.get(index);
     }
 
     public List<SkillGroup> getRaceSkills() {
         return raceSkills;
     }
-    public List<SkillGroup> getRaceSkills(List<Attribute> attributes) {
+    public List<SkillGroup> getRaceSkills(Map<Integer, Attribute> attributes) {
         for (SkillGroup skill : raceSkills) {
             for (Skill singleSkill : skill.getSkills()) {
-                for (Attribute attribute : attributes) {
+                for (Attribute attribute : attributes.values()) {
                     if (singleSkill.getAttr().equals(attribute.getBaseAttribute())) {
                         singleSkill.setLinkedAttribute(attribute);
                         break;
@@ -187,11 +199,11 @@ public class Race {
     public List<TalentGroup> getRaceTalents() {
         return raceTalents;
     }
-    public List<TalentGroup> getRaceTalents(List<Attribute> attributes) {
+    public List<TalentGroup> getRaceTalents(Map<Integer, Attribute> attributes) {
         for (TalentGroup talent : raceTalents) {
             for (Talent singleTalent : talent.getTalents()) {
                 singleTalent.setCurrentLvl(1);
-                for (Attribute attribute : attributes) {
+                for (Attribute attribute : attributes.values()) {
                     if (singleTalent.getAttr() != null && singleTalent.getAttr().equals(attribute.getBaseAttribute())) {
                         singleTalent.setLinkedAttribute(attribute);
                         break;
@@ -200,6 +212,14 @@ public class Race {
             }
         }
         return raceTalents;
+    }
+
+    private void createAttributeMap() {
+        Map<Integer, Attribute> attributeMap = new ConcurrentHashMap<>();
+        for (RaceAttribute raceAttribute : raceAttributes) {
+            attributeMap.put(raceAttribute.getBaseAttribute().getID(), new Attribute(raceAttribute));
+        }
+        this.attributesMap = attributeMap;
     }
 
     @Override

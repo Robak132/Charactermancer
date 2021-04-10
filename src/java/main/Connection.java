@@ -25,7 +25,7 @@ public class Connection {
     }
 
     private void refresh() {
-        String path = this.getClass().getResource("/db/database.sqlite").toString();
+        String path = getClass().getResource("/db/database.sqlite").toString();
         StandardServiceRegistryBuilder tempRegistry = new StandardServiceRegistryBuilder().configure("hibernate.cfg.xml");
         if(path.startsWith("jar:")) {
             path = path.substring("jar:file:/".length());

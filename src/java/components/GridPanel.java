@@ -21,9 +21,6 @@ public class GridPanel extends JPanel {
 
     @Override
     public void add(Component comp, Object constraints) {
-        add(comp, constraints, true);
-    }
-    public void add(Component comp, Object constraints, boolean buildNow) {
         GridConstraints editConstr = (GridConstraints) constraints;
         int columnCount = editConstr.getColumn();
         editConstr.setColumn(columnCount+1);
@@ -37,10 +34,6 @@ public class GridPanel extends JPanel {
         }
         items.put(comp, editConstr);
         components.set(rowCount, columnCount, comp);
-
-        if (buildNow) {
-            build();
-        }
     }
 
     public void build() {
@@ -77,27 +70,25 @@ public class GridPanel extends JPanel {
     }
 
     public void iterateThroughRows(int col, RunnableWithObject runnable) {
-        for (int i = 0; i < components.getYSize(); i++) {
-            Component active = getComponent(col, i);
-            runnable.run(active, i);
-        }
+        iterateThroughRows(col, 0, components.getYSize(), runnable);
     }
     public void iterateThroughRows(int col, int rowStart, int rowEnd, RunnableWithObject runnable) {
         for (int i = rowStart; i < rowEnd; i++) {
             Component active = getComponent(col, i);
-            runnable.run(active, i);
+            if (active != null) {
+                runnable.run(active, i);
+            }
         }
     }
     public void iterateThroughColumns(int row, RunnableWithObject runnable) {
-        for (int i = 0; i < components.getXSize(row); i++) {
-            Component active = getComponent(i, row);
-            runnable.run(active, i);
-        }
+        iterateThroughColumns(row, 0, components.getXSize(row), runnable);
     }
     public void iterateThroughColumns(int row, int columnStart, int columnEnd, RunnableWithObject runnable) {
         for (int i = columnStart; i < columnEnd; i++) {
             Component active = getComponent(i, row);
-            runnable.run(active, i);
+            if (active != null) {
+                runnable.run(active, i);
+            }
         }
     }
 
@@ -111,5 +102,34 @@ public class GridPanel extends JPanel {
         if (alignment == 2) {
             super.add(new Spacer(), new GridConstraints(0, 0, 1, columns+2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null));
         }
+    }
+
+    // Components creators
+    public JLabel createJLabel(int row, int column, String name) {
+        JLabel charLabel = new JLabel(name);
+        charLabel.setHorizontalAlignment(JLabel.CENTER);
+        charLabel.setHorizontalTextPosition(0);
+        add(charLabel, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
+        return charLabel;
+    }
+
+    public JIntegerField createIntegerField(int row, int column, int rowSpan, int colSpan, int value, Dimension dimension) {
+        return createIntegerField(row, column, rowSpan, colSpan, value, dimension, true);
+    }
+    public JIntegerField createIntegerField(int row, int column, int rowSpan, int colSpan, int value, Dimension dimension, boolean editable) {
+        JIntegerField integerField = new JIntegerField(value);
+        integerField.setHorizontalAlignment(JTextField.CENTER);
+        integerField.setEditable(editable);
+        add(integerField, new GridConstraints(row, column, rowSpan, colSpan, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH,
+                            GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, dimension, null));
+        return integerField;
+    }
+
+    public AdvancedSpinner createAdvancedSpinner(int row, int column, int rowSpan, int colSpan, SpinnerModel model, Dimension dimension, boolean enabled) {
+        AdvancedSpinner advancedSpinner = new AdvancedSpinner(model);
+        advancedSpinner.setHorizontalAlignment(JTextField.CENTER);
+        advancedSpinner.setEnabled(enabled);
+        add(advancedSpinner, new GridConstraints(row, column, rowSpan, colSpan, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, dimension, null));
+        return advancedSpinner;
     }
 }

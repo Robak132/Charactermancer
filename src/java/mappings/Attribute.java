@@ -20,6 +20,9 @@ public class Attribute {
     public String getName() {
         return baseAttribute.getName();
     }
+    public boolean isRollable() {
+        return baseAttribute.isRollable();
+    }
 
     public int getBaseValue() {
         return raceAttribute.getValue();

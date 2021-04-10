@@ -4,6 +4,8 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import components.SearchableComboBox;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import mappings.Attribute;
 import mappings.Profession;
 import mappings.Race;
@@ -35,14 +37,13 @@ public class CharacterSheet {
     private JButton exitButton;
     private final List<JTextField> attributesTextFields = new ArrayList<>();
     private int move;
-    private int maxhp;
-    private int hp;
+    private int healthPoints;
 
     private Subrace subrace;
     private Profession prof;
-    private List<Attribute> attributeList;
-    private List<Skill> skillList;
-    private List<Talent> talentList;
+    private Map<Integer, Attribute> attributes = new ConcurrentHashMap<>();
+    private List<Skill> skillList = new ArrayList<>();
+    private List<Talent> talentList = new ArrayList<>();
     private int exp;
 
     public CharacterSheet() {
@@ -115,12 +116,17 @@ public class CharacterSheet {
     public void setProfession(Profession prof) {
         this.prof = prof;
     }
-    public List<Attribute> getAttributeList() {
-        return attributeList;
+
+    public Map<Integer, Attribute> getAttributes() {
+        return attributes;
     }
-    public void setAttributeList(List<Attribute> attributeList) {
-        this.attributeList = attributeList;
+    public void setAttributes(Map<Integer, Attribute> attributes) {
+        this.attributes = attributes;
     }
+    public void addAttribute(Integer key, Attribute value) {
+        attributes.put(key, value);
+    }
+
     public List<Skill> getSkillList() {
         return skillList;
     }
@@ -152,20 +158,26 @@ public class CharacterSheet {
     public void setMove(int move) {
         this.move = move;
     }
-    public int getMaxHP() {
-        return maxhp;
+
+    public int getMaxHealthPoints() {
+        if (!attributes.containsKey(3) || !attributes.containsKey(4) || !attributes.containsKey(9)) {
+            return 0;
+        }
+
+        int value = (attributes.get(4).getTotalValue() / 10) * 2 + attributes.get(9).getTotalValue() / 10;
+        if (subrace.getBaseRace().getSize() == Race.Size.NORMAL) {
+            value += attributes.get(3).getTotalValue() / 10;
+        }
+        return value;
     }
-    public void setMaxHP(int maxhp) {
-        this.maxhp = maxhp;
+    public int getHealthPoints() {
+        return healthPoints;
     }
-    public int getHP() {
-        return hp;
+    public void setHealthPoints(int healthPoints) {
+        this.healthPoints = healthPoints;
     }
-    public void setHP(int hp) {
-        this.hp = hp;
-    }
-    public void setHP() {
-        this.hp = maxhp;
+    public void resetHealthPoints() {
+        this.healthPoints = getMaxHealthPoints();
     }
 
     @Override
@@ -176,7 +188,7 @@ public class CharacterSheet {
             .append(subrace).append("\n")
             .append(prof).append("\n")
             .append("Attributes = [\n");
-        for (Attribute attribute : attributeList) {
+        for (Attribute attribute : attributes.values()) {
             ret.append("\t").append(attribute).append("\n");
         }
         ret.append("]\n")

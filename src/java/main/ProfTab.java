@@ -11,6 +11,7 @@ import javax.swing.JTextField;
 import mappings.Profession;
 import mappings.ProfessionCareer;
 import mappings.ProfessionClass;
+import org.apache.logging.log4j.LogManager;
 
 public class ProfTab {
     private CharacterSheet sheet;
@@ -65,6 +66,7 @@ public class ProfTab {
             Profession rollProf = (Profession) result[1];
             int rollResultNumeric = (int) result[0];
             while (chosenProfessions.contains(rollProf)) {
+                LogManager.getLogger(getClass().getName()).debug(String.format("%d doubled, changing to %d", rollResultNumeric, rollResultNumeric % 100 + 1));
                 rollResultNumeric = rollResultNumeric % 100 + 1;
                 rollProf = connection.getProfFromTable(sheet.getRace(), rollResultNumeric);
             }
