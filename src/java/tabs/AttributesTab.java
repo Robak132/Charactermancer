@@ -1,4 +1,4 @@
-package main;
+package tabs;
 
 import components.GridPanel;
 import components.JIntegerField;
@@ -10,6 +10,9 @@ import java.awt.event.MouseEvent;
 import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import main.CharacterGen;
+import main.CharacterSheet;
+import main.Connection;
 import mappings.Attribute;
 import mappings.Race.Size;
 import tools.ColorPalette;

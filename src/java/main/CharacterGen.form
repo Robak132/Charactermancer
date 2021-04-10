@@ -27,7 +27,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <nested-form id="5da94" form-file="main/RaceTab.form" binding="raceTab">
+              <nested-form id="5da94" form-file="tabs/RaceTab.form" binding="raceTab">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -44,7 +44,7 @@
             </properties>
             <border type="none"/>
             <children>
-              <nested-form id="a6433" form-file="main/ProfTab.form" binding="profTab">
+              <nested-form id="a6433" form-file="tabs/ProfTab.form" binding="profTab">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -59,7 +59,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <nested-form id="7a9ab" form-file="main/AttributesTab.form" binding="attributesTab">
+              <nested-form id="7a9ab" form-file="tabs/AttributesTab.form" binding="attributesTab">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>

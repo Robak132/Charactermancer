@@ -1,4 +1,4 @@
-package main;
+package tabs;
 
 import components.JIntegerField;
 import components.SearchableComboBox;
@@ -8,6 +8,9 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import main.CharacterGen;
+import main.CharacterSheet;
+import main.Connection;
 import mappings.Profession;
 import mappings.ProfessionCareer;
 import mappings.ProfessionClass;
