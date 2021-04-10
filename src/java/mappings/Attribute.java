@@ -41,6 +41,11 @@ public class Attribute {
         this.advValue = advValue;
         updateAll();
     }
+    public int incAdvValue() {
+        advValue++;
+        updateAll();
+        return advValue;
+    }
     public int getTotalValue() {
         updateAll();
         return totalValue;

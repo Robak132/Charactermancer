@@ -16,4 +16,7 @@ public final class AbstractActionHelper {
             }
         };
     }
-}
+    public static void createActionMnemonic(JPanel panel, KeyStroke keyStroke, Runnable runnable) {
+        panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, keyStroke.toString());
+        panel.getActionMap().put(keyStroke.toString(), getAction(runnable));
+    }}

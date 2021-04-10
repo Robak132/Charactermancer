@@ -180,6 +180,16 @@ public class CharacterSheet {
         this.healthPoints = getMaxHealthPoints();
     }
 
+    public String printAttributes() {
+        StringBuilder ret = new StringBuilder()
+            .append("Attributes = [\n");
+        for (Attribute attribute : attributes.values()) {
+            ret.append("\t").append(attribute).append("\n");
+        }
+        System.out.println(ret);
+        return ret.toString();
+    }
+
     @Override
     public String toString() {
         StringBuilder ret = new StringBuilder();
@@ -187,11 +197,8 @@ public class CharacterSheet {
             .append("exp = ").append(exp).append("\n")
             .append(subrace).append("\n")
             .append(prof).append("\n")
-            .append("Attributes = [\n");
-        for (Attribute attribute : attributes.values()) {
-            ret.append("\t").append(attribute).append("\n");
-        }
-        ret.append("]\n")
+            .append(printAttributes())
+            .append("]\n")
             .append("Skills = [\n");
         for (Skill skill : skillList) {
             ret.append("\t").append(skill).append("\n");

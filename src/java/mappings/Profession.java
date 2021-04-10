@@ -1,6 +1,7 @@
 package mappings;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -11,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -28,6 +30,9 @@ public class Profession {
     @Column(name = "LEVEL")
     private int level;
 
+    @Transient
+    private Map<Integer, Attribute> attributesMap;
+
     @ManyToOne
     @JoinColumn(name = "IDCAREER")
     private ProfessionCareer career;
@@ -37,7 +42,7 @@ public class Profession {
     @JoinTable(name="PROF_ATTRIBUTES",
             joinColumns = @JoinColumn(name = "IDPROF"),
             inverseJoinColumns = @JoinColumn(name = "IDATTR"))
-    private List<BaseAttribute> baseAttributes;
+    private List<BaseAttribute> profAttributes;
 
     @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany
@@ -84,26 +89,34 @@ public class Profession {
         this.career = career;
     }
 
-    public List<BaseAttribute> getAttributes() {
-        return baseAttributes;
+    public List<BaseAttribute> getProfAttributes() {
+        return profAttributes;
     }
     public Integer[] getSimpleAttributes() {
         Integer[] intAttributes = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        for (BaseAttribute baseAttribute : baseAttributes) {
+        for (BaseAttribute baseAttribute : profAttributes) {
             intAttributes[baseAttribute.getID()-1] = 1;
         }
         return intAttributes;
     }
     public boolean hasAttribute(int ID) {
-        for (BaseAttribute attr : baseAttributes) {
+        for (BaseAttribute attr : profAttributes) {
             if (attr.getID() == ID) {
                 return true;
             }
         }
         return false;
     }
-    public void setAttributes(List<BaseAttribute> baseAttributes) {
-        this.baseAttributes = baseAttributes;
+    public void setAttributes(List<BaseAttribute> profAttributes) {
+        this.profAttributes = profAttributes;
+    }
+
+    public List<Attribute> getAttributesList(Map<Integer, Attribute> attributes) {
+        if (attributesMap == null) {
+            createAttributeMap(attributes);
+        }
+
+        return new ArrayList<>(attributesMap.values());
     }
 
     public List<ProfSkill> getProfSkills() {
@@ -159,19 +172,24 @@ public class Profession {
     public List<TalentGroup> getProfTalents(Map<Integer, Attribute> attributes) {
         for (TalentGroup talentGroup : profTalents) {
             for (Talent singleTalent : talentGroup.getTalents()) {
-                for (Attribute attribute : attributes.values()) {
-                    if (singleTalent.getAttr() != null && singleTalent.getAttr().equals(attribute.getBaseAttribute())) {
-                        singleTalent.setLinkedAttribute(attribute);
-                        singleTalent.setAdvanceable(true);
-                        break;
-                    }
+                if (singleTalent.getAttr() != null) {
+                    Attribute attribute = attributes.get(singleTalent.getAttr().getID());
+                    singleTalent.setLinkedAttribute(attribute);
+                    singleTalent.setAdvanceable(true);
                 }
             }
         }
         return profTalents;
     }
-    public void setProfTalents(List<ProfSkill> profSkills) {
-        this.profSkills = profSkills;
+    public void setProfTalents(List<TalentGroup> profTalents) {
+        this.profTalents = profTalents;
+    }
+
+    private void createAttributeMap(Map<Integer, Attribute> attributes) {
+        attributesMap = new ConcurrentHashMap<>();
+        for (BaseAttribute baseAttribute : profAttributes) {
+            attributesMap.put(baseAttribute.getID(), attributes.get(baseAttribute.getID()));
+        }
     }
 
     @Override

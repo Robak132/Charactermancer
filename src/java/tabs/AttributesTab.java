@@ -30,7 +30,7 @@ public class AttributesTab {
     private JButton attrRollButton;
     private JButton attrOption1Button;
 
-    private Map<Integer, Attribute> attributesMap;
+    private Map<Integer, Attribute> attributes;
     private int attrItr = 1;
     private int attrMaxExp = 50;
 
@@ -47,7 +47,7 @@ public class AttributesTab {
 
     public void initialise(CharacterGen parent, CharacterSheet sheet, Connection connection) {
         this.sheet = sheet;
-        attributesMap = sheet.getRace().getAttributes();
+        attributes = sheet.getRace().getAttributes();
         createTable();
 
         attrRollButton.addActionListener(e -> roll());
@@ -61,11 +61,9 @@ public class AttributesTab {
             //TODO Add custom values given by user
         });
         attrOption1Button.addActionListener(e -> {
-//            sheet.setAttributes(attributes);
-//            sheet.setMove(attrMove.getValue());
-//            sheet.resetHealthPoints();
-
+            sheet.setAttributes(attributes);
             attrOption1Button.setEnabled(false);
+            attrOption3Button.setEnabled(false);
             attrLocked = true;
             parent.expField.changeValue(attrMaxExp);
             parent.moveToNextTab();
@@ -77,8 +75,7 @@ public class AttributesTab {
     }
 
     private void roll() {
-        Object[] result = CharacterGen.getOneRandomAttr(attrItr, sheet.getRace());
-        Attribute attribute = (Attribute) result[1];
+        Attribute attribute = CharacterGen.getOneRandomAttr(attrItr, sheet.getRace());
 
         JIntegerField field1 = (JIntegerField) attrAttributesTable.getComponent(attrItr, 2);
         field1.setValue(attribute.getRndValue());
@@ -112,17 +109,16 @@ public class AttributesTab {
     }
 
     private void createTable() {
-        for (int i = 0; i < attributesMap.size(); i++) {
+        for (int i = 0; i < attributes.size(); i++) {
             int finalI = i;
             boolean changeBackground = sheet.getRace().getSize()== Size.NORMAL && i == 3 || i == 4 || i == 9;
             Color foregroundColor = Color.black;
             if (sheet.getProfession().hasAttribute(i)) {
                 foregroundColor = ColorPalette.HALF_GREEN;
             }
-
-            attrAttributesTable.createJLabel(0, i, attributesMap.get(i).getName());
-            if (attributesMap.get(i).isRollable()) {
-                JIntegerField baseAttr = attrAttributesTable.createIntegerField(1, i, 1, 1, attributesMap.get(i).getBaseValue(), new Dimension(30, -1), false);
+            attrAttributesTable.createJLabel(0, i, attributes.get(i).getName());
+            if (attributes.get(i).isRollable()) {
+                JIntegerField baseAttr = attrAttributesTable.createIntegerField(1, i, 1, 1, attributes.get(i).getBaseValue(), new Dimension(30, -1), false);
                 baseAttr.setForeground(foregroundColor);
                 if (changeBackground) {
                     baseAttr.setBackground(ColorPalette.WHITE_BLUE);
@@ -130,20 +126,20 @@ public class AttributesTab {
 
                 JIntegerField attr = attrAttributesTable.createIntegerField(2, i, 1, 1, 0, new Dimension(30, -1));
                 attr.setForeground(foregroundColor);
-                attr.setRunnable((o, j) -> attributesMap.get(finalI).setRndValue(attr.getValue()));
+                attr.setRunnable((o, j) -> attributes.get(finalI).setRndValue(attr.getValue()));
                 attr.addMouseListener((MouseClickedAdapter) this::replaceValues);
                 if (changeBackground) {
                     attr.setBackground(ColorPalette.WHITE_BLUE);
                 }
 
-                JIntegerField sumAttr = attrAttributesTable.createIntegerField(3, i, 1, 1, attributesMap.get(i).getTotalValue(), new Dimension(30, -1), false);
+                JIntegerField sumAttr = attrAttributesTable.createIntegerField(3, i, 1, 1, attributes.get(i).getTotalValue(), new Dimension(30, -1), false);
                 sumAttr.setFont(new Font(sumAttr.getFont().getName(),Font.ITALIC+Font.BOLD,sumAttr.getFont().getSize()+2));
                 sumAttr.setForeground(foregroundColor);
                 if (changeBackground) {
                     sumAttr.setBackground(ColorPalette.WHITE_BLUE);
                 }
             } else {
-                JIntegerField baseAttr = attrAttributesTable.createIntegerField(1, i, 3, 1, attributesMap.get(i).getBaseValue(), new Dimension(30, -1), false);
+                JIntegerField baseAttr = attrAttributesTable.createIntegerField(1, i, 3, 1, attributes.get(i).getBaseValue(), new Dimension(30, -1), false);
                 baseAttr.setForeground(foregroundColor);
                 if (changeBackground) {
                     baseAttr.setBackground(ColorPalette.WHITE_BLUE);
@@ -176,7 +172,7 @@ public class AttributesTab {
             }
             attrMaxExp = 25;
             calculateHP();
-            attrAttributesTable.iterateThroughColumns(3, (o, i) -> ((JIntegerField) o).setValue(attributesMap.get(i).getTotalValue()));
+            attrAttributesTable.iterateThroughColumns(3, (o, i) -> ((JIntegerField) o).setValue(attributes.get(i).getTotalValue()));
         }
     }
 }

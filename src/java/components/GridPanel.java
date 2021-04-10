@@ -106,11 +106,11 @@ public class GridPanel extends JPanel {
 
     // Components creators
     public JLabel createJLabel(int row, int column, String name) {
-        JLabel charLabel = new JLabel(name);
-        charLabel.setHorizontalAlignment(JLabel.CENTER);
-        charLabel.setHorizontalTextPosition(0);
-        add(charLabel, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
-        return charLabel;
+        JLabel label = new JLabel(name);
+        label.setHorizontalAlignment(JLabel.CENTER);
+        label.setHorizontalTextPosition(0);
+        add(label, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
+        return label;
     }
 
     public JIntegerField createIntegerField(int row, int column, int rowSpan, int colSpan, int value, Dimension dimension) {

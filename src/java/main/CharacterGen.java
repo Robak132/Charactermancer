@@ -21,6 +21,7 @@ import mappings.Talent;
 import mappings.TalentGroup;
 import org.apache.logging.log4j.LogManager;
 import tabs.AttributesTab;
+import tabs.FateTab;
 import tabs.ProfTab;
 import tabs.RaceTab;
 import tools.AbstractActionHelper;
@@ -40,20 +41,6 @@ public class CharacterGen {
     private JTabbedPane tabbedPane;
     private JButton exitButton;
 
-    private JIntegerField attrHP;
-
-    private JPanel fatePanel;
-    private GridPanel fateAttributeTable;
-    private JIntegerField fateAttrRemain;
-    private JIntegerField fateFate;
-    private JIntegerField fateResilience;
-    private JButton fateFateUP;
-    private JButton fateFateDOWN;
-    private JIntegerField fateExtra;
-    private JButton fateResilienceUP;
-    private JButton fateResilienceDOWN;
-    private JButton fateOption1Button;
-
     private JPanel raceskillPanel;
     private GridPanel raceskillSkillsPanel;
     private GridPanel raceskillTalentsPanel;
@@ -72,6 +59,7 @@ public class CharacterGen {
     private RaceTab raceTab;
     private ProfTab profTab;
     private AttributesTab attributesTab;
+    private FateTab fateTab;
 
     private List<SkillGroup> raceSkillGroups = new ArrayList<>();
     private List<Skill> raceSkills = new ArrayList<>();
@@ -84,10 +72,6 @@ public class CharacterGen {
     private List<TalentGroup> profTalentGroups = new ArrayList<>();
     private final List<Talent> profTalents = new ArrayList<>();
 
-    private final List<JIntegerField> BAttr = new ArrayList<>();
-    private final List<JIntegerField> RAttr = new ArrayList<>();
-    private final List<JIntegerField> TAttr = new ArrayList<>();
-
     public CharacterGen(JFrame frame, Main screen, Connection connection) {
         this.frame = frame;
         previousScreen = screen;
@@ -96,85 +80,6 @@ public class CharacterGen {
 
         // Race //
         raceTab.initialise(this, sheet, this.connection);
-
-        // Fate & Resolve //
-        /* TODO: Maybe change all buttons to JSpinners :thinking: */
-        createActionMnemonic(fatePanel, KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK), () -> {
-            Integer[] slots = {0, 0, 0};
-            int remain = 5;
-            while (remain > 0) {
-                int value = Dice.randomInt(0, remain);
-                int active_slot = Dice.randomInt(0, 2);
-                remain-=value;
-                slots[active_slot]+=value;
-            }
-
-            int active_slot = 0;
-            Integer[] attributes = sheet.getProfession().getSimpleAttributes();
-            for (int i=0; i < attributes.length; i++) {
-                if (attributes[i] != 0) {
-                    attributes[i] = slots[active_slot];
-                    active_slot++;
-                }
-            }
-
-            fateAttributeTable.iterateThroughColumns(2, (o, i) -> {
-                AdvancedSpinner spinner = (AdvancedSpinner) o;
-                if (spinner.isEnabled()) {
-                    spinner.setValue(attributes[i]);
-                }
-            });
-        });
-        fateFateUP.addActionListener(e -> {
-            fateExtra.setValue(fateExtra.getValue() - 1);
-            fateFate.setValue(fateFate.getValue() + 1);
-
-            fateFateUP.setEnabled(Integer.parseInt(fateExtra.getText())!=0);
-            fateFateDOWN.setEnabled(true);
-            fateResilienceUP.setEnabled(Integer.parseInt(fateExtra.getText())!=0);
-            fateResilienceDOWN.setEnabled(Integer.parseInt(fateResilience.getText())!=sheet.getRace().getResilience());
-
-            fateOption1Button.setEnabled(fateExtra.getValue() == 0 && fateAttrRemain.getValue() == 0);
-        });
-        fateFateDOWN.addActionListener(e -> {
-            fateExtra.setValue(fateExtra.getValue()+1);
-            fateFate.setValue(fateFate.getValue()-1);
-
-            fateFateUP.setEnabled(true);
-            fateFateDOWN.setEnabled(Integer.parseInt(fateFate.getText())!=sheet.getRace().getFate());
-            fateResilienceUP.setEnabled(true);
-            fateResilienceDOWN.setEnabled(Integer.parseInt(fateResilience.getText())!=sheet.getRace().getResilience());
-
-            fateOption1Button.setEnabled(fateExtra.getValue() == 0 && fateAttrRemain.getValue() == 0);
-        });
-        fateResilienceUP.addActionListener(e -> {
-            fateExtra.setValue(fateExtra.getValue() - 1);
-            fateResilience.setValue(fateResilience.getValue() + 1);
-
-            fateFateUP.setEnabled(Integer.parseInt(fateExtra.getText())!=0);
-            fateFateDOWN.setEnabled(Integer.parseInt(fateFate.getText())!=sheet.getRace().getFate());
-            fateResilienceUP.setEnabled(Integer.parseInt(fateExtra.getText())!=0);
-            fateResilienceDOWN.setEnabled(true);
-
-            fateOption1Button.setEnabled(fateExtra.getValue() == 0 && fateAttrRemain.getValue() == 0);
-        });
-        fateResilienceDOWN.addActionListener(e -> {
-            fateExtra.setValue(fateExtra.getValue() + 1);
-            fateResilience.setValue(fateResilience.getValue() - 1);
-
-            fateFateUP.setEnabled(true);
-            fateFateDOWN.setEnabled(Integer.parseInt(fateFate.getText())!=sheet.getRace().getFate());
-            fateResilienceUP.setEnabled(true);
-            fateResilienceDOWN.setEnabled(Integer.parseInt(fateResilience.getText())!=sheet.getRace().getResilience());
-
-            fateOption1Button.setEnabled(fateExtra.getValue() == 0 && fateAttrRemain.getValue() == 0);
-        });
-        fateOption1Button.addActionListener(e -> { //
-            sheet.setAttributes(sheet.getAttributes());
-
-            moveToNextTab();
-        });
-        fateOption1Button.setMnemonic(KeyEvent.VK_1);
 
         // Race skills & Talents //
         createActionMnemonic(raceskillPanel, KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.SHIFT_DOWN_MASK | InputEvent.ALT_DOWN_MASK), () -> {
@@ -220,83 +125,6 @@ public class CharacterGen {
             this.frame.setContentPane(previousScreen.mainPanel);
             this.frame.validate();
         });
-    }
-
-    private void fateCreateTable() {
-        List<Component> tabOrder = new ArrayList<>();
-        BAttr.clear();
-        RAttr.clear();
-        TAttr.clear();
-
-        String[] columns = {"WW", "US", "S", "Wt", "I", "Zw", "Zr", "Int", "SW", "Ogd", "Żyw"};
-        for (int i = 0; i < columns.length; i++) {
-            JLabel charLabel = new JLabel(columns[i], JLabel.CENTER);
-            fateAttributeTable
-                    .add(charLabel, new GridConstraints(0, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
-        }
-
-        attrHP = new JIntegerField(sheet.getMaxHealthPoints());
-        attrHP.setHorizontalAlignment(JTextField.CENTER);
-        attrHP.setEditable(false);
-        fateAttributeTable.add(
-                attrHP, new GridConstraints(1, columns.length-1, 3, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(30, -1), null));
-
-        for (int i = 0; i < columns.length-1; i++) {
-            int finalI = i;
-
-            JIntegerField attr = new JIntegerField(sheet.getAttributes().get(i+1).getTotalValue());
-            attr.setHorizontalAlignment(JTextField.CENTER);
-            attr.setEditable(false);
-            BAttr.add(attr);
-            fateAttributeTable.add(attr, new GridConstraints(1, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null));
-
-            AdvancedSpinner adv = new AdvancedSpinner(new SpinnerNumberModel(0, 0, 5, 1));
-            adv.setEnabled(false);
-            if (sheet.getProfession().hasAttribute(i+1)) {
-                adv.setEnabled(true);
-                tabOrder.add(adv.getTextField());
-            }
-            fateAttributeTable.add(adv,new GridConstraints(2, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null));
-
-            JIntegerField sumAttr = new JIntegerField(BAttr.get(i).getValue());
-            sumAttr.setHorizontalAlignment(JTextField.CENTER);
-            sumAttr.setEditable(false);
-            sumAttr.setFont(new Font(sumAttr.getFont().getName(), Font.ITALIC + Font.BOLD, sumAttr.getFont().getSize() + 2));
-            TAttr.add(sumAttr);
-            fateAttributeTable.add(sumAttr, new GridConstraints(3, i, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(30, -1), null));
-
-            adv.addChangeListener(e -> fateUpdatePoints(adv, finalI, sumAttr));
-        }
-        fateAttributeTable.setFocusCycleRoot(true);
-        fateAttributeTable.setFocusTraversalPolicy(new CustomFocusTraversalPolicy(tabOrder));
-        tabOrder.get(0).requestFocusInWindow();
-
-        fateAttributeTable.build(GridPanel.ALIGNMENT_HORIZONTAL);
-
-        fateFate.setValue(sheet.getRace().getFate());
-        fateResilience.setValue(sheet.getRace().getResilience());
-        fateExtra.setValue(sheet.getRace().getExtra());
-    }
-    private void fateUpdatePoints(AdvancedSpinner activeSpinner, int finalI, JIntegerField field) {
-        int now = (int) (activeSpinner.getValue());
-        int adv = sheet.getAttributes().get(finalI+1).getAdvValue();
-
-        if (adv != now) {
-            fateAttrRemain.changeValue(adv - now);
-            field.changeValue(now - adv);
-            sheet.getAttributes().get(finalI).setAdvValue(now);
-            calculateHP();
-
-            fateAttributeTable.iterateThroughColumns(2, (o, i) -> {
-                AdvancedSpinner spinner = (AdvancedSpinner) o;
-                if (activeSpinner != o) {
-                    SpinnerNumberModel model = (SpinnerNumberModel) spinner.getModel();
-                    model.setMaximum((int) model.getValue() + fateAttrRemain.getValue());
-                }
-            });
-        }
-
-        fateOption1Button.setEnabled(fateExtra.getValue() == 0 && fateAttrRemain.getValue() == 0);
     }
 
     private void raceskillCreateTable() {
@@ -693,18 +521,6 @@ public class CharacterGen {
         profskillTalentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
 
-    private void calculateHP() {
-        int value = (TAttr.get(3).getValue() / 10) * 2 + TAttr.get(8).getValue() / 10;
-        if (sheet.getRace().getSize() == Race.Size.NORMAL)
-            value += TAttr.get(2).getValue() / 10;
-        attrHP.setValue(value);
-    }
-    private void calculateTotal() {
-        for (int i=0;i<10;i++)
-            TAttr.get(i).setValue(BAttr.get(i).getValue() + RAttr.get(i).getValue());
-        calculateHP();
-    }
-
     public void moveToNextTab() {
         int tab = tabbedPane.getSelectedIndex();
         tabbedPane.setEnabledAt(tab + 1, true);
@@ -718,7 +534,7 @@ public class CharacterGen {
                 attributesTab.initialise(this, sheet, connection);
                 break;
             case 3:
-                fateCreateTable();
+                fateTab.initialise(this, sheet, connection);
                 break;
             case 4:
                 raceskillCreateTable();
@@ -736,7 +552,6 @@ public class CharacterGen {
         expField = new JIntegerField(0);
         expField.setRunnable((o, i) -> sheet.setExp(((JIntegerField) o).getValue()));
 
-        fateAttrRemain = new JIntegerField(5);
         raceskillPoints = new ConcurrentHashMap<>();
         raceskillPoints.put(0, 0);
         raceskillPoints.put(3, 0);
@@ -835,33 +650,38 @@ public class CharacterGen {
         returns[1] = connection.getProfFromTable(race, numeric);
         return returns;
     }
-    public static Object[] getOneRandomAttr(int index, Race race) {
-        Object[] returns = new Object[2];
+    public static Attribute getOneRandomAttr(int index, Race race) {
         int numeric = Dice.randomDice(2, 10);
         Attribute attribute = race.getAttribute(index);
         attribute.setRndValue(numeric);
-        returns[0] = numeric;
-        returns[1] = attribute;
-        return returns;
+        return attribute;
     }
-    public static Object[] getAllRandomAttr(Race race) {
-        Integer[] rollAttr = new Integer[10];
-        Integer[] sumAttr = new Integer[10];
-        Object[] returns = new Object[3];
-        int sumRollAttr = 0;
-        for (int i=0;i<10;i++) {
-            Object[] attr = getOneRandomAttr(i, race);
-            rollAttr[i] = (Integer) attr[0];
-            sumAttr[i] = (Integer) attr[1];
-            sumRollAttr += (int) attr[0];
+    public static Map<Integer, Attribute> getAllRandomAttr(Race race) {
+        Map<Integer, Attribute> attributeMap = race.getAttributes();
+        for (int i = 0; i < attributeMap.size(); i++) {
+            int numeric = Dice.randomDice(2, 10);
+            attributeMap.get(i).setRndValue(numeric);
         }
-        returns[0] = rollAttr;
-        returns[1] = sumAttr;
-        returns[2] = sumRollAttr;
-        return returns;
+        return attributeMap;
     }
+    public static Map<Integer, Attribute> randomAttributeAdvances(Profession profession, Map<Integer, Attribute> startAttributes, int maxPoints) {
+        Map<Integer, Attribute> attributes = new ConcurrentHashMap<>(startAttributes);
+        List<Attribute> profAttributes = profession.getAttributesList(attributes);
 
-    public List<Skill> randomizeSkillsWithList(List<SkillGroup> skills, int[] values) {
+        for (Attribute attribute : attributes.values()) {
+            attribute.setAdvValue(0);
+        }
+
+        for (int i = 0; i < maxPoints; i++) {
+            int activeSlot = Dice.randomInt(0, profAttributes.size() - 1);
+            Attribute active = profAttributes.get(activeSlot);
+            if (active.incAdvValue() == maxPoints) {
+                profAttributes.remove(activeSlot);
+            }
+        }
+        return attributes;
+    }
+    public static List<Skill> randomizeSkillsWithList(List<SkillGroup> skills, int[] values) {
         int range = skills.size();
         List<Integer> usedIndexes = new ArrayList<>();
         List<Skill> finalSkillList = new ArrayList<>();
@@ -892,7 +712,7 @@ public class CharacterGen {
         }
         return returnList;
     }
-    public Object[] getRandomTalent() {
+    public static Object[] getRandomTalent(Connection connection) {
         Object[] returns = new Object[2];
         int numeric = Dice.randomDice(1, 100);
         returns[0] = numeric;
