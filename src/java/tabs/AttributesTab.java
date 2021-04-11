@@ -124,7 +124,7 @@ public class AttributesTab {
                     baseAttr.setBackground(ColorPalette.WHITE_BLUE);
                 }
 
-                JIntegerField attr = attrAttributesTable.createIntegerField(2, i, 1, 1, 0, new Dimension(30, -1));
+                JIntegerField attr = attrAttributesTable.createIntegerField(2, i, 0, new Dimension(30, -1));
                 attr.setForeground(foregroundColor);
                 attr.setRunnable((o, j) -> attributes.get(finalI).setRndValue(attr.getValue()));
                 attr.addMouseListener((MouseClickedAdapter) this::replaceValues);

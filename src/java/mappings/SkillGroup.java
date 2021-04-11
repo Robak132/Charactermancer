@@ -1,5 +1,6 @@
 package mappings;
 
+import java.util.ArrayList;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -32,6 +33,10 @@ public class SkillGroup {
             inverseJoinColumns = @JoinColumn(name = "IDSKILL"))
     @OrderBy(value="name")
     private List<Skill> skills;
+
+    public SkillGroup() {
+        // Needed for Hibernate/JPA
+    }
 
     public int getID() {
         return ID;
@@ -72,5 +77,14 @@ public class SkillGroup {
     }
     public void setSkills(List<Skill> skills) {
         this.skills = skills;
+    }
+
+    @Override
+    public String toString() {
+        if (skills.size() == 1) {
+            return getFirstSkill().toString();
+        } else {
+            return String.format("SkillGroup {ID = %d, name = %s}", ID, name);
+        }
     }
 }

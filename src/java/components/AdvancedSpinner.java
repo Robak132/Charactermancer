@@ -4,25 +4,7 @@ import javax.swing.*;
 
 public class AdvancedSpinner extends JSpinner {
     private final JTextField textField;
-
-    public Object getLastValue() {
-        if (getModel() instanceof SpinnerTypeListModel<?>) {
-            return ((SpinnerTypeListModel<?>) getModel()).getLastValue();
-        }
-        return null;
-    }
-    public Object getLastIndex() {
-        if (getModel() instanceof SpinnerTypeListModel<?>) {
-            return ((SpinnerTypeListModel<?>) getModel()).getLastIndex();
-        }
-        return null;
-    }
-    public Object getIndex() {
-        if (getModel() instanceof SpinnerTypeListModel<?>) {
-            return ((SpinnerTypeListModel<?>) getModel()).getIndex();
-        }
-        return null;
-    }
+    private Object lastValue;
 
     public AdvancedSpinner(SpinnerModel model) {
         super(model);
@@ -41,5 +23,29 @@ public class AdvancedSpinner extends JSpinner {
     }
     public JTextField getTextField() {
         return textField;
+    }
+
+    @Override
+    public void setValue(Object value) {
+        lastValue = super.getValue();
+        super.setValue(value);
+    }
+    @Override
+    public Object getValue() {
+        return super.getValue();
+    }
+    @Override
+    public Object getNextValue() {
+        lastValue = super.getValue();
+        return super.getNextValue();
+    }
+    @Override
+    public Object getPreviousValue() {
+        lastValue = super.getValue();
+        return super.getPreviousValue();
+    }
+
+    public Object getLastValue() {
+        return lastValue;
     }
 }

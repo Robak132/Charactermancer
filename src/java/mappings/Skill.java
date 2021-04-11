@@ -38,6 +38,16 @@ public class Skill {
         this.name = name;
         this.baseSkill = baseSkill;
     }
+    public Skill(Skill other) {
+        this.ID = other.ID;
+        this.name = other.name;
+        this.baseSkill = other.baseSkill;
+        this.earning = other.earning;
+        this.advanceable = other.advanceable;
+        this.linkedAttribute = other.linkedAttribute;
+        this.advValue = other.advValue;
+        this.totalValue = other.totalValue;
+    }
 
     public int getID() {
         return ID;
