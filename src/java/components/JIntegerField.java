@@ -1,5 +1,7 @@
 package components;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.*;
 import org.apache.logging.log4j.LogManager;
 import tools.RunnableWithObject;
@@ -36,8 +38,13 @@ public class JIntegerField extends JTypeField<Integer> {
         }
         return value;
     }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        setValue((Integer) evt.getNewValue());
+    }
 }
-abstract class JTypeField<T> extends JTextField {
+abstract class JTypeField<T> extends JTextField implements PropertyChangeListener {
     protected T value;
     private String format;
     private RunnableWithObject runnable;

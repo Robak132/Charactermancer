@@ -45,7 +45,7 @@ public class Main {
         });
         createcharButton.setMnemonic(KeyEvent.VK_1);
         createsheetButton.addActionListener(e -> {
-            frame.setContentPane(new CharacterSheet(frame, this, connection).mainPanel);
+            frame.setContentPane(new CharacterSheetMaker(frame, this, connection).mainPanel);
             frame.validate();
         });
         createsheetButton.setMnemonic(KeyEvent.VK_2);

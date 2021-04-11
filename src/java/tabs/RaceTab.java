@@ -73,7 +73,7 @@ public final class RaceTab {
 
         raceOption1Button.addActionListener(e -> {
             raceOption2Combo.setSelectedItem(raceOption1.getText());
-            parent.expField.changeValue(20);
+            sheet.addExp(20);
 
             moveToSubraces();
         });

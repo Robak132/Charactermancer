@@ -19,8 +19,6 @@ import mappings.Skill;
 import mappings.SkillGroup;
 import mappings.Talent;
 import mappings.TalentGroup;
-import org.apache.commons.collections4.map.LinkedMap;
-import org.apache.commons.collections4.set.ListOrderedSet;
 import org.apache.logging.log4j.LogManager;
 import tabs.AttributesTab;
 import tabs.FateTab;
@@ -33,13 +31,13 @@ import tools.MultiLineTooltip;
 public class CharacterGen {
     public JPanel mainPanel;
     public final Main previousScreen;
-    public JIntegerField expField;
 
     private final JFrame frame;
     private final Connection connection;
     private final CharacterSheet sheet;
     private JLabel imageLabel;
     private JTabbedPane tabbedPane;
+    private JIntegerField expField;
     private JButton exitButton;
 
     private GridPanel profskillSkillsPanel;
@@ -51,13 +49,10 @@ public class CharacterGen {
     private FateTab fateTab;
     private RaceSkillTab raceSkillTab;
 
-    private List<SkillGroup> raceSkillGroups = new ArrayList<>();
-    private List<Skill> raceSkills = new ArrayList<>();
-    private List<TalentGroup> raceTalentGroups = new ArrayList<>();
     private final List<Talent> raceTalents = new ArrayList<>();
-    private List<SkillGroup> profSkills = new ArrayList<>();
+    private final List<SkillGroup> profSkills = new ArrayList<>();
     private final List<Skill> profSkillGroups = new ArrayList<>();
-    private List<TalentGroup> profTalentGroups = new ArrayList<>();
+    private final List<TalentGroup> profTalentGroups = new ArrayList<>();
     private final List<Talent> profTalents = new ArrayList<>();
 
     public CharacterGen(JFrame frame, Main screen, Connection connection) {
@@ -65,6 +60,7 @@ public class CharacterGen {
         previousScreen = screen;
         this.connection = connection;
         sheet = new CharacterSheet();
+        sheet.addObserver("exp", expField);
 
         // Race //
         raceTab.initialise(this, sheet, this.connection);
@@ -233,7 +229,6 @@ public class CharacterGen {
     }
     private void createUIComponents() {
         expField = new JIntegerField(0);
-        expField.setRunnable((o, i) -> sheet.setExp(((JIntegerField) o).getValue()));
     }
 
     private Container createSkillComboIfNeeded(SkillGroup groupSkill, GridPanel panel, int row, int column) {

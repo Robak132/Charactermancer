@@ -1,9 +1,13 @@
 package main;
 
+import java.util.HashSet;
+import java.util.Set;
+import mappings.ProfTable;
 import mappings.Profession;
 import mappings.ProfessionCareer;
 import mappings.ProfessionClass;
 import mappings.Race;
+import mappings.Subrace;
 import mappings.TalentGroup;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -74,13 +78,31 @@ public class Connection {
         List<Race> races = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            races = list(session.createQuery("FROM Race"));
+            Query query = session.createQuery("FROM Race");
+            races = query.list();
             session.close();
         } catch (Exception ex) {
             abort();
             ex.printStackTrace();
         }
         return races;
+    }
+    public List<Subrace> getSubraces(Race race) {
+        if (race != null) {
+            return race.getSubraces();
+        }
+
+        List<Subrace> subraces = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query query = session.createQuery("SELECT r.subraces FROM Race r");
+            subraces = query.list();
+            session.close();
+         } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return subraces;
     }
 
     public Profession getProfFromTable(Race race, int n) {
@@ -102,7 +124,7 @@ public class Connection {
         List<ProfessionClass> classes = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query query = session.createQuery("FROM ProfessionClass");
+            Query query = session.createQuery("FROM ProfessionClass WHERE name!='Zwierzę'");
             classes = query.list();
             session.close();
         } catch (Exception ex) {
@@ -111,11 +133,15 @@ public class Connection {
         }
         return classes;
     }
-    public List<ProfessionCareer> getProfessionCareers() {
+    public List<ProfessionCareer> getProfessionCareers(Race race) {
+        if (race != null) {
+            return race.getRaceCareers();
+        }
+
         List<ProfessionCareer> careers = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query query = session.createQuery("FROM ProfessionCareer ");
+            Query query = session.createQuery("FROM ProfessionCareer C WHERE C.professionClass.name != 'Zwierzę'");
             careers = query.list();
             session.close();
         } catch (Exception ex) {
@@ -124,11 +150,53 @@ public class Connection {
         }
         return careers;
     }
+    public List<ProfessionCareer> getProfessionCareers() {
+        List<ProfessionCareer> careers = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query query = session.createQuery("From ProfessionCareer");
+            careers = query.list();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return careers;
+    }
+    public List<Profession> getProfessions(Subrace subrace, ProfessionClass clss, ProfessionCareer career) {
+        List<Profession> professions = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query query = session.createQuery("SELECT DISTINCT t.prof FROM ProfTable t WHERE t.subrace=:param AND t.prof.career.professionClass=:param2 AND t.prof.career=:param3");
+            query.setParameter("param", subrace);
+            query.setParameter("param2", clss);
+            query.setParameter("param3", career);
+            professions = query.list();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return professions;
+    }
+    public List<Profession> getProfessions() {
+        List<Profession> professions = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query query = session.createQuery("FROM Profession");
+            professions = query.list();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return professions;
+    }
     public List<Profession> getProfs(int race) {
         List<Profession> profs = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query query = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.race.id =:param AND t.prof.career.professionClass!='Zwierzęta'");
+            Query query = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.race.id =:param AND t.prof.career.professionClass.name!='Zwierzę'");
             query.setParameter("param", race);
             profs = query.list();
             session.close();
@@ -172,7 +240,7 @@ public class Connection {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> List<T> list(Query q){
+    private static <T> List<T> list(Query<T> q){
         return q.list();
     }
 }

@@ -1,9 +1,11 @@
 package mappings;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -33,7 +35,7 @@ public class Profession {
     @Transient
     private Map<Integer, Attribute> attributesMap;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCAREER")
     private ProfessionCareer career;
 
@@ -82,7 +84,7 @@ public class Profession {
     public void setLevel(int level) {
         this.level = level;
     }
-    public ProfessionCareer getCareer() {
+    public ProfessionCareer getProfessionCareer() {
         return career;
     }
     public void setCareer(ProfessionCareer career) {
@@ -92,12 +94,16 @@ public class Profession {
     public List<BaseAttribute> getProfAttributes() {
         return profAttributes;
     }
-    public Integer[] getSimpleAttributes() {
-        Integer[] intAttributes = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        for (BaseAttribute baseAttribute : profAttributes) {
-            intAttributes[baseAttribute.getID()-1] = 1;
+    public void setProfAttributes(List<BaseAttribute> profAttributes) {
+        this.profAttributes = profAttributes;
+    }
+
+    public List<Attribute> getAttributesList(Map<Integer, Attribute> attributes) {
+        if (attributesMap == null) {
+            createAttributeMap(attributes);
         }
-        return intAttributes;
+
+        return new ArrayList<>(attributesMap.values());
     }
     public boolean hasAttribute(int ID) {
         for (BaseAttribute attr : profAttributes) {
@@ -109,14 +115,6 @@ public class Profession {
     }
     public void setAttributes(List<BaseAttribute> profAttributes) {
         this.profAttributes = profAttributes;
-    }
-
-    public List<Attribute> getAttributesList(Map<Integer, Attribute> attributes) {
-        if (attributesMap == null) {
-            createAttributeMap(attributes);
-        }
-
-        return new ArrayList<>(attributesMap.values());
     }
 
     public List<ProfSkill> getProfSkills() {
@@ -194,22 +192,23 @@ public class Profession {
 
     @Override
     public boolean equals(Object o) {
-        if (o == this) {
+        if (this == o) {
             return true;
         }
-        if (!(o instanceof Profession)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Profession c = (Profession) o;
-        return ID == c.ID;
+        Profession that = (Profession) o;
+        return ID == that.ID && Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ID, name);
     }
 
     @Override
     public String toString() {
-        return String.format("Profession {\n" +
-                "\t%s\n" +
-                "\t%s\n" +
-                "\tProfession {ID = %d, name = %s}\n" +
-                "}", career.getProfessionClass(), career, ID, name);
+        return String.format("Profession {ID = %d, name = %s}", ID, name);
     }
 }

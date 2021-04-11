@@ -76,8 +76,8 @@ public class ProfTab {
             chosenProfessions.add(rollProf);
             profRollResult.setValue(rollResultNumeric);
 
-            profOptions[chosenProfessions.size() - 1][0].setText(rollProf.getCareer().getProfessionClass().getName());
-            profOptions[chosenProfessions.size() - 1][1].setText(rollProf.getCareer().getName());
+            profOptions[chosenProfessions.size() - 1][0].setText(rollProf.getProfessionCareer().getProfessionClass().getName());
+            profOptions[chosenProfessions.size() - 1][1].setText(rollProf.getProfessionCareer().getName());
             profButtons[chosenProfessions.size() - 1].setEnabled(true);
 
             if (chosenProfessions.size() >= 3) {
@@ -103,7 +103,7 @@ public class ProfTab {
                 // TODO: Make "Roll doubled" dialog or do sth better
             } else {
                 chosenProfessions.add(prof);
-                profOptions[chosenProfessions.size() - 1][0].setText(prof.getCareer().getName());
+                profOptions[chosenProfessions.size() - 1][0].setText(prof.getProfessionCareer().getName());
                 profOptions[chosenProfessions.size() - 1][1].setText(prof.getName());
                 profButtons[chosenProfessions.size() - 1].setEnabled(true);
 
@@ -129,7 +129,7 @@ public class ProfTab {
 
     private void lockAll(int index) {
         sheet.setProfession(chosenProfessions.get(index));
-        parent.expField.changeValue(chosenProfessions.size() == 1 ? 50 : 25);
+        sheet.addExp(chosenProfessions.size() == 1 ? 50 : 25);
 
         profRollButton.setEnabled(false);
         profRollResult.setEditable(false);

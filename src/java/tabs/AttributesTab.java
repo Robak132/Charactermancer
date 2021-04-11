@@ -65,7 +65,7 @@ public class AttributesTab {
             attrOption1Button.setEnabled(false);
             attrOption3Button.setEnabled(false);
             attrLocked = true;
-            parent.expField.changeValue(attrMaxExp);
+            sheet.addExp(attrMaxExp);
             parent.moveToNextTab();
         });
         attrOption1Button.setMnemonic(KeyEvent.VK_1);
@@ -151,6 +151,7 @@ public class AttributesTab {
         JIntegerField attrHP = attrAttributesTable.createIntegerField(1, 12, 3, 1, 0, new Dimension(30, -1), false);
         attrHP.setFont(new Font(attrHP.getFont().getName(),Font.ITALIC+Font.BOLD, attrHP.getFont().getSize()+2));
         attrHP.setBackground(ColorPalette.WHITE_BLUE);
+        sheet.addObserver("maxhp", attrHP);
         attrAttributesTable.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
     private void replaceValues(MouseEvent e) {

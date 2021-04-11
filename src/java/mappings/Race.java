@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import tools.Dice;
 
 @Entity
 @Table(name = "RACES")
@@ -43,6 +44,13 @@ public class Race {
     @JoinColumn(name= "IDRACE")
     @OrderBy("def DESC, name")
     private List<Subrace> subraces;
+
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @ManyToMany
+    @JoinTable(name="RACE_CAREERS",
+            joinColumns = @JoinColumn(name = "IDRACE"),
+            inverseJoinColumns = @JoinColumn(name = "IDCAREER"))
+    private List<ProfessionCareer> raceCareers;
 
     @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany
@@ -148,6 +156,9 @@ public class Race {
     public List<Subrace> getSubraces() {
         return subraces;
     }
+    public Subrace getRndSubrace() {
+        return (Subrace) Dice.randomItem(subraces);
+    }
     public void setSubraces(List<Subrace> subraces) {
         this.subraces = subraces;
     }
@@ -162,6 +173,13 @@ public class Race {
             }
         }
         return null;
+    }
+
+    public List<ProfessionCareer> getRaceCareers() {
+        return raceCareers;
+    }
+    public void setRaceCareers(List<ProfessionCareer> raceCareers) {
+        this.raceCareers = raceCareers;
     }
 
     public Map<Integer, Attribute> getAttributes() {

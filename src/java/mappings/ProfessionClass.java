@@ -1,10 +1,16 @@
 package mappings;
 
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity
 @Table(name = "PROFESSIONS_CLASSES")
@@ -14,6 +20,10 @@ public class ProfessionClass {
     private int ID;
     @Column(name = "NAME")
     private String name;
+
+    @OneToMany
+    @JoinColumn(name= "IDCLSS")
+    private List<ProfessionCareer> careers;
 
     public ProfessionClass() {}
     public ProfessionClass(int ID, String name) {
@@ -32,6 +42,13 @@ public class ProfessionClass {
     }
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<ProfessionCareer> getCareers() {
+        return careers;
+    }
+    public void setCareers(List<ProfessionCareer> careers) {
+        this.careers = careers;
     }
 
     @Override

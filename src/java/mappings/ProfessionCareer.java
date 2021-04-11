@@ -1,11 +1,17 @@
 package mappings;
 
+import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity
 @Table(name = "PROFESSIONS_CAREERS")
@@ -16,7 +22,12 @@ public class ProfessionCareer {
     @Column(name = "NAME")
     private String name;
 
-    @ManyToOne
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @OneToMany
+    @JoinColumn(name= "IDCAREER")
+    private List<Profession> professions;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "IDCLSS")
     private ProfessionClass professionClass;
 
@@ -43,6 +54,29 @@ public class ProfessionCareer {
     }
     public void setProfessionClass(ProfessionClass professionClass) {
         this.professionClass = professionClass;
+    }
+    public List<Profession> getProfessions() {
+        return professions;
+    }
+    public void setProfessions(List<Profession> professions) {
+        this.professions = professions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ProfessionCareer career = (ProfessionCareer) o;
+        return ID == career.ID && Objects.equals(name, career.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ID, name);
     }
 
     @Override

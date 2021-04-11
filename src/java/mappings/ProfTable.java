@@ -23,15 +23,15 @@ public class ProfTable {
     private Profession prof;
     @ManyToOne
     @JoinColumn(name = "IDRACE")
-    private Race race;
+    private Subrace subrace;
 
     public ProfTable() {}
-    public ProfTable(int ID, int indexDOWN, int indexUP, Profession prof, Race race) {
+    public ProfTable(int ID, int indexDOWN, int indexUP, Profession prof, Subrace subrace) {
         this.ID = ID;
         this.indexDOWN = indexDOWN;
         this.indexUP = indexUP;
         this.prof = prof;
-        this.race = race;
+        this.subrace = subrace;
     }
 
     public int getID() {
@@ -58,11 +58,11 @@ public class ProfTable {
     public void setProf(Profession prof) {
         this.prof = prof;
     }
-    public Race getRace() {
-        return race;
+    public Subrace getSubrace() {
+        return subrace;
     }
-    public void setRace(Race race) {
-        this.race = race;
+    public void setSubrace(Subrace subrace) {
+        this.subrace = subrace;
     }
 
     @Override
@@ -74,10 +74,10 @@ public class ProfTable {
             return false;
         }
         ProfTable profTable = (ProfTable) o;
-        return Objects.equals(prof, profTable.prof) && Objects.equals(race, profTable.race);
+        return Objects.equals(prof, profTable.prof) && Objects.equals(subrace, profTable.subrace);
     }
     @Override
     public int hashCode() {
-        return Objects.hash(prof, race);
+        return Objects.hash(prof, subrace);
     }
 }

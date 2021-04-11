@@ -1,5 +1,6 @@
 package mappings;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -65,10 +66,27 @@ public class Subrace {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Subrace subrace = (Subrace) o;
+        return ID == subrace.ID && Objects.equals(name, subrace.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ID, name);
+    }
+
+    @Override
     public String toString() {
         if (name.equals(baseRace.getName())) {
-            return String.format("Race {ID = %d, name = %s}", ID, name);
+            return String.format("Subrace {ID = %d, name = %s}", ID, name);
         }
-        return String.format("Talent {ID = %d, name = %s [%s]}", ID, name, baseRace.getName());
+        return String.format("Subrace {ID = %d, name = %s [%s]}", ID, name, baseRace.getName());
     }
 }
