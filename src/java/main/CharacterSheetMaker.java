@@ -1,5 +1,11 @@
 package main;
 
+import components.GridPanel;
+import components.JIntegerField;
+import components.SearchableComboBox;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,13 +17,18 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import mappings.Attribute;
 import mappings.Profession;
 import mappings.ProfessionCareer;
 import mappings.ProfessionClass;
 import mappings.Race;
+import mappings.Race.Size;
 import mappings.Subrace;
+import mappings.Talent;
 import org.apache.logging.log4j.LogManager;
+import tools.ColorPalette;
 import tools.Dice;
+import tools.MouseClickedAdapter;
 
 public class CharacterSheetMaker {
     public JPanel mainPanel;
@@ -43,8 +54,12 @@ public class CharacterSheetMaker {
     private JToggleButton careerButton;
     private JComboBox<String> professionCombo;
     private JToggleButton professionButton;
-    private JLabel errorLabel;
     private JButton refreshButton;
+    private GridPanel attributesTable;
+    private JButton ADDButton;
+    private SearchableComboBox searchableTalent;
+    private JIntegerField JIntegerField1;
+    private GridPanel talentsPanel;
 
     // Visible Element Lists
     private final List<Race> visibleRaces = new ArrayList<>();
@@ -52,6 +67,7 @@ public class CharacterSheetMaker {
     private final List<ProfessionClass> visibleClasses = new ArrayList<>();
     private List<ProfessionCareer> visibleCareers = new ArrayList<>();
     private List<Profession> visibleProfessions = new ArrayList<>();
+    private List<Talent> visibleTalents = new ArrayList<>();
 
     // Constraints
     private Race race;
@@ -74,7 +90,9 @@ public class CharacterSheetMaker {
 
         buildRace();
         buildProfession();
-        refreshAll();
+        createTable();
+        visibleTalents = connection.getAllTalents();
+        visibleTalents.forEach(e->searchableTalent.addItem(e.getName()));
 
         raceCombo.addActionListener(e -> {
             if (!lock) {
@@ -153,6 +171,19 @@ public class CharacterSheetMaker {
             refreshAll();
         });
 
+        ADDButton.addActionListener(e -> {
+            int index = searchableTalent.getSelectedIndex();
+            if (index != -1) {
+                Talent currentTalent = visibleTalents.get(index);
+                talentsPanel.createTextField(talentsPanel.getRows(), 1, currentTalent.getName(), new Dimension(300, -1), false);
+                talentsPanel.build();
+                talentsPanel.revalidate();
+                talentsPanel.repaint();
+                frame.pack();
+            }
+
+        });
+
         refreshButton.addActionListener(e -> refreshAll());
         exitButton.addActionListener(e -> {
             this.frame.setContentPane(parent.mainPanel);
@@ -160,18 +191,18 @@ public class CharacterSheetMaker {
         });
     }
     private void refreshAll() {
-        lock = true;
-        logConstraints();
-        try {
-            errorLabel.setVisible(false);
-            compatibleSubraces = findCompatibleSubraces(race);
-            findCompatibleProfessions();
-            applyAll();
-        } catch (InvalidParametersException ex) {
-            errorLabel.setText(ex.getMessage());
-            errorLabel.setVisible(true);
-        }
-        lock = false;
+//        lock = true;
+//        logConstraints();
+//        try {
+//            errorLabel.setVisible(false);
+//            compatibleSubraces = findCompatibleSubraces(race);
+//            findCompatibleProfessions();
+//            applyAll();
+//        } catch (InvalidParametersException ex) {
+//            errorLabel.setText(ex.getMessage());
+//            errorLabel.setVisible(true);
+//        }
+//        lock = false;
     }
 
     private void buildRace() {
@@ -280,6 +311,17 @@ public class CharacterSheetMaker {
         LogManager.getLogger(getClass().getName()).info(String.format("Constraints: class = %s", professionClass));
         LogManager.getLogger(getClass().getName()).info(String.format("Constraints: career = %s", professionCareer));
         LogManager.getLogger(getClass().getName()).info(String.format("Constraints: profession = %s\n", profession));
+    }
+
+    private void createTable() {
+        Map<Integer, Attribute> attributes = visibleRaces.get(0).getAttributes();
+        for (int i = 0; i < attributes.size(); i++) {
+            attributesTable.createJLabel(0, i, attributes.get(i).getName());
+            JIntegerField baseAttr = attributesTable.createIntegerField(1, i, 1, 1, 0, new Dimension(30, -1), true);
+        }
+        attributesTable.createJLabel(0, 12, "HP");
+        JIntegerField attrHP = attributesTable.createIntegerField(1, 12, 1, 1, 0, new Dimension(30, -1), true);
+        attributesTable.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
 }
 

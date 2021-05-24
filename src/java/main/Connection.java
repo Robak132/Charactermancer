@@ -8,6 +8,7 @@ import mappings.ProfessionCareer;
 import mappings.ProfessionClass;
 import mappings.Race;
 import mappings.Subrace;
+import mappings.Talent;
 import mappings.TalentGroup;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -105,13 +106,13 @@ public class Connection {
         return subraces;
     }
 
-    public Profession getProfFromTable(Race race, int n) {
+    public Profession getProfFromTable(Subrace subrace, int n) {
         Profession prof = null;
         try {
             Session session = factory.openSession();
-            Query query = session.createQuery("SELECT t.prof FROM ProfTable t WHERE t.indexDOWN <= :param1 AND :param1 <= t.indexUP AND t.race.id = :param2");
+            Query query = session.createQuery("SELECT t.prof FROM ProfTable t WHERE t.indexDOWN <= :param1 AND :param1 <= t.indexUP AND t.subrace = :param2");
             query.setParameter("param1", n);
-            query.setParameter("param2", race.getID());
+            query.setParameter("param2", subrace);
             prof = query.list().size()==0 ? null : (Profession) query.list().get(0);
             session.close();
         } catch (Exception ex) {
@@ -237,6 +238,19 @@ public class Connection {
             ex.printStackTrace();
         }
         return talent;
+    }
+    public List<Talent> getAllTalents() {
+        List<Talent> talents = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query query = session.createQuery("FROM Talent");
+            talents = query.list();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return talents;
     }
 
     @SuppressWarnings("unchecked")

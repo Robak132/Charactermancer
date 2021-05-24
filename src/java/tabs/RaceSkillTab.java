@@ -93,7 +93,7 @@ public class RaceSkillTab {
 
             System.out.println(sheet);
 
-            parent.moveToNextTab();
+            parent.export();
         });
     }
 

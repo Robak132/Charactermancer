@@ -17,6 +17,7 @@ import mappings.Profession;
 import mappings.Race;
 import mappings.Skill;
 import mappings.SkillGroup;
+import mappings.Subrace;
 import mappings.Talent;
 import mappings.TalentGroup;
 import org.apache.logging.log4j.LogManager;
@@ -227,6 +228,10 @@ public class CharacterGen {
                 break;
         }
     }
+    public void export() {
+        frame.setContentPane(new CharacterSheetBrowser(frame, sheet, connection).mainPanel);
+        frame.validate();
+    }
     private void createUIComponents() {
         expField = new JIntegerField(0);
     }
@@ -312,11 +317,11 @@ public class CharacterGen {
         returns[1] = connection.getRaceFromTable(numeric);
         return returns;
     }
-    public static Object[] getRandomProf(Connection connection, Race race) {
+    public static Object[] getRandomProf(Connection connection, Subrace subrace) {
         Object[] returns = new Object[2];
         int numeric = Dice.randomDice(1, 100);
         returns[0] = numeric;
-        returns[1] = connection.getProfFromTable(race, numeric);
+        returns[1] = connection.getProfFromTable(subrace, numeric);
         return returns;
     }
     public static Attribute getOneRandomAttr(int index, Race race) {

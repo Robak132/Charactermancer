@@ -65,13 +65,13 @@ public class ProfTab {
         fillCombos();
 
         profRollButton.addActionListener(e -> {
-            Object[] result = CharacterGen.getRandomProf(connection, sheet.getRace());
+            Object[] result = CharacterGen.getRandomProf(connection, sheet.getSubrace());
             Profession rollProf = (Profession) result[1];
             int rollResultNumeric = (int) result[0];
             while (chosenProfessions.contains(rollProf)) {
                 LogManager.getLogger(getClass().getName()).debug(String.format("%d doubled, changing to %d", rollResultNumeric, rollResultNumeric % 100 + 1));
                 rollResultNumeric = rollResultNumeric % 100 + 1;
-                rollProf = connection.getProfFromTable(sheet.getRace(), rollResultNumeric);
+                rollProf = connection.getProfFromTable(sheet.getSubrace(), rollResultNumeric);
             }
             chosenProfessions.add(rollProf);
             profRollResult.setValue(rollResultNumeric);
@@ -98,7 +98,7 @@ public class ProfTab {
                 return;
             }
 
-            Profession prof = connection.getProfFromTable(sheet.getRace(), rollResultNumeric);
+            Profession prof = connection.getProfFromTable(sheet.getSubrace(), rollResultNumeric);
             if (chosenProfessions.contains(prof)) {
                 // TODO: Make "Roll doubled" dialog or do sth better
             } else {
