@@ -34,7 +34,7 @@ public class CharacterSheetMaker {
     public JPanel mainPanel;
 
     private final JFrame frame;
-    private Main parent;
+    private final Main parent;
     private final Connection connection;
     private final CharacterSheet sheet;
 
@@ -80,7 +80,7 @@ public class CharacterSheetMaker {
     private List<Subrace> compatibleSubraces;
     private Map<Subrace, List<ProfessionCareer>> compatibleCareers;
 
-    private boolean lock = false;
+    private final boolean lock = false;
 
     public CharacterSheetMaker(JFrame frame, Main parent, Connection connection) {
         this.frame = frame;

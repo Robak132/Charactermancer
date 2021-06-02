@@ -21,15 +21,9 @@ public class TalentRandom {
 
     @ManyToOne
     @JoinColumn(name = "IDTAL")
-    private TalentGroup talent;
+    private Talent talent;
 
     public TalentRandom() {}
-    public TalentRandom(int ID, int indexDOWN, int indexUP, TalentGroup talent) {
-        this.ID = ID;
-        this.indexDOWN = indexDOWN;
-        this.indexUP = indexUP;
-        this.talent = talent;
-    }
 
     public int getID() {
         return ID;
@@ -49,10 +43,10 @@ public class TalentRandom {
     public void setIndexUP(int idxup) {
         this.indexUP = idxup;
     }
-    public TalentGroup getTalent() {
+    public Talent getTalent() {
         return talent;
     }
-    public void setTalent(TalentGroup talent) {
+    public void setTalent(Talent talent) {
         this.talent = talent;
     }
 

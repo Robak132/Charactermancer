@@ -1,36 +1,29 @@
 package mappings;
 
-import java.util.ArrayList;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
+import javax.persistence.*;
+
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import java.util.List;
+import java.util.Map;
+
 import tools.Dice;
 
 @Entity
-@Table(name = "SKILLS_GROUPS")
-public class SkillGroup {
+@DiscriminatorValue("GROUP")
+public class SkillGroup extends Skill{
     @Id
     @Column(name = "ID")
     private int ID;
-    @Column(name = "NAME")
-    private String name;
     @Column(name = "LOCKED")
     private boolean locked;
 
     @LazyCollection(LazyCollectionOption.TRUE)
     @ManyToMany
-    @JoinTable(name="SKILLS_LINK",
-            joinColumns = @JoinColumn(name = "IDGROUP"),
-            inverseJoinColumns = @JoinColumn(name = "IDSKILL"))
+    @JoinTable(name= "SKILLS_HIERARCHY",
+            joinColumns = @JoinColumn(name = "IDPARENT"),
+            inverseJoinColumns = @JoinColumn(name = "IDCHILD"))
     @OrderBy(value="name")
     private List<Skill> skills;
 
@@ -58,19 +51,17 @@ public class SkillGroup {
     }
 
     public Skill getFirstSkill() {
+        // TODO: make returns only SkillSingle
         return skills.get(0);
     }
     public Skill getRndSkill() {
+        // TODO: make returns only SkillSingle
         return (Skill) Dice.randomItem(skills);
     }
 
     public List<Skill> getSkills() {
+        // TODO: make returns only SkillSingle
         return skills;
-    }
-    public void cleanSkills() {
-        for (Skill skill : skills) {
-            skill.clean();
-        }
     }
     public int countSkills() {
         return skills.size();
@@ -80,11 +71,28 @@ public class SkillGroup {
     }
 
     @Override
-    public String toString() {
-        if (skills.size() == 1) {
-            return getFirstSkill().toString();
-        } else {
-            return String.format("SkillGroup {ID = %d, name = %s}", ID, name);
+    public boolean isAdv() {
+        boolean adv = true;
+        for (Skill skill : skills) {
+            if (!skill.isAdv())
+                adv = false;
         }
+        return adv;
+    }
+    @Override
+    public void setAdvValue(int advValue) {
+        for (Skill skill : skills) {
+            skill.setAdvValue(advValue);
+        }
+    }
+    @Override
+    public void linkAttributeMap(Map<Integer, Attribute> attributeMap) {
+        for (Skill skill : skills) {
+            skill.linkAttributeMap(attributeMap);
+        }
+    }
+    @Override
+    public String toString() {
+        return String.format("SkillGroup {ID = %d, name = %s}", ID, name);
     }
 }

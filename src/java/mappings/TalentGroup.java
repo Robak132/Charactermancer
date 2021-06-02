@@ -1,49 +1,33 @@
 package mappings;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
+import java.util.List;
+import java.util.Map;
+
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import java.util.List;
 import tools.Dice;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "TALENTS_GROUPS")
-public class TalentGroup {
+@DiscriminatorValue("GROUP")
+public class TalentGroup extends Talent {
     @Id
-    @Column(name = "ID")
     private int ID;
-    @Column(name = "NAME")
-    private String name;
     @Column(name = "LOCKED")
-    private boolean locked;
+    protected boolean locked;
 
     @LazyCollection(LazyCollectionOption.TRUE)
     @ManyToMany
-    @JoinTable(name="TALENTS_LINK",
-            joinColumns = @JoinColumn(name = "IDGROUP"),
-            inverseJoinColumns = @JoinColumn(name = "IDTALENT"))
-    @OrderBy(value="name")
-    private List<Talent> talents;
+    @JoinTable(name= "TALENTS_HIERARCHY",
+            joinColumns = @JoinColumn(name = "ID_PARENT"),
+            inverseJoinColumns = @JoinColumn(name = "ID_CHILD"))
+    protected List<Talent> childTalents;
 
-    public int getID() {
-        return ID;
+    public TalentGroup() {
+        // Needed for Hibernate/JPA
     }
-    public void setID(int ID) {
-        this.ID = ID;
-    }
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
+
     public boolean isLocked() {
         return locked;
     }
@@ -52,22 +36,40 @@ public class TalentGroup {
     }
 
     public Talent getFirstTalent() {
-        return talents.get(0);
+        return childTalents.get(0);
     }
     public Talent getRndTalent() {
-        return (Talent) Dice.randomItem(talents);
+        return (Talent) Dice.randomItem(childTalents);
     }
     public int getRndTalentIndex() {
-        return Dice.randomInt(0, talents.size() - 1);
+        return Dice.randomInt(0, childTalents.size() - 1);
     }
 
-    public List<Talent> getTalents() {
-        return talents;
+    public List<Talent> getChildTalents() {
+        return childTalents;
     }
-    public int countTalents() {
-        return talents.size();
+    public int countChildTalents() {
+        return childTalents.size();
     }
-    public void setTalents(List<Talent> talents) {
-        this.talents = talents;
+    public void setChildTalents(List<Talent> talents) {
+        this.childTalents = talents;
+    }
+
+    @Override
+    public void setCurrentLvl(int currentLvl) {
+        if (childTalents.size() > 0) {
+            childTalents.forEach(e->e.setCurrentLvl(currentLvl));
+        }
+    }
+    @Override
+    public void linkAttributeMap(Map<Integer, Attribute> attributeMap) {
+        for (Talent talent : childTalents) {
+            talent.linkAttributeMap(attributeMap);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("GroupTalent {ID = %d, name = %s [%d], locked = %s}", ID, name, childTalents.size(), locked);
     }
 }

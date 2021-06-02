@@ -76,26 +76,25 @@ public class FateTab {
         List<Component> tabOrder = new ArrayList<>();
         attributes = sheet.getAttributes();
 
-        for (int i = 0; i < attributes.size(); i++) {
+        fateAttributeTable.createJLabel(0, 0, attributes.get(11).getName());
+        fateAttributeTable.createIntegerField(1, 0, 3, 1, attributes.get(11).getBaseValue(), new Dimension(30, -1), false);
+
+        for (int i = 1; i < attributes.size(); i++) {
             int finalI = i;
 
             fateAttributeTable.createJLabel(0, i, attributes.get(i).getName());
-            if (attributes.get(i).isRollable()) {
-                fateAttributeTable.createIntegerField(1, i, 1, 1, sheet.getAttributes().get(i).getTotalValue(), new Dimension(30, -1), false);
+            fateAttributeTable.createIntegerField(1, i, 1, 1, sheet.getAttributes().get(i).getTotalValue(), new Dimension(30, -1), false);
 
-                AdvancedSpinner advancedSpinner = fateAttributeTable.createAdvancedSpinner(2, i, 1, 1, new SpinnerNumberModel(0, 0, 5, 1), new Dimension(30, -1), false);
-                if (sheet.getProfession().hasAttribute(i)) {
-                    advancedSpinner.setEnabled(true);
-                    tabOrder.add(advancedSpinner.getTextField());
-                }
-
-                JIntegerField sumAttr = fateAttributeTable.createIntegerField(3, i, 1, 1, sheet.getAttributes().get(i).getTotalValue(), new Dimension(30, -1), false);
-                sumAttr.setFont(new Font(sumAttr.getFont().getName(), Font.ITALIC + Font.BOLD, sumAttr.getFont().getSize() + 2));
-
-                advancedSpinner.addChangeListener(e -> updatePoints(advancedSpinner, finalI, sumAttr));
-            } else {
-                fateAttributeTable.createIntegerField(1, i, 3, 1, sheet.getAttributes().get(i).getTotalValue(), new Dimension(30, -1), false);
+            AdvancedSpinner advancedSpinner = fateAttributeTable.createAdvancedSpinner(2, i, 1, 1, new SpinnerNumberModel(0, 0, 5, 1), new Dimension(30, -1), false);
+            if (sheet.getProfession().hasAttribute(i)) {
+                advancedSpinner.setEnabled(true);
+                tabOrder.add(advancedSpinner.getTextField());
             }
+
+            JIntegerField sumAttr = fateAttributeTable.createIntegerField(3, i, 1, 1, sheet.getAttributes().get(i).getTotalValue(), new Dimension(30, -1), false);
+            sumAttr.setFont(new Font(sumAttr.getFont().getName(), Font.ITALIC + Font.BOLD, sumAttr.getFont().getSize() + 2));
+
+            advancedSpinner.addChangeListener(e -> updatePoints(advancedSpinner, finalI, sumAttr));
         }
         fateAttributeTable.createJLabel(0, 12, "HP");
         fateAttributeTable.createIntegerField(1, 12, 3, 1, sheet.getMaxHealthPoints(), new Dimension(30, -1), false);

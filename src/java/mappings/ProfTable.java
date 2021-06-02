@@ -14,15 +14,15 @@ public class ProfTable {
     @Id
     @Column(name = "ID")
     private int ID;
-    @Column(name = "IDXDOWN")
+    @Column(name = "IDX_DOWN")
     private int indexDOWN;
-    @Column(name = "IDXUP")
+    @Column(name = "IDX_UP")
     private int indexUP;
     @ManyToOne
-    @JoinColumn(name = "IDPROF")
+    @JoinColumn(name = "ID_PROF")
     private Profession prof;
     @ManyToOne
-    @JoinColumn(name = "IDRACE")
+    @JoinColumn(name = "ID_RACE")
     private Subrace subrace;
 
     public ProfTable() {}

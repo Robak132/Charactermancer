@@ -9,7 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "RACE_TABLE")
+@Table(name = "RACE_RND_TABLE")
 public class RaceTable {
     @Id
     @Column(name = "ID")

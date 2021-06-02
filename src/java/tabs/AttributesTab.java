@@ -109,45 +109,39 @@ public class AttributesTab {
     }
 
     private void createTable() {
-        for (int i = 0; i < attributes.size(); i++) {
+        attrAttributesTable.createJLabel(0, 0, attributes.get(11).getName());
+        attrAttributesTable.createIntegerField(1, 0, 3, 1, attributes.get(11).getBaseValue(), new Dimension(30, -1), false);
+
+        for (int i = 1; i < attributes.size(); i++) {
             int finalI = i;
-            boolean changeBackground = sheet.getRace().getSize()== Size.NORMAL && i == 3 || i == 4 || i == 9;
+            boolean changeBackground = sheet.getRace().getSize() == Size.NORMAL && i == 3 || i == 4 || i == 9;
             Color foregroundColor = Color.black;
             if (sheet.getProfession().hasAttribute(i)) {
                 foregroundColor = ColorPalette.HALF_GREEN;
             }
             attrAttributesTable.createJLabel(0, i, attributes.get(i).getName());
-            if (attributes.get(i).isRollable()) {
-                JIntegerField baseAttr = attrAttributesTable.createIntegerField(1, i, 1, 1, attributes.get(i).getBaseValue(), new Dimension(30, -1), false);
-                baseAttr.setForeground(foregroundColor);
-                if (changeBackground) {
-                    baseAttr.setBackground(ColorPalette.WHITE_BLUE);
-                }
+            JIntegerField baseAttr = attrAttributesTable.createIntegerField(1, i, 1, 1, attributes.get(i).getBaseValue(), new Dimension(30, -1), false);
+            baseAttr.setForeground(foregroundColor);
+            if (changeBackground) {
+                baseAttr.setBackground(ColorPalette.WHITE_BLUE);
+            }
 
-                JIntegerField attr = attrAttributesTable.createIntegerField(2, i, 0, new Dimension(30, -1));
-                attr.setForeground(foregroundColor);
-                attr.setRunnable((o, j) -> attributes.get(finalI).setRndValue(attr.getValue()));
-                attr.addMouseListener((MouseClickedAdapter) this::replaceValues);
-                if (changeBackground) {
-                    attr.setBackground(ColorPalette.WHITE_BLUE);
-                }
+            JIntegerField attr = attrAttributesTable.createIntegerField(2, i, 0, new Dimension(30, -1));
+            attr.setForeground(foregroundColor);
+            attr.setRunnable((o, j) -> attributes.get(finalI).setRndValue(attr.getValue()));
+            attr.addMouseListener((MouseClickedAdapter) this::replaceValues);
+            if (changeBackground) {
+                attr.setBackground(ColorPalette.WHITE_BLUE);
+            }
 
-                JIntegerField sumAttr = attrAttributesTable.createIntegerField(3, i, 1, 1, attributes.get(i).getTotalValue(), new Dimension(30, -1), false);
-                sumAttr.setFont(new Font(sumAttr.getFont().getName(),Font.ITALIC+Font.BOLD,sumAttr.getFont().getSize()+2));
-                sumAttr.setForeground(foregroundColor);
-                if (changeBackground) {
-                    sumAttr.setBackground(ColorPalette.WHITE_BLUE);
-                }
-            } else {
-                JIntegerField baseAttr = attrAttributesTable.createIntegerField(1, i, 3, 1, attributes.get(i).getBaseValue(), new Dimension(30, -1), false);
-                baseAttr.setForeground(foregroundColor);
-                if (changeBackground) {
-                    baseAttr.setBackground(ColorPalette.WHITE_BLUE);
-                }
+            JIntegerField sumAttr = attrAttributesTable.createIntegerField(3, i, 1, 1, attributes.get(i).getTotalValue(), new Dimension(30, -1), false);
+            sumAttr.setFont(new Font(sumAttr.getFont().getName(),Font.ITALIC+Font.BOLD,sumAttr.getFont().getSize()+2));
+            sumAttr.setForeground(foregroundColor);
+            if (changeBackground) {
+                sumAttr.setBackground(ColorPalette.WHITE_BLUE);
             }
         }
         attrAttributesTable.createJLabel(0, 12, "HP");
-
         JIntegerField attrHP = attrAttributesTable.createIntegerField(1, 12, 3, 1, 0, new Dimension(30, -1), false);
         attrHP.setFont(new Font(attrHP.getFont().getName(),Font.ITALIC+Font.BOLD, attrHP.getFont().getSize()+2));
         attrHP.setBackground(ColorPalette.WHITE_BLUE);

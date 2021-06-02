@@ -42,13 +42,13 @@ public class Profession {
     @LazyCollection(LazyCollectionOption.TRUE)
     @ManyToMany
     @JoinTable(name="PROF_ATTRIBUTES",
-            joinColumns = @JoinColumn(name = "IDPROF"),
-            inverseJoinColumns = @JoinColumn(name = "IDATTR"))
+            joinColumns = @JoinColumn(name = "ID_PROF"),
+            inverseJoinColumns = @JoinColumn(name = "ID_ATTR"))
     private List<BaseAttribute> profAttributes;
 
     @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany
-    @JoinColumn(name= "IDPROF")
+    @JoinColumn(name= "ID_PROF")
     @OrderBy("S DESC")
     private List<ProfSkill> profSkills;
 
@@ -57,7 +57,15 @@ public class Profession {
     @JoinTable(name="PROF_TALENTS",
             joinColumns = @JoinColumn(name = "IDPROF"),
             inverseJoinColumns = @JoinColumn(name = "IDTAL"))
-    private List<TalentGroup> profTalents;
+    @Transient
+    private List<Talent> profTalents;
+
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @ManyToMany
+    @JoinTable(name="PROF_TALENTS",
+            joinColumns = @JoinColumn(name = "IDPROF"),
+            inverseJoinColumns = @JoinColumn(name = "IDTAL"))
+    private List<Talent> profTalents2;
 
     public Profession() {}
     public Profession(int ID, String name, int level) {
@@ -127,11 +135,11 @@ public class Profession {
             tempList.add(tempSkill);
             for (Skill singleSkill : tempSkill.getSkills()) {
                 for (Attribute attribute : attributes.values()) {
-                    if (singleSkill.getAttr().equals(attribute.getBaseAttribute())) {
-                        singleSkill.setLinkedAttribute(attribute);
-                        singleSkill.setAdvanceable(true);
-                        break;
-                    }
+//                    if (singleSkill.getAttr().equals(attribute.getBaseAttribute())) {
+//                        singleSkill.setLinkedAttribute(attribute);
+//                        singleSkill.setAdvanceable(true);
+//                        break;
+//                    }
                 }
             }
         }
@@ -144,7 +152,7 @@ public class Profession {
             SkillGroup tempSkill = skill.getSkill();
             tempList.add(tempSkill);
             for (int i = 0; i < tempSkill.getSkills().size(); i++) {
-                Skill singleSkill = tempSkill.getSkills().get(i);
+                SkillSingle singleSkill = (SkillSingle) tempSkill.getSkills().get(i);
                 singleSkill.setEarning(skill.isS());
                 for (Skill compareSkill : skills) {
                     if (compareSkill.equals(singleSkill)) {
@@ -153,11 +161,11 @@ public class Profession {
                     }
                 }
                 for (Attribute attribute : attributes.values()) {
-                    if (singleSkill.getAttr().equals(attribute.getBaseAttribute())) {
-                        tempSkill.getSkills().get(i).setLinkedAttribute(attribute);
-                        tempSkill.getSkills().get(i).setAdvanceable(true);
-                        break;
-                    }
+//                    if (singleSkill.getAttr().equals(attribute.getBaseAttribute())) {
+//                        tempSkill.getSkills().get(i).setLinkedAttribute(attribute);
+//                        tempSkill.getSkills().get(i).setAdvanceable(true);
+//                        break;
+//                    }
                 }
             }
         }
@@ -167,19 +175,19 @@ public class Profession {
         this.profSkills = profSkills;
     }
 
-    public List<TalentGroup> getProfTalents(Map<Integer, Attribute> attributes) {
-        for (TalentGroup talentGroup : profTalents) {
-            for (Talent singleTalent : talentGroup.getTalents()) {
-                if (singleTalent.getAttr() != null) {
-                    Attribute attribute = attributes.get(singleTalent.getAttr().getID());
-                    singleTalent.setLinkedAttribute(attribute);
-                    singleTalent.setAdvanceable(true);
-                }
-            }
-        }
+    public List<Talent> getProfTalents(Map<Integer, Attribute> attributes) {
+//        for (TalentGroup talentGroup : profTalents) {
+//            for (Talent singleTalent : talentGroup.getTalents()) {
+//                if (singleTalent.getAttr() != null) {
+//                    Attribute attribute = attributes.get(singleTalent.getAttr().getID());
+//                    singleTalent.setLinkedAttribute(attribute);
+//                    singleTalent.setAdvanceable(true);
+//                }
+//            }
+//        }
         return profTalents;
     }
-    public void setProfTalents(List<TalentGroup> profTalents) {
+    public void setProfTalents(List<Talent> profTalents) {
         this.profTalents = profTalents;
     }
 

@@ -19,7 +19,7 @@ import mappings.Talent;
 
 public class CharacterSheet {
     public JPanel mainPanel;
-    private PropertyChangeSupport pcs = new  PropertyChangeSupport(this);
+    private final PropertyChangeSupport pcs = new  PropertyChangeSupport(this);
 
     private int move;
     private int healthPoints;

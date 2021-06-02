@@ -62,14 +62,16 @@ public class Race {
     @JoinTable(name="RACE_SKILLS",
             joinColumns = @JoinColumn(name = "IDRACE"),
             inverseJoinColumns = @JoinColumn(name = "IDSKILL"))
-    private List<SkillGroup> raceSkills;
+    @OrderBy("name")
+    private List<Skill> raceSkills;
 
     @LazyCollection(LazyCollectionOption.TRUE)
     @ManyToMany
     @JoinTable(name="RACE_TALENTS",
             joinColumns = @JoinColumn(name = "IDRACE"),
             inverseJoinColumns = @JoinColumn(name = "IDTALENT"))
-    private List<TalentGroup> raceTalents;
+    @OrderBy("name")
+    private List<Talent> raceTalents;
 
     public enum Size {
         TINY(0),
@@ -197,39 +199,30 @@ public class Race {
         return attributesMap.get(index);
     }
 
-    public List<SkillGroup> getRaceSkills() {
+    public List<Skill> getRaceSkills() {
         return raceSkills;
     }
-    public List<SkillGroup> getRaceSkills(Map<Integer, Attribute> attributes) {
-        for (SkillGroup skill : raceSkills) {
-            for (Skill singleSkill : skill.getSkills()) {
-                for (Attribute attribute : attributes.values()) {
-                    if (singleSkill.getAttr().equals(attribute.getBaseAttribute())) {
-                        singleSkill.setLinkedAttribute(attribute);
-                        break;
-                    }
-                }
-            }
-        }
+    public List<Skill> getRaceSkills(Map<Integer, Attribute> attributeMap) {
+        raceSkills.forEach(e->e.linkAttributeMap(attributeMap));
         return raceSkills;
+    }
+    public void setRaceSkills(List<Skill> raceSkills) {
+        this.raceSkills = raceSkills;
     }
 
-    public List<TalentGroup> getRaceTalents() {
+    public List<Talent> getRaceTalents() {
+        raceTalents.forEach(e->e.setCurrentLvl(1));
         return raceTalents;
     }
-    public List<TalentGroup> getRaceTalents(Map<Integer, Attribute> attributes) {
-        for (TalentGroup talent : raceTalents) {
-            for (Talent singleTalent : talent.getTalents()) {
-                singleTalent.setCurrentLvl(1);
-                for (Attribute attribute : attributes.values()) {
-                    if (singleTalent.getAttr() != null && singleTalent.getAttr().equals(attribute.getBaseAttribute())) {
-                        singleTalent.setLinkedAttribute(attribute);
-                        break;
-                    }
-                }
-            }
+    public List<Talent> getRaceTalents(Map<Integer, Attribute> attributeMap) {
+        for (Talent talent : raceTalents) {
+            talent.setCurrentLvl(1);
+            talent.linkAttributeMap(attributeMap);
         }
         return raceTalents;
+    }
+    public void setRaceTalents(List<Talent> raceTalents) {
+        this.raceTalents = raceTalents;
     }
 
     private void createAttributeMap() {

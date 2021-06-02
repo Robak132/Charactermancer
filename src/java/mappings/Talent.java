@@ -1,41 +1,23 @@
 package mappings;
 
+import java.util.Map;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
+
+import org.hibernate.annotations.DiscriminatorFormula;
+import org.hibernate.annotations.DiscriminatorOptions;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorFormula("CASE WHEN IDBASE IS NOT NULL THEN 'SINGLE' ELSE 'GROUP' END")
+@DiscriminatorOptions(force=true)
 @Table(name = "TALENTS")
-public class Talent {
+public abstract class Talent {
     @Id
     @Column(name = "ID")
     private int ID;
     @Column(name = "NAME")
-    private String name;
-
-    @ManyToOne
-    @JoinColumn(name = "IDBASE")
-    private BaseTalent baseTalent;
-
-    @Transient
-    private int currentLvl;
-    @Transient
-    private boolean advanceable;
-    @Transient
-    private Attribute linkedAttribute;
-
-    public Talent() {}
-    public Talent(int ID, String name, int currentLvl, BaseTalent baseTalent) {
-        this.ID = ID;
-        this.name = name;
-        this.currentLvl = currentLvl;
-        this.baseTalent = baseTalent;
-    }
+    protected String name;
 
     public int getID() {
         return ID;
@@ -49,60 +31,9 @@ public class Talent {
     public void setName(String name) {
         this.name = name;
     }
-    public int getCurrentLvl() {
-        return currentLvl;
-    }
-    public void setCurrentLvl(int currentLvl) {
-        this.currentLvl = currentLvl;
-    }
-    public Attribute getLinkedAttribute() {
-        return linkedAttribute;
-    }
-    public void setLinkedAttribute(Attribute linkedAttribute) {
-        this.linkedAttribute = linkedAttribute;
-    }
-    public boolean isAdvanceable() {
-        return advanceable;
-    }
-    public void setAdvanceable(boolean advanceable) {
-        this.advanceable = advanceable;
-    }
 
-    public Integer getMax() {
-        if (linkedAttribute != null) {
-            return linkedAttribute.getBonus();
-        } else if (baseTalent.getConstLvl() != null) {
-            return baseTalent.getConstLvl();
-        }
-        return null;
-    }
-    public String getMaxString() {
-        if (getMax() != null) {
-            return String.valueOf(getMax());
-        }
-        return "";
-    }
-    public BaseAttribute getAttr() {
-        return baseTalent.getAttr();
-    }
-    public void setAttr(BaseAttribute baseAttribute) {
-        baseTalent.setAttr(baseAttribute);
-    }
-    public BaseTalent getBaseTalent() {
-        return baseTalent;
-    }
-    public void setBaseTalent(BaseTalent baseTalent) {
-        this.baseTalent = baseTalent;
-    }
-
-    @Override
-    public String toString() {
-        if (name.equals(baseTalent.getName())) {
-            return String.format("Talent {ID = %d, name = %s, lvl = %d}", ID, name, currentLvl);
-        } else {
-            return String.format("Talent {ID = %d, name = %s [%s], lvl = %d}", ID, name, baseTalent.getName(), currentLvl);
-        }
-    }
+    public abstract void setCurrentLvl(int currentLvl);
+    public abstract void linkAttributeMap(Map<Integer, Attribute> attributeMap);
 
     @Override
     public boolean equals(Object o) {

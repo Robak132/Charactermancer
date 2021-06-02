@@ -1,15 +1,6 @@
 package main;
 
-import java.util.HashSet;
-import java.util.Set;
-import mappings.ProfTable;
-import mappings.Profession;
-import mappings.ProfessionCareer;
-import mappings.ProfessionClass;
-import mappings.Race;
-import mappings.Subrace;
-import mappings.Talent;
-import mappings.TalentGroup;
+import mappings.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
@@ -239,22 +230,19 @@ public class Connection {
         }
         return talent;
     }
+
+    @SuppressWarnings("unchecked")
     public List<Talent> getAllTalents() {
         List<Talent> talents = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query query = session.createQuery("FROM Talent");
-            talents = query.list();
+            talents = session.createQuery("FROM Talent").getResultList();
             session.close();
+
         } catch (Exception ex) {
             abort();
             ex.printStackTrace();
         }
         return talents;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> List<T> list(Query<T> q){
-        return q.list();
     }
 }

@@ -1,15 +1,17 @@
 package mappings;
 
+import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "TALENTS_BASE")
-public class BaseTalent {
+public class TalentBase {
     @Id
     @Column(name = "ID")
     private int ID;
@@ -28,8 +30,11 @@ public class BaseTalent {
     @JoinColumn(name = "MAX_LVL")
     private BaseAttribute attr;
 
-    public BaseTalent() {}
-    public BaseTalent(int ID, String name, String nameEng, String test, String desc) {
+    @Transient
+    private Attribute linkedAttribute;
+
+    public TalentBase() {}
+    public TalentBase(int ID, String name, String nameEng, String test, String desc) {
         this.ID = ID;
         this.name = name;
         this.nameEng = nameEng;
@@ -78,5 +83,18 @@ public class BaseTalent {
     }
     public void setConstLvl(int constLvl) {
         this.constLvl = constLvl;
+    }
+    public int getMaxLvl() {
+        if (attr!=null) {
+            return linkedAttribute.getBonus();
+        } else {
+            return constLvl;
+        }
+    }
+
+    public void linkAttributeMap(Map<Integer, Attribute> attributeMap) {
+        if (attr!=null) {
+            this.linkedAttribute = attributeMap.getOrDefault(attr.getID(), null);
+        }
     }
 }

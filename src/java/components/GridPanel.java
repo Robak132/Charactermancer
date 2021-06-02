@@ -2,11 +2,7 @@ package components;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import java.awt.event.ActionListener;
-import mappings.Skill;
-import mappings.SkillGroup;
-import mappings.Talent;
-import mappings.TalentGroup;
+import mappings.*;
 import org.jetbrains.annotations.NotNull;
 import tools.MultiLineTooltip;
 import tools.RunnableWithObject;
@@ -178,14 +174,14 @@ public class GridPanel extends JPanel {
 
     public Container createSkillComboIfNeeded(SkillGroup groupSkill, int row, int column) {
         if (groupSkill.countSkills() == 1) {
-            Skill singleSkill = groupSkill.getFirstSkill();
+            SkillSingle singleSkill = (SkillSingle) groupSkill.getFirstSkill();
 
             JTextField textField = new JTextField(singleSkill.getName());
             String tooltip = singleSkill.getBaseSkill().getDesc();
             if (tooltip != null) {
                 textField.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
             }
-            if (groupSkill.getFirstSkill().isEarning()) {
+            if (((SkillSingle) groupSkill.getFirstSkill()).isEarning()) {
                 textField.setFont(textField.getFont().deriveFont(Font.BOLD));
             }
             textField.setFocusable(false);
@@ -195,7 +191,7 @@ public class GridPanel extends JPanel {
             return textField;
         } else {
             SearchableComboBox comboBox = new SearchableComboBox();
-            String tooltip = groupSkill.getFirstSkill().getBaseSkill().getDesc();
+            String tooltip = ((SkillSingle) groupSkill.getFirstSkill()).getBaseSkill().getDesc();
             if (tooltip != null) {
                 comboBox.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
             }
@@ -210,28 +206,28 @@ public class GridPanel extends JPanel {
             return comboBox;
         }
     }
-    public Container createTalentComboIfNeeded(TalentGroup groupTalent, int row, int column, Dimension columnDimensions, ActionListener listener) {
-        if (groupTalent.countTalents() == 1) {
-            Talent singleTalent = groupTalent.getFirstTalent();
-
+    public Container createTalentComboIfNeeded(Talent talent, int row, int column, Dimension columnDimensions) {
+        if (talent instanceof TalentSingle) {
+            TalentSingle singleTalent = (TalentSingle) talent;
             JTextField textField = new JTextField(singleTalent.getName());
             textField.setFocusable(false);
             textField.setEditable(false);
-            add(textField, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions, null));
+            add(textField, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH,
+                    GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions, null));
             return textField;
         } else {
+            TalentGroup talentGroup = (TalentGroup) talent;
             SearchableComboBox comboBox = new SearchableComboBox();
-            String tooltip = groupTalent.getName();
+            String tooltip = talentGroup.getName();
             if (tooltip != null) {
                 comboBox.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
             }
-            for (Talent alternateTalent : groupTalent.getTalents()) {
+            for (Talent alternateTalent : talentGroup.getChildTalents()) {
                 comboBox.addItem(alternateTalent.getName());
             }
             comboBox.setPreferredSize(new Dimension(comboBox.getSize().width, -1));
             comboBox.refresh();
             comboBox.setEditable(false);
-            comboBox.addActionListener(listener);
             add(comboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions, null));
             return comboBox;
         }

@@ -1,15 +1,11 @@
 package mappings;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Map;
 
 @Entity
 @Table(name = "SKILLS_BASE")
-public class BaseSkill {
+public class SkillBase {
     @Id
     @Column(name = "ID")
     private int ID;
@@ -24,8 +20,11 @@ public class BaseSkill {
     @JoinColumn(name = "ATTR")
     private BaseAttribute attr;
 
-    public BaseSkill() {}
-    public BaseSkill(int ID, String name, boolean adv, String desc) {
+    @Transient
+    private Attribute linkedAttribute;
+
+    public SkillBase() {}
+    public SkillBase(int ID, String name, boolean adv, String desc) {
         this.ID = ID;
         this.name = name;
         this.adv = adv;
@@ -61,5 +60,17 @@ public class BaseSkill {
     }
     public void setAdv(boolean adv) {
         this.adv = adv;
+    }
+    public Attribute getLinkedAttribute() {
+        return linkedAttribute;
+    }
+    public void setLinkedAttribute(Attribute linkedAttribute) {
+        this.linkedAttribute = linkedAttribute;
+    }
+
+    public void linkAttributeMap(Map<Integer, Attribute> attributeMap) {
+        if (attr!=null) {
+            this.linkedAttribute = attributeMap.getOrDefault(attr.getID(), null);
+        }
     }
 }
