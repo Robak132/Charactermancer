@@ -36,6 +36,10 @@ public class Race {
     @Column(name = "SIZE")
     private int size;
 
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @OneToMany
+    @JoinColumn(name= "IDRACE")
+    private List<RaceAttribute> raceAttributes;
     @Transient
     private Map<Integer, Attribute> attributesMap;
 
@@ -51,11 +55,6 @@ public class Race {
             joinColumns = @JoinColumn(name = "IDRACE"),
             inverseJoinColumns = @JoinColumn(name = "IDCAREER"))
     private List<ProfessionCareer> raceCareers;
-
-    @LazyCollection(LazyCollectionOption.TRUE)
-    @OneToMany
-    @JoinColumn(name= "IDRACE")
-    private List<RaceAttribute> raceAttributes;
 
     @LazyCollection(LazyCollectionOption.TRUE)
     @ManyToMany
@@ -165,6 +164,34 @@ public class Race {
         this.subraces = subraces;
     }
 
+    public List<ProfessionCareer> getRaceCareers() {
+        return raceCareers;
+    }
+    public void setRaceCareers(List<ProfessionCareer> raceCareers) {
+        this.raceCareers = raceCareers;
+    }
+
+    // Attributes
+    private void createAttributeMap() {
+        Map<Integer, Attribute> attributeMap = new ConcurrentHashMap<>();
+        for (RaceAttribute raceAttribute : raceAttributes) {
+            attributeMap.put(raceAttribute.getBaseAttribute().getID(), new Attribute(raceAttribute));
+        }
+        this.attributesMap = attributeMap;
+    }
+    public Map<Integer, Attribute> getAttributes() {
+        if (attributesMap == null) {
+            createAttributeMap();
+        }
+        return attributesMap;
+    }
+    public Attribute getAttribute(int index) {
+        if (attributesMap == null) {
+            createAttributeMap();
+        }
+        return attributesMap.get(index);
+    }
+
     public List<RaceAttribute> getRaceAttributes() {
         return raceAttributes;
     }
@@ -177,28 +204,7 @@ public class Race {
         return null;
     }
 
-    public List<ProfessionCareer> getRaceCareers() {
-        return raceCareers;
-    }
-    public void setRaceCareers(List<ProfessionCareer> raceCareers) {
-        this.raceCareers = raceCareers;
-    }
-
-    public Map<Integer, Attribute> getAttributes() {
-        if (attributesMap == null) {
-            createAttributeMap();
-        }
-
-        return attributesMap;
-    }
-    public Attribute getAttribute(int index) {
-        if (attributesMap == null) {
-            createAttributeMap();
-        }
-
-        return attributesMap.get(index);
-    }
-
+    // Skills
     public List<Skill> getRaceSkills() {
         return raceSkills;
     }
@@ -225,13 +231,6 @@ public class Race {
         this.raceTalents = raceTalents;
     }
 
-    private void createAttributeMap() {
-        Map<Integer, Attribute> attributeMap = new ConcurrentHashMap<>();
-        for (RaceAttribute raceAttribute : raceAttributes) {
-            attributeMap.put(raceAttribute.getBaseAttribute().getID(), new Attribute(raceAttribute));
-        }
-        this.attributesMap = attributeMap;
-    }
 
     @Override
     public String toString() {

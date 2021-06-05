@@ -14,20 +14,22 @@ import mappings.ProfessionClass;
 import mappings.Race;
 import mappings.Race.Size;
 import mappings.Skill;
+import mappings.SkillSingle;
 import mappings.Subrace;
 import mappings.Talent;
+import mappings.TalentSingle;
 
 public class CharacterSheet {
     public JPanel mainPanel;
     private final PropertyChangeSupport pcs = new  PropertyChangeSupport(this);
 
-    private int move;
+    private final int MOVE = 11;
     private int healthPoints;
     private Subrace subrace;
     private Profession prof;
     private Map<Integer, Attribute> attributes = new ConcurrentHashMap<>();
-    private List<Skill> skillList = new ArrayList<>();
-    private List<Talent> talentList = new ArrayList<>();
+    private List<SkillSingle> skillList = new ArrayList<>();
+    private List<TalentSingle> talentList = new ArrayList<>();
     private int exp;
 
     public CharacterSheet() {}
@@ -69,19 +71,19 @@ public class CharacterSheet {
         attributes.put(key, value);
     }
 
-    public List<Skill> getSkillList() {
+    public List<SkillSingle> getSkillList() {
         return skillList;
     }
-    public void setSkillList(List<Skill> skillList) {
+    public void setSkillList(List<SkillSingle> skillList) {
         this.skillList = skillList;
     }
-    public List<Talent> getTalentList() {
+    public List<TalentSingle> getTalentList() {
         return talentList;
     }
-    public void setTalentList(List<Talent> talentList) {
+    public void setTalentList(List<TalentSingle> talentList) {
         this.talentList = talentList;
     }
-    public void addTalents(List<Talent> talents) {
+    public void addTalents(List<TalentSingle> talents) {
         this.talentList.addAll(talents);
     }
 
@@ -94,12 +96,6 @@ public class CharacterSheet {
     }
     public void addExp(int exp) {
         setExp(this.exp + exp);
-    }
-    public int getMove() {
-        return move;
-    }
-    public void setMove(int move) {
-        this.move = move;
     }
 
     public int getMaxHealthPoints() {

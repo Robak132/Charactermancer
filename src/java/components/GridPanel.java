@@ -129,6 +129,9 @@ public class GridPanel extends JPanel {
     public JIntegerField createIntegerField(int row, int column, int value, Dimension dimension) {
         return createIntegerField(row, column, 1, 1, value, dimension, true);
     }
+    public JIntegerField createIntegerField(int row, int column, int value, Dimension dimension, boolean editable) {
+        return createIntegerField(row, column, 1, 1, value, dimension, editable);
+    }
     public JIntegerField createIntegerField(int row, int column, int rowSpan, int colSpan, int value, Dimension dimension, boolean editable) {
         JIntegerField integerField = new JIntegerField(value);
         integerField.setHorizontalAlignment(JTextField.CENTER);
@@ -170,66 +173,5 @@ public class GridPanel extends JPanel {
         searchableComboBox.setLocked(locked);
         add(searchableComboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, dimension, null));
         return searchableComboBox;
-    }
-
-    public Container createSkillComboIfNeeded(SkillGroup groupSkill, int row, int column) {
-        if (groupSkill.countSkills() == 1) {
-            SkillSingle singleSkill = (SkillSingle) groupSkill.getFirstSkill();
-
-            JTextField textField = new JTextField(singleSkill.getName());
-            String tooltip = singleSkill.getBaseSkill().getDesc();
-            if (tooltip != null) {
-                textField.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
-            }
-            if (((SkillSingle) groupSkill.getFirstSkill()).isEarning()) {
-                textField.setFont(textField.getFont().deriveFont(Font.BOLD));
-            }
-            textField.setFocusable(false);
-            textField.setEditable(false);
-
-            add(textField, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
-            return textField;
-        } else {
-            SearchableComboBox comboBox = new SearchableComboBox();
-            String tooltip = ((SkillSingle) groupSkill.getFirstSkill()).getBaseSkill().getDesc();
-            if (tooltip != null) {
-                comboBox.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
-            }
-            for (Skill alternateSkill : groupSkill.getSkills()) {
-                comboBox.addItem(alternateSkill.getName());
-            }
-            comboBox.setPreferredSize(new Dimension(comboBox.getSize().width, -1));
-            comboBox.refresh();
-            comboBox.setEditable(!groupSkill.isLocked());
-
-            add(comboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
-            return comboBox;
-        }
-    }
-    public Container createTalentComboIfNeeded(Talent talent, int row, int column, Dimension columnDimensions) {
-        if (talent instanceof TalentSingle) {
-            TalentSingle singleTalent = (TalentSingle) talent;
-            JTextField textField = new JTextField(singleTalent.getName());
-            textField.setFocusable(false);
-            textField.setEditable(false);
-            add(textField, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH,
-                    GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions, null));
-            return textField;
-        } else {
-            TalentGroup talentGroup = (TalentGroup) talent;
-            SearchableComboBox comboBox = new SearchableComboBox();
-            String tooltip = talentGroup.getName();
-            if (tooltip != null) {
-                comboBox.setToolTipText(MultiLineTooltip.splitToolTip(tooltip));
-            }
-            for (Talent alternateTalent : talentGroup.getChildTalents()) {
-                comboBox.addItem(alternateTalent.getName());
-            }
-            comboBox.setPreferredSize(new Dimension(comboBox.getSize().width, -1));
-            comboBox.refresh();
-            comboBox.setEditable(false);
-            add(comboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, columnDimensions, null));
-            return comboBox;
-        }
     }
 }

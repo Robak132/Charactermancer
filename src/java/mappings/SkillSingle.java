@@ -24,6 +24,15 @@ public class SkillSingle extends Skill {
         // Needed for Hibernate/JPA
     }
 
+    @Override
+    public int getID() {
+        return ID;
+    }
+    @Override
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
     public int getAdvValue() {
         return advValue;
     }
@@ -72,6 +81,6 @@ public class SkillSingle extends Skill {
 
     @Override
     public String toString() {
-        return String.format("SingleSkill {ID = %d, name = %s, AV = %3d}", ID, name, advValue);
+        return String.format("SingleSkill {ID = %d, name = %s, AV = %d}", ID, name, advValue);
     }
 }

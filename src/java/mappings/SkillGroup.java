@@ -31,12 +31,15 @@ public class SkillGroup extends Skill{
         // Needed for Hibernate/JPA
     }
 
+    @Override
     public int getID() {
         return ID;
     }
+    @Override
     public void setID(int ID) {
         this.ID = ID;
     }
+
     public String getName() {
         return name;
     }

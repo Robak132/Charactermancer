@@ -9,6 +9,8 @@ import components.SpinnerTypeListModel;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,18 +26,20 @@ import tools.MultiLineTooltip;
 
 public class RaceSkillTab {
     private CharacterSheet sheet;
-    private CharacterGen parent;
     private Connection connection;
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     private GridPanel skillsPanel;
     private GridPanel talentsPanel;
     private JPanel mainPanel;
     private GridPanel randomTalentsPanel;
-    private JPanel raceskillRollPanel;
-    private JButton raceskillOption1;
-    private JButton raceskillRollButton;
-    private JButton raceskillOKButton;
-    private JIntegerField raceskillRollResult;
+    private JPanel rollPanel;
+    private JButton rollButton;
+    private JButton rollOKButton;
+    private JIntegerField rollResult;
+    private JButton option1Button;
+    private JIntegerField points3Field;
+    private JIntegerField points5Field;
 
     private final Map<Integer, Integer> raceskillPoints = new ConcurrentHashMap<>();
 
@@ -62,12 +66,14 @@ public class RaceSkillTab {
 
     public void initialise(CharacterGen parent, CharacterSheet sheet, Connection connection) {
         this.sheet = sheet;
-        this.parent = parent;
         this.connection = connection;
 
         raceskillPoints.put(0, 0);
-        raceskillPoints.put(3, 0);
-        raceskillPoints.put(5, 0);
+        raceskillPoints.put(3, 3);
+        raceskillPoints.put(5, 3);
+        this.addObserver("points3", points3Field);
+        this.addObserver("points5", points5Field);
+
         raceSkills = sheet.getRace().getRaceSkills(sheet.getAttributes());
         raceTalents = sheet.getRace().getRaceTalents(sheet.getAttributes());
 
@@ -81,25 +87,18 @@ public class RaceSkillTab {
             rollTalents();
             rollRandomTalents(sheet.getSubrace().getRandomTalents());
         });
-//        raceskillRollButton.addActionListener(e -> roll());
-//        raceskillRollButton.setMnemonic(KeyEvent.VK_R);
-//        raceskillOption1.addActionListener(e -> {
-//            List<Skill> tempList = new ArrayList<>();
-//            for (Skill skill : raceSkills) {
-//                if (skill.getAdvValue() != 0) {
-//                    tempList.add(skill);
-//                }
-//            }
-//            raceSkills = tempList;
-//
-//            sheet.setSkillList(raceSkills);
-//            sheet.setTalentList(raceTalents);
-//            sheet.addTalents(randomTalents);
-//
-//            System.out.println(sheet);
-//
-//            parent.export();
-//        });
+        rollButton.addActionListener(e -> rollRandomTalents());
+        rollButton.setMnemonic(KeyEvent.VK_R);
+        rollOKButton.addActionListener(e -> {
+            // TODO: Manual entering
+        });
+        option1Button.addActionListener(e -> {
+            sheet.setSkillList(visibleRaceSkills);
+            sheet.setTalentList(visibleRaceTalents);
+            sheet.addTalents(visibleRandomTalents);
+
+            System.out.println(sheet);
+        });
     }
 
     private void createSkillTable(List<Skill> raceSkills) {
@@ -131,8 +130,7 @@ public class RaceSkillTab {
             AdvancedSpinner jSpinner = skillsPanel.createAdvancedSpinner(row, column++, 1, 1, new SpinnerTypeListModel<>(new Integer[]{0, 3, 5}), new Dimension(35, -1), true);
             jSpinner.addChangeListener(e -> skillSpinnerChange(finalI, finalRow, finalColumn, jSpinner));
 
-            JIntegerField sumField = skillsPanel.createIntegerField(row, column++, activeSkill.getBaseSkill().getLinkedAttribute().getTotalValue(), new Dimension(30, -1));
-            sumField.setEditable(false);
+            skillsPanel.createIntegerField(row, column++, activeSkill.getBaseSkill().getLinkedAttribute().getTotalValue(), new Dimension(30, -1), false);
 
             tabOrder.add(jSpinner.getTextField());
         }
@@ -155,12 +153,16 @@ public class RaceSkillTab {
 
         if (lastManual != now) {
             // Manual change of Spinner
+            pcs.firePropertyChange("points" + lastManual, (int) raceskillPoints.get(lastManual), raceskillPoints.get(lastManual) + 1);
+            pcs.firePropertyChange("points" + now, (int) raceskillPoints.get(now), raceskillPoints.get(now) - 1);
             raceskillPoints.put(lastManual, raceskillPoints.get(lastManual) + 1);
             raceskillPoints.put(now, raceskillPoints.get(now) - 1);
             visibleRaceSkills.get(idx).setAdvValue(now);
             updateSkillRow(idx, row, column);
         } else if (lastAuto != now) {
             // Automatic change via updateAll()
+            pcs.firePropertyChange("points" + lastAuto, (int) raceskillPoints.get(lastAuto), raceskillPoints.get(lastAuto) + 1);
+            pcs.firePropertyChange("points" + now, (int) raceskillPoints.get(now), raceskillPoints.get(now) - 1);
             raceskillPoints.put(lastAuto, raceskillPoints.get(lastAuto) + 1);
             raceskillPoints.put(now, raceskillPoints.get(now) - 1);
         }
@@ -221,11 +223,9 @@ public class RaceSkillTab {
 
             TalentSingle activeTalent = createComboIfNeeded(raceTalent, i, row, column++);
 
-            JIntegerField attrField = talentsPanel.createIntegerField(row, column++, activeTalent.getCurrentLvl(), fieldDimensions[column-1]);
-            attrField.setEditable(false);
+            talentsPanel.createIntegerField(row, column++, activeTalent.getCurrentLvl(), fieldDimensions[column-1], false);
 
-            JIntegerField maxAttrField = talentsPanel.createIntegerField(row, column++, activeTalent.getMax(), fieldDimensions[column-1]);
-            maxAttrField.setEditable(false);
+            talentsPanel.createIntegerField(row, column++, activeTalent.getMax(), fieldDimensions[column-1], false);
 
             JTextArea testArea = talentsPanel.createTextArea(row, column++, activeTalent.getBaseTalent().getTest(), fieldDimensions[column-1], false);
             testArea.setFont(testArea.getFont().deriveFont(Font.PLAIN, 10));
@@ -281,17 +281,15 @@ public class RaceSkillTab {
 
     private void createRandomTalentTable(Dimension[] fieldDimensions) {
         if (sheet.getSubrace().getRandomTalents() != 0) {
-            raceskillRollPanel.setVisible(true);
+            rollPanel.setVisible(true);
             for (int row=0; row < sheet.getSubrace().getRandomTalents(); row++) {
                 int column = 0;
 
                 randomTalentsPanel.createSearchableComboBox(row, column++, fieldDimensions[column-1], true);
 
-                JIntegerField attrField = randomTalentsPanel.createIntegerField(row, column++, 0, fieldDimensions[column-1]);
-                attrField.setEditable(false);
+                randomTalentsPanel.createIntegerField(row, column++, 0, fieldDimensions[column-1], false);
 
-                JIntegerField maxAttrField = randomTalentsPanel.createIntegerField(row, column++, 0, fieldDimensions[column-1]);
-                maxAttrField.setEditable(false);
+                randomTalentsPanel.createIntegerField(row, column++, 0, fieldDimensions[column-1], false);
 
                 JTextArea testArea = randomTalentsPanel.createTextArea(row, column++, "", fieldDimensions[column-1], false);
                 testArea.setFont(testArea.getFont().deriveFont(Font.PLAIN, 10));
@@ -328,12 +326,12 @@ public class RaceSkillTab {
             } else {
                 activeTalent = (TalentSingle) ((TalentGroup) raceTalents.get(i)).getRndTalent();
             }
-            updateTalentRow(talentsPanel, i, i + 1, 0, visibleRandomTalents, activeTalent);
+            updateTalentRow(talentsPanel, i, i + 1, 0, visibleRaceTalents, activeTalent);
         }
     }
     private void rollRandomTalents(int iterations) {
         for (int i=0; i<iterations;i++) {
-            if (raceskillRollButton.isEnabled()) {
+            if (rollButton.isEnabled()) {
                 Object[] result = CharacterGen.getRandomTalent(connection, sheet.getAttributes());
                 Talent rollTalent = (Talent) result[1];
                 int rollResultNumeric = (int) result[0];
@@ -345,18 +343,20 @@ public class RaceSkillTab {
                     rollTalent = connection.getRandomTalent(rollResultNumeric);
                 }
                 randomTalents.add(rollTalent);
-                raceskillRollResult.setValue(rollResultNumeric);
+                rollResult.setValue(rollResultNumeric);
 
                 int row = randomTalents.size() - 1;
                 SearchableComboBox searchableComboBox = (SearchableComboBox) randomTalentsPanel.getComponent(0, row);
                 if (rollTalent instanceof TalentSingle) {
                     searchableComboBox.addItem(rollTalent.getName());
+                    searchableComboBox.refresh();
                     visibleRandomTalents.add((TalentSingle) rollTalent);
                 } else {
                     TalentGroup rollTalentGroup = (TalentGroup) rollTalent;
                     for (Talent talent : rollTalentGroup.getChildTalents()) {
                         searchableComboBox.addItem(talent.getName());
                     }
+                    searchableComboBox.refresh();
                     searchableComboBox.setLocked(false);
                     searchableComboBox.setEditable(!rollTalentGroup.isLocked());
                     searchableComboBox.setToolTipText(MultiLineTooltip.splitToolTip(rollTalentGroup.getName()));
@@ -365,17 +365,21 @@ public class RaceSkillTab {
                     TalentSingle newTalent = (TalentSingle) rollTalentGroup.getChildTalents().get(searchableComboBox.getSelectedIndex());
                     searchableComboBox.addActionListener(e -> updateTalentRow(randomTalentsPanel, row, row, 0, visibleRandomTalents, newTalent));
                 }
-                searchableComboBox.refresh();
+                updateTalentRow(randomTalentsPanel, row, row, 0, visibleRandomTalents);
 
                 if (sheet.getSubrace().getRandomTalents() == randomTalents.size()) {
-                    raceskillRollButton.setEnabled(false);
-                    raceskillRollResult.setEditable(false);
-                    raceskillOKButton.setEnabled(false);
+                    rollButton.setEnabled(false);
+                    rollResult.setEditable(false);
+                    rollOKButton.setEnabled(false);
                 }
             }
         }
     }
     private void rollRandomTalents() {
         rollRandomTalents(1);
+    }
+
+    private void addObserver(String propertyName, PropertyChangeListener l) {
+        pcs.addPropertyChangeListener(propertyName, l);
     }
 }
