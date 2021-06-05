@@ -378,16 +378,15 @@ public class CharacterGen {
         }
         return returnList;
     }
-    public static Object[] getRandomTalent(Connection connection) {
+    public static Object[] getRandomTalent(Connection connection, Map<Integer, Attribute> attributeMap) {
         Object[] returns = new Object[2];
         int numeric = Dice.randomDice(1, 100);
-        TalentGroup talentGroup = connection.getRandomTalent(numeric);
-//        for (Talent talent : talentGroup.getTalents()) {
-//            talent.setCurrentLvl(1);
-//        }
+        Talent talent = connection.getRandomTalent(numeric);
+        talent.setCurrentLvl(1);
+        talent.linkAttributeMap(attributeMap);
 
         returns[0] = numeric;
-        returns[1] = talentGroup;
+        returns[1] = talent;
         return returns;
     }
 }

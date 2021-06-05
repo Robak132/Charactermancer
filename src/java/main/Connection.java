@@ -216,13 +216,14 @@ public class Connection {
         return profs;
     }
 
-    public TalentGroup getRandomTalent(int n) {
-        TalentGroup talent = null;
+    @SuppressWarnings("unchecked")
+    public Talent getRandomTalent(int n) {
+        Talent talent = null;
         try {
             Session session = factory.openSession();
-            Query query = session.createQuery("SELECT r.talent FROM TalentRandom r WHERE r.indexDOWN <= :param AND :param <= r.indexUP");
+            Query<Talent> query = session.createQuery("SELECT r.talent FROM TalentRandom r WHERE r.indexDOWN <= :param AND :param <= r.indexUP");
             query.setParameter("param", n);
-            talent = query.list().size()==0 ? null : (TalentGroup) query.list().get(0);
+            talent = query.list().size()==0 ? null : query.list().get(0);
             session.close();
         } catch (Exception ex) {
             abort();
