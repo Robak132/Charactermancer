@@ -36,16 +36,16 @@ public class TalentGroup extends Talent {
     }
 
     public Talent getFirstTalent() {
+        /// TODO: make returns only TalentSingle
         return childTalents.get(0);
     }
     public Talent getRndTalent() {
+        /// TODO: make returns only TalentSingle
         return (Talent) Dice.randomItem(childTalents);
-    }
-    public int getRndTalentIndex() {
-        return Dice.randomInt(0, childTalents.size() - 1);
     }
 
     public List<Talent> getChildTalents() {
+        /// TODO: make returns only TalentSingle
         return childTalents;
     }
     public int countChildTalents() {

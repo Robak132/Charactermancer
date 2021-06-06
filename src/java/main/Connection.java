@@ -12,6 +12,7 @@ import org.hibernate.query.Query;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 public class Connection {
     private StandardServiceRegistry registry;
     private SessionFactory factory;
@@ -188,7 +189,7 @@ public class Connection {
         List<Profession> profs = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query query = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.race.id =:param AND t.prof.career.professionClass.name!='Zwierzę'");
+            Query<Profession> query = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.subrace.id =:param AND t.prof.career.professionClass.name!='Zwierzę'");
             query.setParameter("param", race);
             profs = query.list();
             session.close();
@@ -204,7 +205,7 @@ public class Connection {
         List<Profession> profs = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query query = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.prof.career.professionClass = :param2 AND t.race.id =:param");
+            Query<Profession> query = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.prof.career.professionClass = :param2 AND t.subrace.id =:param");
             query.setParameter("param", race);
             query.setParameter("param2", clss);
             profs = query.list();
@@ -216,7 +217,6 @@ public class Connection {
         return profs;
     }
 
-    @SuppressWarnings("unchecked")
     public Talent getRandomTalent(int n) {
         Talent talent = null;
         try {
@@ -232,7 +232,6 @@ public class Connection {
         return talent;
     }
 
-    @SuppressWarnings("unchecked")
     public List<Talent> getAllTalents() {
         List<Talent> talents = new ArrayList<>();
         try {

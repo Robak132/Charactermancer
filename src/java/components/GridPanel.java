@@ -2,15 +2,19 @@ package components;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import mappings.*;
-import org.jetbrains.annotations.NotNull;
-import tools.MultiLineTooltip;
-import tools.RunnableWithObject;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SpinnerModel;
 import tools.DynamicMatrix2D;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.*;
+import tools.RunnableWithObject;
 
 public class GridPanel extends JPanel {
     private int columns = 1;
@@ -24,8 +28,12 @@ public class GridPanel extends JPanel {
     public static final int ALIGNMENT_CENTER = 2;
 
     @Override
-    public void add(@NotNull Component comp, Object constraints) {
+    public void add(Component comp, Object constraints) {
         GridConstraints editConstr = (GridConstraints) constraints;
+        Component lastComponent = components.get(editConstr.getRow(), editConstr.getColumn());
+        if (lastComponent != null) {
+            items.remove(lastComponent);
+        }
         int columnCount = editConstr.getColumn();
         editConstr.setColumn(columnCount + 1);
         if (columns < columnCount + 1) {
@@ -57,6 +65,8 @@ public class GridPanel extends JPanel {
             }
             super.add(pair.getKey(), pair.getValue());
         }
+        revalidate();
+        repaint();
     }
 
     public int getColumns() {

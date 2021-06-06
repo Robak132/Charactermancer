@@ -99,6 +99,7 @@ public class RaceSkillTab {
 
             System.out.println(sheet);
         });
+        option1Button.setMnemonic(KeyEvent.VK_1);
     }
 
     private void createSkillTable(List<Skill> raceSkills) {
@@ -286,7 +287,7 @@ public class RaceSkillTab {
             for (int row=0; row < sheet.getSubrace().getRandomTalents(); row++) {
                 int column = 0;
 
-                randomTalentsPanel.createSearchableComboBox(row, column++, fieldDimensions[column-1], true);
+                randomTalentsPanel.createTextField(row, column++, "", fieldDimensions[column-1], false);
 
                 randomTalentsPanel.createIntegerField(row, column++, 0, fieldDimensions[column-1], false);
 
@@ -347,21 +348,22 @@ public class RaceSkillTab {
                 rollResult.setValue(rollResultNumeric);
 
                 int row = randomTalents.size() - 1;
-                SearchableComboBox searchableComboBox = (SearchableComboBox) randomTalentsPanel.getComponent(0, row);
+                JTextField textField = (JTextField) randomTalentsPanel.getComponent(0, row);
                 if (rollTalent instanceof TalentSingle) {
-                    searchableComboBox.addItem(rollTalent.getName());
-                    searchableComboBox.refresh();
+                    textField.setText(rollTalent.getName());
                     visibleRandomTalents.add((TalentSingle) rollTalent);
                 } else {
                     TalentGroup rollTalentGroup = (TalentGroup) rollTalent;
-                    for (Talent talent : rollTalentGroup.getChildTalents()) {
-                        searchableComboBox.addItem(talent.getName());
-                    }
+                    Dimension dimension = new Dimension(textField.getWidth(), -1);
+                    SearchableComboBox searchableComboBox = randomTalentsPanel.createSearchableComboBox(row, 0, dimension, false);
+                    randomTalentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
+
+                    rollTalentGroup.getChildTalents().forEach(e->searchableComboBox.addItem(e.getName()));
                     searchableComboBox.refresh();
                     searchableComboBox.setLocked(false);
                     searchableComboBox.setEditable(!rollTalentGroup.isLocked());
                     searchableComboBox.setToolTipText(MultiLineTooltip.splitToolTip(rollTalentGroup.getName()));
-                    visibleRandomTalents.add((TalentSingle) rollTalentGroup.getRndTalent());
+                    visibleRandomTalents.add((TalentSingle) rollTalentGroup.getFirstTalent());
 
                     searchableComboBox.addActionListener(e -> updateTalentRow(randomTalentsPanel, row, row, 0, visibleRandomTalents,
                             (TalentSingle) rollTalentGroup.getChildTalents().get(searchableComboBox.getSelectedIndex())));
