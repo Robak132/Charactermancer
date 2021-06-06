@@ -6,7 +6,10 @@ import components.GridPanel;
 import components.JIntegerField;
 import components.SearchableComboBox;
 import components.SpinnerTypeListModel;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeListener;
@@ -15,16 +18,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import main.CharacterGen;
 import main.CharacterSheet;
 import main.Connection;
-import mappings.*;
+import mappings.Skill;
+import mappings.SkillGroup;
+import mappings.SkillSingle;
+import mappings.Talent;
+import mappings.TalentGroup;
+import mappings.TalentSingle;
 import org.apache.logging.log4j.LogManager;
 import tools.AbstractActionHelper;
 import tools.MultiLineTooltip;
 
-public class RaceSkillTab {
+public class ProfSkillTab {
     private CharacterSheet sheet;
     private Connection connection;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
@@ -57,10 +71,10 @@ public class RaceSkillTab {
             new Dimension(200, -1)
     };
 
-    public RaceSkillTab() {
+    public ProfSkillTab() {
         // Needed for GUI Designer
     }
-    public RaceSkillTab(CharacterGen parent, CharacterSheet sheet, Connection connection) {
+    public ProfSkillTab(CharacterGen parent, CharacterSheet sheet, Connection connection) {
         initialise(parent, sheet, connection);
     }
 
@@ -97,9 +111,8 @@ public class RaceSkillTab {
             sheet.setTalentList(visibleRaceTalents);
             sheet.addTalents(visibleRandomTalents);
 
-            parent.moveToNextTab();
+            System.out.println(sheet);
         });
-        option1Button.setMnemonic(KeyEvent.VK_1);
     }
 
     private void createSkillTable(List<Skill> raceSkills) {

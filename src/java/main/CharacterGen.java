@@ -6,17 +6,41 @@ import components.CustomFocusTraversalPolicy;
 import components.GridPanel;
 import components.JIntegerField;
 import components.SearchableComboBox;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.swing.*;
-
-import mappings.*;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import mappings.Attribute;
+import mappings.Profession;
+import mappings.Race;
+import mappings.Skill;
+import mappings.SkillGroup;
+import mappings.SkillSingle;
+import mappings.Subrace;
+import mappings.Talent;
+import mappings.TalentGroup;
+import mappings.TalentSingle;
 import org.apache.logging.log4j.LogManager;
 import tabs.AttributesTab;
 import tabs.FateTab;
+import tabs.ProfSkillTab;
 import tabs.ProfTab;
 import tabs.RaceSkillTab;
 import tabs.RaceTab;
@@ -37,12 +61,12 @@ public class CharacterGen {
 
     private GridPanel profskillSkillsPanel;
     private GridPanel profskillTalentsPanel;
-    private JButton profskillOption1;
     private RaceTab raceTab;
     private ProfTab profTab;
     private AttributesTab attributesTab;
     private FateTab fateTab;
     private RaceSkillTab raceSkillTab;
+    private ProfSkillTab profSkillTab;
 
     private final List<Talent> raceTalents = new ArrayList<>();
     private final List<SkillGroup> profSkills = new ArrayList<>();
@@ -215,8 +239,7 @@ public class CharacterGen {
                 raceSkillTab.initialise(this, sheet, connection);
                 break;
             case 5:
-//                profskillCreateTable();
-//                proftalentCreateTable();
+                profSkillTab.initialise(this, sheet, connection);
                 break;
             default:
                 break;

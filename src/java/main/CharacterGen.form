@@ -96,7 +96,7 @@
               </nested-form>
             </children>
           </grid>
-          <grid id="1bceb" layout-manager="GridLayoutManager" row-count="11" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="1bceb" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <tabbedpane title="Profession Skills &amp; Talents" enabled="false"/>
@@ -104,124 +104,11 @@
             <properties/>
             <border type="none"/>
             <children>
-              <vspacer id="73535">
+              <nested-form id="6175a" form-file="tabs/ProfSkillTab.form" binding="profSkillTab">
                 <constraints>
-                  <grid row="10" column="0" row-span="1" col-span="3" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
-              </vspacer>
-              <vspacer id="13a1">
-                <constraints>
-                  <grid row="7" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
-                    <preferred-size width="-1" height="20"/>
-                  </grid>
-                </constraints>
-              </vspacer>
-              <grid id="c7853" class="components.GridPanel" binding="profskillSkillsPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                <margin top="0" left="0" bottom="0" right="0"/>
-                <constraints>
-                  <grid row="5" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties/>
-                <border type="none"/>
-                <children/>
-              </grid>
-              <grid id="dbacf" class="components.GridPanel" binding="profskillTalentsPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                <margin top="0" left="0" bottom="0" right="0"/>
-                <constraints>
-                  <grid row="8" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties/>
-                <border type="none"/>
-                <children/>
-              </grid>
-              <component id="9543f" class="javax.swing.JButton" binding="profskillOption1">
-                <constraints>
-                  <grid row="9" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="2" indent="1" use-parent-layout="false">
-                    <preferred-size width="400" height="-1"/>
-                  </grid>
-                </constraints>
-                <properties>
-                  <text value="OK"/>
-                </properties>
-              </component>
-              <component id="d3992" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <font size="16"/>
-                  <horizontalAlignment value="0"/>
-                  <horizontalTextPosition value="0"/>
-                  <text value="Distribute 40 points between your profession skills."/>
-                </properties>
-              </component>
-              <component id="b8bf" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <font size="12" style="0"/>
-                  <horizontalAlignment value="0"/>
-                  <horizontalTextPosition value="0"/>
-                  <text value="&lt;html&gt;&lt;b&gt;Note 1:&lt;/b&gt; you need 5 points in 8 skills including your earning skill to progress further"/>
-                </properties>
-              </component>
-              <component id="5b2fe" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <font size="12" style="0"/>
-                  <horizontalAlignment value="0"/>
-                  <horizontalTextPosition value="0"/>
-                  <text value="&lt;html&gt;&lt;b&gt;Note 2:&lt;/b&gt; if you don't add points to your advanced skills, you won't be able to use them in game.&lt;/html&gt;"/>
-                </properties>
-              </component>
-              <hspacer id="618e1">
-                <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-              </hspacer>
-              <component id="5de6a" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <horizontalAlignment value="4"/>
-                  <horizontalTextPosition value="4"/>
-                  <text value="Remain:"/>
-                </properties>
-              </component>
-              <component id="80945" class="components.JIntegerField">
-                <constraints>
-                  <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="100" height="-1"/>
-                  </grid>
-                </constraints>
-                <properties>
-                  <editable value="false"/>
-                  <horizontalAlignment value="0"/>
-                  <text value="40"/>
-                </properties>
-              </component>
-              <vspacer id="515a3">
-                <constraints>
-                  <grid row="3" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
-                    <preferred-size width="-1" height="20"/>
-                  </grid>
-                </constraints>
-              </vspacer>
-              <component id="61c82" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="6" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <font size="16"/>
-                  <horizontalAlignment value="0"/>
-                  <horizontalTextPosition value="0"/>
-                  <text value="Choose one talent"/>
-                </properties>
-              </component>
+              </nested-form>
             </children>
           </grid>
         </children>
