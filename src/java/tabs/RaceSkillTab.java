@@ -186,7 +186,8 @@ public class RaceSkillTab {
             skillNameCombo.setPreferredSize(new Dimension(skillNameCombo.getSize().width, -1));
             skillNameCombo.refresh();
             skillNameCombo.setForeground(color);
-            skillNameCombo.addActionListener(e -> updateSkillRow(idx, row, column, (SkillSingle) skillGroup.getSkills().get(skillNameCombo.getSelectedIndex())));
+            skillNameCombo.addActionListener(e -> updateSkillRow(idx, row, column,
+                    (SkillSingle) skillGroup.getSkills().get(skillNameCombo.getSelectedIndex())));
 
             visibleRaceSkills.add(activeSkill);
             return activeSkill;
@@ -252,8 +253,8 @@ public class RaceSkillTab {
             }
             talentNameCombo.setPreferredSize(new Dimension(talentNameCombo.getSize().width, -1));
             talentNameCombo.refresh();
-            TalentSingle newTalent = (TalentSingle) talentGroup.getChildTalents().get(talentNameCombo.getSelectedIndex());
-            talentNameCombo.addActionListener(e -> updateTalentRow(randomTalentsPanel, idx, row, column, visibleRaceTalents, newTalent));
+            talentNameCombo.addActionListener(e -> updateTalentRow(talentsPanel, idx, row, column, visibleRaceTalents,
+                    (TalentSingle) talentGroup.getChildTalents().get(talentNameCombo.getSelectedIndex())));
 
             visibleRaceTalents.add(activeTalent);
             return activeTalent;
@@ -362,8 +363,8 @@ public class RaceSkillTab {
                     searchableComboBox.setToolTipText(MultiLineTooltip.splitToolTip(rollTalentGroup.getName()));
                     visibleRandomTalents.add((TalentSingle) rollTalentGroup.getRndTalent());
 
-                    TalentSingle newTalent = (TalentSingle) rollTalentGroup.getChildTalents().get(searchableComboBox.getSelectedIndex());
-                    searchableComboBox.addActionListener(e -> updateTalentRow(randomTalentsPanel, row, row, 0, visibleRandomTalents, newTalent));
+                    searchableComboBox.addActionListener(e -> updateTalentRow(randomTalentsPanel, row, row, 0, visibleRandomTalents,
+                            (TalentSingle) rollTalentGroup.getChildTalents().get(searchableComboBox.getSelectedIndex())));
                 }
                 updateTalentRow(randomTalentsPanel, row, row, 0, visibleRandomTalents);
 

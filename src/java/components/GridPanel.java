@@ -114,7 +114,6 @@ public class GridPanel extends JPanel {
         add(label, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
         return label;
     }
-
     public JLabel createJLabel(int row, int column, String name) {
         return createJLabel(row, column, 1, 1, name);
     }
