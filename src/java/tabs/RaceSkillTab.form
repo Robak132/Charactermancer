@@ -132,7 +132,7 @@
           <font size="12" style="0"/>
           <horizontalAlignment value="0"/>
           <horizontalTextPosition value="0"/>
-          <text value="&lt;html&gt;Note that if you don't add points to advanced skills they may be lost unless they are &lt;font color=rgb(0,128,0)&gt;profession skills&lt;/font&gt;.&lt;/html&gt;"/>
+          <text value="&lt;html&gt;&lt;b&gt;Note:&lt;/b&gt; if you don't add points to advanced skills they may be lost unless they are &lt;font color=rgb(0,128,0)&gt;profession skills&lt;/font&gt;.&lt;/html&gt;"/>
         </properties>
       </component>
       <vspacer id="db8c3">

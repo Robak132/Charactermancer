@@ -89,6 +89,23 @@ public class SkillGroup extends Skill{
         }
     }
     @Override
+    public boolean isAdvanceable() {
+        boolean adv = true;
+        for (Skill skill : skills) {
+            if (!skill.isAdvanceable()) {
+                adv = false;
+                break;
+            }
+        }
+        return adv;
+    }
+    @Override
+    public void setAdvanceable(boolean advanceable) {
+        for (Skill skill : skills) {
+            skill.setAdvanceable(advanceable);
+        }
+    }
+    @Override
     public void linkAttributeMap(Map<Integer, Attribute> attributeMap) {
         for (Skill skill : skills) {
             skill.linkAttributeMap(attributeMap);

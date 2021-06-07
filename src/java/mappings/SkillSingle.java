@@ -36,12 +36,6 @@ public class SkillSingle extends Skill {
     public int getAdvValue() {
         return advValue;
     }
-    public boolean isAdvanceable() {
-        return advanceable;
-    }
-    public void setAdvanceable(boolean advanceable) {
-        this.advanceable = advanceable;
-    }
     public SkillBase getBaseSkill() {
         return baseSkill;
     }
@@ -77,6 +71,14 @@ public class SkillSingle extends Skill {
     @Override
     public void setAdvValue(int advValue) {
         this.advValue = advValue;
+    }
+    @Override
+    public boolean isAdvanceable() {
+        return advanceable;
+    }
+    @Override
+    public void setAdvanceable(boolean advanceable) {
+        this.advanceable = advanceable;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package mappings;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,9 +19,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "PROFESSIONS")
@@ -57,15 +56,7 @@ public class Profession {
     @JoinTable(name="PROF_TALENTS",
             joinColumns = @JoinColumn(name = "IDPROF"),
             inverseJoinColumns = @JoinColumn(name = "IDTAL"))
-    @Transient
     private List<Talent> profTalents;
-
-    @LazyCollection(LazyCollectionOption.TRUE)
-    @ManyToMany
-    @JoinTable(name="PROF_TALENTS",
-            joinColumns = @JoinColumn(name = "IDPROF"),
-            inverseJoinColumns = @JoinColumn(name = "IDTAL"))
-    private List<Talent> profTalents2;
 
     public Profession() {}
     public Profession(int ID, String name, int level) {
@@ -125,50 +116,37 @@ public class Profession {
         this.profAttributes = profAttributes;
     }
 
-    public List<ProfSkill> getProfSkills() {
-        return profSkills;
-    }
-    public List<SkillGroup> getProfSkills(Map<Integer, Attribute> attributes) {
-        List<SkillGroup> tempList = new ArrayList<>();
-        for (ProfSkill skill : profSkills) {
-            SkillGroup tempSkill = skill.getSkill();
-            tempList.add(tempSkill);
-            for (Skill singleSkill : tempSkill.getSkills()) {
-                for (Attribute attribute : attributes.values()) {
-//                    if (singleSkill.getAttr().equals(attribute.getBaseAttribute())) {
-//                        singleSkill.setLinkedAttribute(attribute);
-//                        singleSkill.setAdvanceable(true);
-//                        break;
-//                    }
-                }
-            }
+    public List<Skill> getProfSkills() {
+        List<Skill> tempList = new ArrayList<>();
+        for (ProfSkill profSkill : profSkills) {
+            tempList.add(profSkill.getSkill());
         }
         return tempList;
     }
 
     public List<SkillGroup> getProfSkills(Map<Integer, Attribute> attributes, List<Skill> skills) {
         List<SkillGroup> tempList = new ArrayList<>();
-        for (ProfSkill skill : profSkills) {
-            SkillGroup tempSkill = skill.getSkill();
-            tempList.add(tempSkill);
-            for (int i = 0; i < tempSkill.getSkills().size(); i++) {
-                SkillSingle singleSkill = (SkillSingle) tempSkill.getSkills().get(i);
-                singleSkill.setEarning(skill.isS());
-                for (Skill compareSkill : skills) {
-                    if (compareSkill.equals(singleSkill)) {
-                        tempSkill.getSkills().set(i, compareSkill);
-                        break;
-                    }
-                }
-                for (Attribute attribute : attributes.values()) {
-//                    if (singleSkill.getAttr().equals(attribute.getBaseAttribute())) {
-//                        tempSkill.getSkills().get(i).setLinkedAttribute(attribute);
-//                        tempSkill.getSkills().get(i).setAdvanceable(true);
+//        for (ProfSkill skill : profSkills) {
+//            Skill tempSkill = skill.getSkill();
+//            tempList.add(tempSkill);
+//            for (int i = 0; i < tempSkill.getSkills().size(); i++) {
+//                SkillSingle singleSkill = (SkillSingle) tempSkill.getSkills().get(i);
+//                singleSkill.setEarning(skill.isS());
+//                for (Skill compareSkill : skills) {
+//                    if (compareSkill.equals(singleSkill)) {
+//                        tempSkill.getSkills().set(i, compareSkill);
 //                        break;
 //                    }
-                }
-            }
-        }
+//                }
+//                for (Attribute attribute : attributes.values()) {
+////                    if (singleSkill.getAttr().equals(attribute.getBaseAttribute())) {
+////                        tempSkill.getSkills().get(i).setLinkedAttribute(attribute);
+////                        tempSkill.getSkills().get(i).setAdvanceable(true);
+////                        break;
+////                    }
+//                }
+//            }
+//        }
         return tempList;
     }
     public void setProfSkills(List<ProfSkill> profSkills) {

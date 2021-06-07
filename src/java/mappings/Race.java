@@ -212,6 +212,18 @@ public class Race {
         raceSkills.forEach(e->e.linkAttributeMap(attributeMap));
         return raceSkills;
     }
+    public List<Skill> getRaceSkills(Map<Integer, Attribute> attributeMap, List<Skill> profSkills) {
+        for (Skill raceSkill : raceSkills) {
+            raceSkill.linkAttributeMap(attributeMap);
+            for (Skill profSkill : profSkills) {
+                if (raceSkill.equals(profSkill)) {
+                    raceSkill.setAdvanceable(true);
+                    break;
+                }
+            }
+        }
+        return raceSkills;
+    }
     public void setRaceSkills(List<Skill> raceSkills) {
         this.raceSkills = raceSkills;
     }

@@ -1,5 +1,6 @@
 package mappings;
 
+import java.util.Objects;
 import org.hibernate.annotations.DiscriminatorFormula;
 import org.hibernate.annotations.DiscriminatorOptions;
 
@@ -33,5 +34,23 @@ public abstract class Skill {
 
     public abstract boolean isAdv();
     public abstract void setAdvValue(int advValue);
+    public abstract boolean isAdvanceable();
+    public abstract void setAdvanceable(boolean advanceable);
     public abstract void linkAttributeMap(Map<Integer, Attribute> attributeMap);
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Skill skill = (Skill) o;
+        return getID() == skill.getID() || Objects.equals(name, skill.name);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(ID, name);
+    }
 }
