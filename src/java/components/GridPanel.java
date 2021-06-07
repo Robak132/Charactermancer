@@ -170,6 +170,9 @@ public class GridPanel extends JPanel {
         return textArea;
     }
 
+    public AdvancedSpinner createAdvancedSpinner(int row, int column, SpinnerModel model, Dimension dimension, boolean enabled) {
+        return createAdvancedSpinner(row, column, 1, 1, model, dimension, enabled);
+    }
     public AdvancedSpinner createAdvancedSpinner(int row, int column, int rowSpan, int colSpan, SpinnerModel model, Dimension dimension, boolean enabled) {
         AdvancedSpinner advancedSpinner = new AdvancedSpinner(model);
         advancedSpinner.setHorizontalAlignment(JTextField.CENTER);

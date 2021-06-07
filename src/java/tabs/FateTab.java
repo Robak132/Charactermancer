@@ -85,7 +85,7 @@ public class FateTab {
             fateAttributeTable.createJLabel(0, i, attributes.get(i).getName());
             fateAttributeTable.createIntegerField(1, i, 1, 1, sheet.getAttributes().get(i).getTotalValue(), new Dimension(30, -1), false);
 
-            AdvancedSpinner advancedSpinner = fateAttributeTable.createAdvancedSpinner(2, i, 1, 1, new SpinnerNumberModel(0, 0, 5, 1), new Dimension(30, -1), false);
+            AdvancedSpinner advancedSpinner = fateAttributeTable.createAdvancedSpinner(2, i, new SpinnerNumberModel(0, 0, 5, 1), new Dimension(30, -1), false);
             if (sheet.getProfession().hasAttribute(i)) {
                 advancedSpinner.setEnabled(true);
                 tabOrder.add(advancedSpinner.getTextField());
