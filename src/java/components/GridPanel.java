@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
+import org.apache.logging.log4j.LogManager;
 import tools.DynamicMatrix2D;
 import tools.RunnableWithObject;
 
@@ -53,7 +54,7 @@ public class GridPanel extends JPanel {
     }
     public void build(int alignment) {
         removeAll();
-        System.out.printf("GridPanel@%s: Panel built (col: %d, row: %d)\n", this.hashCode(), columns, rows);
+        LogManager.getLogger(getClass().getName()).info(String.format("Panel built (col: %d, row: %d)", columns, rows));
         setLayout(new GridLayoutManager(rows + 2, columns + 2, new Insets(0, 0, 0, 0), -1, -1));
         addSpacers(alignment);
         for (Map.Entry<Component, GridConstraints> pair : items.entrySet()) {

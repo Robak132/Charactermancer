@@ -31,10 +31,6 @@ public class AdvancedSpinner extends JSpinner {
         super.setValue(value);
     }
     @Override
-    public Object getValue() {
-        return super.getValue();
-    }
-    @Override
     public Object getNextValue() {
         lastValue = super.getValue();
         return super.getNextValue();

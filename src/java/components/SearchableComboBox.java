@@ -53,7 +53,7 @@ public final class SearchableComboBox extends JComboBox<String> {
         addItems(items, startNull);
     }
 
-    public void refresh() {refresh(false, false);}
+    public void refresh() {refresh(false);}
     public void refresh(boolean startNull) {
         refresh(startNull, false);
     }
