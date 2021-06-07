@@ -45,12 +45,6 @@ public class SkillSingle extends Skill {
     public String getAttrName() {
         return baseSkill.getAttr().getName();
     }
-    public boolean isEarning() {
-        return earning;
-    }
-    public void setEarning(boolean earning) {
-        this.earning = earning;
-    }
 
     public Integer getTotalValue() {
         try {
@@ -79,6 +73,14 @@ public class SkillSingle extends Skill {
     @Override
     public void setAdvanceable(boolean advanceable) {
         this.advanceable = advanceable;
+    }
+    @Override
+    public boolean isEarning() {
+        return earning;
+    }
+    @Override
+    public void setEarning(boolean earning) {
+        this.earning = earning;
     }
 
     @Override

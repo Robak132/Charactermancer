@@ -106,6 +106,23 @@ public class SkillGroup extends Skill{
         }
     }
     @Override
+    public boolean isEarning() {
+        boolean earning = true;
+        for (Skill skill : skills) {
+            if (!skill.isEarning()) {
+                earning = false;
+                break;
+            }
+        }
+        return earning;
+    }
+    @Override
+    public void setEarning(boolean earning) {
+        for (Skill skill : skills) {
+            skill.setEarning(earning);
+        }
+    }
+    @Override
     public void linkAttributeMap(Map<Integer, Attribute> attributeMap) {
         for (Skill skill : skills) {
             skill.linkAttributeMap(attributeMap);

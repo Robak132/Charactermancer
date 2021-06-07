@@ -14,7 +14,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "PROF_SKILLS")
 @IdClass(ProfSkillPK.class)
-public class ProfSkill implements Serializable {
+public class ProfSkill {
     @Id
     @ManyToOne
     @JoinColumn(name = "ID_PROF")
@@ -25,16 +25,18 @@ public class ProfSkill implements Serializable {
     @JoinColumn(name = "ID_SKILL")
     private Skill skill;
 
-    @Column(name = "S")
-    private boolean S;
+    @Column(name = "EARNING")
+    private boolean earning;
 
-    public ProfSkill() {}
-
-    public boolean isS() {
-        return S;
+    public ProfSkill() {
+        // Needed for Hibernate/JPA
     }
-    public void setS(boolean s) {
-        S = s;
+
+    public boolean isEarning() {
+        return earning;
+    }
+    public void setEarning(boolean earning) {
+        this.earning = earning;
     }
     public Profession getProfession() {
         return profession;

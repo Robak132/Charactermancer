@@ -48,7 +48,7 @@ public class Profession {
     @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany
     @JoinColumn(name= "ID_PROF")
-    @OrderBy("S DESC")
+    @OrderBy("earning DESC")
     private List<ProfSkill> profSkills;
 
     @LazyCollection(LazyCollectionOption.TRUE)
@@ -90,6 +90,7 @@ public class Profession {
         this.career = career;
     }
 
+    // Attributes
     public List<BaseAttribute> getProfAttributes() {
         return profAttributes;
     }
@@ -116,37 +117,25 @@ public class Profession {
         this.profAttributes = profAttributes;
     }
 
+    // Skills
     public List<Skill> getProfSkills() {
         List<Skill> tempList = new ArrayList<>();
         for (ProfSkill profSkill : profSkills) {
-            tempList.add(profSkill.getSkill());
+            Skill skill = profSkill.getSkill();
+            skill.setAdvanceable(true);
+            tempList.add(skill);
         }
         return tempList;
     }
-
-    public List<SkillGroup> getProfSkills(Map<Integer, Attribute> attributes, List<Skill> skills) {
-        List<SkillGroup> tempList = new ArrayList<>();
-//        for (ProfSkill skill : profSkills) {
-//            Skill tempSkill = skill.getSkill();
-//            tempList.add(tempSkill);
-//            for (int i = 0; i < tempSkill.getSkills().size(); i++) {
-//                SkillSingle singleSkill = (SkillSingle) tempSkill.getSkills().get(i);
-//                singleSkill.setEarning(skill.isS());
-//                for (Skill compareSkill : skills) {
-//                    if (compareSkill.equals(singleSkill)) {
-//                        tempSkill.getSkills().set(i, compareSkill);
-//                        break;
-//                    }
-//                }
-//                for (Attribute attribute : attributes.values()) {
-////                    if (singleSkill.getAttr().equals(attribute.getBaseAttribute())) {
-////                        tempSkill.getSkills().get(i).setLinkedAttribute(attribute);
-////                        tempSkill.getSkills().get(i).setAdvanceable(true);
-////                        break;
-////                    }
-//                }
-//            }
-//        }
+    public List<Skill> getProfSkills(Map<Integer, Attribute> attributesMap) {
+        List<Skill> tempList = new ArrayList<>();
+        for (ProfSkill profSkill : profSkills) {
+            Skill skill = profSkill.getSkill();
+            skill.setAdvanceable(true);
+            skill.setEarning(profSkill.isEarning());
+            skill.linkAttributeMap(attributesMap);
+            tempList.add(skill);
+        }
         return tempList;
     }
     public void setProfSkills(List<ProfSkill> profSkills) {

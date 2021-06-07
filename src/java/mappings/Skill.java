@@ -36,6 +36,8 @@ public abstract class Skill {
     public abstract void setAdvValue(int advValue);
     public abstract boolean isAdvanceable();
     public abstract void setAdvanceable(boolean advanceable);
+    public abstract boolean isEarning();
+    public abstract void setEarning(boolean earning);
     public abstract void linkAttributeMap(Map<Integer, Attribute> attributeMap);
 
     @Override
