@@ -213,16 +213,19 @@ public class Race {
         return raceSkills;
     }
     public List<Skill> getRaceSkills(Map<Integer, Attribute> attributeMap, List<Skill> profSkills) {
+        List<Skill> tempSkills = new ArrayList<>();
         for (Skill raceSkill : raceSkills) {
-            raceSkill.linkAttributeMap(attributeMap);
             for (Skill profSkill : profSkills) {
                 if (raceSkill.equals(profSkill)) {
+                    raceSkill = profSkill;
                     raceSkill.setAdvanceable(true);
                     break;
                 }
             }
+            raceSkill.linkAttributeMap(attributeMap);
+            tempSkills.add(raceSkill);
         }
-        return raceSkills;
+        return tempSkills;
     }
     public void setRaceSkills(List<Skill> raceSkills) {
         this.raceSkills = raceSkills;
