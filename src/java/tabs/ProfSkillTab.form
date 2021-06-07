@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="tabs.ProfSkillTab">
-  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="11" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="12" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="533" height="400"/>
+      <xy x="20" y="20" width="566" height="400"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
       <vspacer id="ab30a">
         <constraints>
-          <grid row="10" column="0" row-span="1" col-span="4" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="11" column="0" row-span="1" col-span="3" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <vspacer id="f1110">
         <constraints>
-          <grid row="5" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+          <grid row="6" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
             <preferred-size width="-1" height="20"/>
           </grid>
         </constraints>
@@ -23,7 +23,7 @@
       <grid id="6cdbf" class="components.GridPanel" binding="skillsPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -32,7 +32,7 @@
       <grid id="eb8b3" class="components.GridPanel" binding="talentsPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="6" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="7" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -41,7 +41,7 @@
       <grid id="c94c0" class="components.GridPanel" binding="randomTalentsPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="8" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="9" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <visible value="true"/>
@@ -52,7 +52,7 @@
       <grid id="3fc5a" binding="rollPanel" layout-manager="GridLayoutManager" row-count="1" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="7" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="8" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <enabled value="true"/>
@@ -105,7 +105,7 @@
       </grid>
       <component id="78c76" class="javax.swing.JButton" binding="option1Button">
         <constraints>
-          <grid row="9" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="2" indent="1" use-parent-layout="false">
+          <grid row="10" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="2" indent="1" use-parent-layout="false">
             <preferred-size width="400" height="-1"/>
           </grid>
         </constraints>
@@ -113,74 +113,72 @@
           <text value="OK"/>
         </properties>
       </component>
-      <component id="ffa94" class="javax.swing.JLabel">
-        <constraints>
-          <grid row="0" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <font size="16"/>
-          <horizontalAlignment value="0"/>
-          <horizontalTextPosition value="0"/>
-          <text value="Choose 3 skills to add 3 points and 3 skills to add 5 points."/>
-        </properties>
-      </component>
-      <component id="9c775" class="javax.swing.JLabel">
-        <constraints>
-          <grid row="1" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <font size="12" style="0"/>
-          <horizontalAlignment value="0"/>
-          <horizontalTextPosition value="0"/>
-          <text value="&lt;html&gt;Note that if you don't add points to advanced skills they may be lost unless they are &lt;font color=rgb(0,128,0)&gt;profession skills&lt;/font&gt;.&lt;/html&gt;"/>
-        </properties>
-      </component>
       <vspacer id="db8c3">
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+          <grid row="3" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
             <preferred-size width="-1" height="20"/>
           </grid>
         </constraints>
       </vspacer>
       <hspacer id="d92df">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
       <component id="d563f" class="components.JIntegerField" binding="points5Field">
         <constraints>
-          <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="0" indent="0" use-parent-layout="false">
+          <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="0" indent="0" use-parent-layout="false">
             <preferred-size width="50" height="-1"/>
           </grid>
         </constraints>
         <properties>
           <editable value="false"/>
-          <format value="5: %d/3" noi18n="true"/>
+          <format value="%d/40" noi18n="true"/>
           <horizontalAlignment value="0"/>
-          <text value="5: 0/3"/>
-        </properties>
-      </component>
-      <component id="dde13" class="components.JIntegerField" binding="points3Field">
-        <constraints>
-          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="50" height="-1"/>
-          </grid>
-        </constraints>
-        <properties>
-          <editable value="false"/>
-          <format value="3: %d/3" noi18n="true"/>
-          <horizontalAlignment value="0"/>
-          <text value="3: 0/3"/>
+          <text value="0/40"/>
         </properties>
       </component>
       <component id="e4922" class="javax.swing.JLabel">
         <constraints>
-          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <horizontalAlignment value="4"/>
           <horizontalTextPosition value="4"/>
           <text value="Remain:"/>
+        </properties>
+      </component>
+      <component id="c1e00" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font size="16"/>
+          <horizontalAlignment value="0"/>
+          <horizontalTextPosition value="0"/>
+          <text value="Distribute 40 points between your profession skills."/>
+        </properties>
+      </component>
+      <component id="538b4" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font size="12" style="0"/>
+          <horizontalAlignment value="0"/>
+          <horizontalTextPosition value="0"/>
+          <text value="&lt;html&gt;&lt;b&gt;Note 1:&lt;/b&gt; you need 5 points in 8 skills including your &lt;font color=rgb(32,64,255)&gt;earning skill&lt;/font&gt; to progress further."/>
+        </properties>
+      </component>
+      <component id="7235a" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font size="12" style="0"/>
+          <horizontalAlignment value="0"/>
+          <horizontalTextPosition value="0"/>
+          <text value="&lt;html&gt;&lt;b&gt;Note 2:&lt;/b&gt; if you don't add points to your advanced skills, you won't be able to use them in game.&lt;/html&gt;"/>
         </properties>
       </component>
     </children>
