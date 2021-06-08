@@ -5,7 +5,6 @@ import components.CustomFocusTraversalPolicy;
 import components.GridPanel;
 import components.JIntegerField;
 import components.SearchableComboBox;
-import components.SpinnerTypeListModel;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -25,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.SpinnerListModel;
 import main.CharacterGen;
 import main.CharacterSheet;
 import main.Connection;
@@ -144,7 +144,7 @@ public class RaceSkillTab {
 
             skillsPanel.createTextField(row, column++, activeSkill.getAttrName(), new Dimension(30, -1), false);
 
-            AdvancedSpinner jSpinner = skillsPanel.createAdvancedSpinner(row, column++, new SpinnerTypeListModel<>(new Integer[]{0, 3, 5}), new Dimension(35, -1), true);
+            AdvancedSpinner jSpinner = skillsPanel.createAdvancedSpinner(row, column++, new SpinnerListModel(new Integer[]{0, 3, 5}), new Dimension(35, -1), true);
             jSpinner.addChangeListener(e -> skillSpinnerChange(finalI, finalRow, finalColumn, jSpinner, finalColor));
 
             skillsPanel.createIntegerField(row, column++, activeSkill.getBaseSkill().getLinkedAttribute().getTotalValue(), new Dimension(30, -1), false);
