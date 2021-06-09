@@ -27,12 +27,12 @@ import main.CharacterGen;
 import main.CharacterSheet;
 import main.Connection;
 import mappings.Skill;
-import mappings.SkillGroup;
 import mappings.SkillSingle;
 import mappings.Talent;
 import mappings.TalentGroup;
 import mappings.TalentSingle;
 import tools.AbstractActionHelper;
+import tools.ColorPalette;
 import tools.MultiLineTooltip;
 
 public class ProfSkillTab {
@@ -98,7 +98,7 @@ public class ProfSkillTab {
         int column;
         for (int i = 0; i < raceSkills.size(); i++) {
             Skill raceSkill = raceSkills.get(i);
-            Color color = Color.black;
+            Color color = raceSkill.isEarning() ? ColorPalette.BLUE : Color.black;
 
             if (raceSkill.isAdv()) {
                 column = 4;
@@ -112,7 +112,9 @@ public class ProfSkillTab {
             int finalRow = row;
             int finalColumn = column;
 
-            SkillSingle activeSkill = createComboIfNeeded(raceSkill, i, row, column++, color);
+            SkillSingle activeSkill = skillsPanel.createComboIfNeeded(raceSkill, row, column++, color,
+                    newSkill -> updateSkillRow(finalI, finalRow, finalColumn, newSkill));
+            visibleRaceSkills.add(activeSkill);
 
             skillsPanel.createTextField(row, column++, activeSkill.getAttrName(), new Dimension(30, -1), false);
 
@@ -157,32 +159,6 @@ public class ProfSkillTab {
 //            raceskillPoints.put(now, raceskillPoints.get(now) - 1);
         }
     }
-    private SkillSingle createComboIfNeeded(Skill raceSkill, int idx, int row, int column, Color color) {
-        if (raceSkill instanceof SkillSingle) {
-            SkillSingle activeSkill = (SkillSingle) raceSkill;
-            JTextField talentName = skillsPanel.createTextField(row, column, activeSkill.getName(), null, false);
-            talentName.setForeground(color);
-
-            visibleRaceSkills.add(activeSkill);
-            return activeSkill;
-        } else {
-            SkillGroup skillGroup = (SkillGroup) raceSkill;
-            SkillSingle activeSkill = (SkillSingle) skillGroup.getFirstSkill();
-            SearchableComboBox skillNameCombo = skillsPanel.createSearchableComboBox(row, column, null, false);
-            skillNameCombo.setToolTipText(MultiLineTooltip.splitToolTip(skillGroup.getName()));
-            for (Skill alternateSkill : skillGroup.getSkills()) {
-                skillNameCombo.addItem(alternateSkill.getName());
-            }
-            skillNameCombo.setPreferredSize(new Dimension(skillNameCombo.getSize().width, -1));
-            skillNameCombo.refresh();
-            skillNameCombo.setForeground(color);
-            skillNameCombo.addActionListener(e -> updateSkillRow(idx, row, column,
-                    (SkillSingle) skillGroup.getSkills().get(skillNameCombo.getSelectedIndex())));
-
-            visibleRaceSkills.add(activeSkill);
-            return activeSkill;
-        }
-    }
     private void updateSkillRow(int idx, int row, int column, SkillSingle newSkill) {
         boolean colorChange = newSkill.isAdv() && newSkill.getAdvValue()==0;
         if (skillsPanel.getComponent(column, row) instanceof JTextField) {
@@ -196,7 +172,6 @@ public class ProfSkillTab {
         ((AdvancedSpinner) skillsPanel.getComponent(column + 2, row)).setValue(newSkill.getAdvValue());
         ((JIntegerField) skillsPanel.getComponent(column + 3, row)).setValue(newSkill.getTotalValue());
 
-
         if (visibleRaceSkills.size() > idx) {
             visibleRaceSkills.set(idx, newSkill);
         }
@@ -209,10 +184,13 @@ public class ProfSkillTab {
         talentsPanel.createJLabel(0,0,1,-1, "Talents");
         for (int i = 0; i < raceTalents.size(); i++) {
             Talent raceTalent = raceTalents.get(i);
+            int finalI = i;
             int row = i + 1;
             int column = 0;
 
-            TalentSingle activeTalent = createComboIfNeeded(raceTalent, i, row, column++);
+            TalentSingle activeTalent = talentsPanel.createComboIfNeeded(raceTalent, row, column++,
+                    newTalent -> updateTalentRow(talentsPanel, finalI, row, 0, visibleRaceTalents, newTalent));
+            visibleRaceTalents.add(activeTalent);
 
             talentsPanel.createIntegerField(row, column++, activeTalent.getCurrentLvl(), fieldDimensions[column-1], false);
 
@@ -227,15 +205,13 @@ public class ProfSkillTab {
         talentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
     private TalentSingle createComboIfNeeded(Talent raceTalent, int idx, int row, int column) {
+        TalentSingle activeTalent;
         if (raceTalent instanceof TalentSingle) {
-            TalentSingle activeTalent = (TalentSingle) raceTalent;
+            activeTalent = (TalentSingle) raceTalent;
             talentsPanel.createTextField(row, column, activeTalent.getName(), null, false);
-
-            visibleRaceTalents.add(activeTalent);
-            return activeTalent;
         } else {
             TalentGroup talentGroup = (TalentGroup) raceTalent;
-            TalentSingle activeTalent = (TalentSingle) talentGroup.getFirstTalent();
+            activeTalent = (TalentSingle) talentGroup.getFirstTalent();
             SearchableComboBox talentNameCombo = talentsPanel.createSearchableComboBox(row, column, null, false);
             talentNameCombo.setToolTipText(MultiLineTooltip.splitToolTip(talentGroup.getName()));
             for (Talent alternateTalent : talentGroup.getChildTalents()) {
@@ -245,10 +221,8 @@ public class ProfSkillTab {
             talentNameCombo.refresh();
             talentNameCombo.addActionListener(e -> updateTalentRow(talentsPanel, idx, row, column, visibleRaceTalents,
                     (TalentSingle) talentGroup.getChildTalents().get(talentNameCombo.getSelectedIndex())));
-
-            visibleRaceTalents.add(activeTalent);
-            return activeTalent;
         }
+        return activeTalent;
     }
     private void updateTalentRow(GridPanel panel, int idx, int row, int column, List<TalentSingle> talentList, TalentSingle newTalent) {
         if (panel.getComponent(column, row) instanceof JTextField) {

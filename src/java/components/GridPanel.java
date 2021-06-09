@@ -1,7 +1,9 @@
 package components;
+
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -13,8 +15,15 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
+import mappings.Skill;
+import mappings.SkillGroup;
+import mappings.SkillSingle;
+import mappings.Talent;
+import mappings.TalentGroup;
+import mappings.TalentSingle;
 import org.apache.logging.log4j.LogManager;
 import tools.DynamicMatrix2D;
+import tools.MultiLineTooltip;
 import tools.RunnableWithObject;
 
 public class GridPanel extends JPanel {
@@ -186,5 +195,56 @@ public class GridPanel extends JPanel {
         searchableComboBox.setLocked(locked);
         add(searchableComboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, dimension, null));
         return searchableComboBox;
+    }
+
+    public SkillSingle createComboIfNeeded(Skill raceSkill, int row, int column, Color color, UpdateSkillRow runnable) {
+        SkillSingle activeSkill;
+        if (raceSkill instanceof SkillSingle) {
+            activeSkill = (SkillSingle) raceSkill;
+            JTextField talentName = createTextField(row, column, activeSkill.getName(), null, false);
+            talentName.setForeground(color);
+        } else {
+            SkillGroup skillGroup = (SkillGroup) raceSkill;
+            activeSkill = (SkillSingle) skillGroup.getFirstSkill();
+            SearchableComboBox skillNameCombo = createSearchableComboBox(row, column, null, false);
+            skillNameCombo.setToolTipText(MultiLineTooltip.splitToolTip(skillGroup.getName()));
+            for (Skill alternateSkill : skillGroup.getSkills()) {
+                skillNameCombo.addItem(alternateSkill.getName());
+            }
+            skillNameCombo.setPreferredSize(new Dimension(skillNameCombo.getSize().width, -1));
+            skillNameCombo.setEditable(!skillGroup.isLocked());
+            skillNameCombo.refresh();
+            skillNameCombo.setForeground(color);
+            skillNameCombo.addActionListener(e-> runnable.run((SkillSingle) skillGroup.getSkills().get(skillNameCombo.getSelectedIndex())));
+        }
+        return activeSkill;
+    }
+    public TalentSingle createComboIfNeeded(Talent raceTalent, int row, int column, UpdateTalentRow runnable) {
+        TalentSingle activeTalent;
+        if (raceTalent instanceof TalentSingle) {
+            activeTalent = (TalentSingle) raceTalent;
+            createTextField(row, column, activeTalent.getName(), null, false);
+        } else {
+            TalentGroup talentGroup = (TalentGroup) raceTalent;
+            activeTalent = (TalentSingle) talentGroup.getFirstTalent();
+            SearchableComboBox talentNameCombo = createSearchableComboBox(row, column, null, false);
+            talentNameCombo.setToolTipText(MultiLineTooltip.splitToolTip(talentGroup.getName()));
+            for (Talent alternateTalent : talentGroup.getChildTalents()) {
+                talentNameCombo.addItem(alternateTalent.getName());
+            }
+            talentNameCombo.setPreferredSize(new Dimension(talentNameCombo.getSize().width, -1));
+            talentNameCombo.refresh();
+            talentNameCombo.addActionListener(e -> runnable.run((TalentSingle) talentGroup.getChildTalents().get(talentNameCombo.getSelectedIndex())));
+        }
+        return activeTalent;
+    }
+
+    @FunctionalInterface
+    public interface UpdateSkillRow {
+        void run(SkillSingle newSkill);
+    }
+    @FunctionalInterface
+    public interface UpdateTalentRow {
+        void run(TalentSingle newTalent);
     }
 }
