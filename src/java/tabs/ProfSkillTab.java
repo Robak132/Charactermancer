@@ -112,9 +112,8 @@ public class ProfSkillTab {
             int finalRow = row;
             int finalColumn = column;
 
-            SkillSingle activeSkill = skillsPanel.createComboIfNeeded(raceSkill, row, column++, color,
+            SkillSingle activeSkill = skillsPanel.createComboIfNeeded(raceSkill, row, column++, color, visibleRaceSkills,
                     newSkill -> updateSkillRow(finalI, finalRow, finalColumn, newSkill));
-            visibleRaceSkills.add(activeSkill);
 
             skillsPanel.createTextField(row, column++, activeSkill.getAttrName(), new Dimension(30, -1), false);
 
@@ -188,9 +187,8 @@ public class ProfSkillTab {
             int row = i + 1;
             int column = 0;
 
-            TalentSingle activeTalent = talentsPanel.createComboIfNeeded(raceTalent, row, column++,
+            TalentSingle activeTalent = talentsPanel.createComboIfNeeded(raceTalent, row, column++, visibleRaceTalents,
                     newTalent -> updateTalentRow(talentsPanel, finalI, row, 0, visibleRaceTalents, newTalent));
-            visibleRaceTalents.add(activeTalent);
 
             talentsPanel.createIntegerField(row, column++, activeTalent.getCurrentLvl(), fieldDimensions[column-1], false);
 

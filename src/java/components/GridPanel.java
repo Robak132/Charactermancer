@@ -8,6 +8,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -197,7 +198,7 @@ public class GridPanel extends JPanel {
         return searchableComboBox;
     }
 
-    public SkillSingle createComboIfNeeded(Skill raceSkill, int row, int column, Color color, UpdateSkillRow runnable) {
+    public SkillSingle createComboIfNeeded(Skill raceSkill, int row, int column, Color color, List<SkillSingle> skillList, UpdateSkillRow runnable) {
         SkillSingle activeSkill;
         if (raceSkill instanceof SkillSingle) {
             activeSkill = (SkillSingle) raceSkill;
@@ -217,9 +218,10 @@ public class GridPanel extends JPanel {
             skillNameCombo.setForeground(color);
             skillNameCombo.addActionListener(e-> runnable.run((SkillSingle) skillGroup.getSkills().get(skillNameCombo.getSelectedIndex())));
         }
+        skillList.add(activeSkill);
         return activeSkill;
     }
-    public TalentSingle createComboIfNeeded(Talent raceTalent, int row, int column, UpdateTalentRow runnable) {
+    public TalentSingle createComboIfNeeded(Talent raceTalent, int row, int column, List<TalentSingle> talentList, UpdateTalentRow runnable) {
         TalentSingle activeTalent;
         if (raceTalent instanceof TalentSingle) {
             activeTalent = (TalentSingle) raceTalent;
@@ -236,6 +238,7 @@ public class GridPanel extends JPanel {
             talentNameCombo.refresh();
             talentNameCombo.addActionListener(e -> runnable.run((TalentSingle) talentGroup.getChildTalents().get(talentNameCombo.getSelectedIndex())));
         }
+        talentList.add(activeTalent);
         return activeTalent;
     }
 
