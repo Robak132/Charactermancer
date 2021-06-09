@@ -24,6 +24,9 @@ public class AdvancedSpinner extends JSpinner {
     public JTextField getTextField() {
         return textField;
     }
+    public Object getLastValue() {
+        return lastValue;
+    }
 
     @Override
     public void setValue(Object value) {
@@ -41,7 +44,11 @@ public class AdvancedSpinner extends JSpinner {
         return super.getPreviousValue();
     }
 
-    public Object getLastValue() {
-        return lastValue;
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) getEditor();
+        editor.getTextField().setEnabled(true);
+        editor.getTextField().setEditable(enabled);
     }
 }

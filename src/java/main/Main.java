@@ -25,7 +25,7 @@ public class Main {
         frame = new JFrame("Charactermancer");
         frame.setContentPane(new Main().mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setMinimumSize(new Dimension(900, 775));
+        frame.setMinimumSize(new Dimension(900, 800));
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);

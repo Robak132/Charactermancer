@@ -95,7 +95,7 @@
           <font size="12" style="0"/>
           <horizontalAlignment value="0"/>
           <horizontalTextPosition value="0"/>
-          <text value="&lt;html&gt;&lt;b&gt;Note 1:&lt;/b&gt; you need 5 points in 8 skills including your &lt;font color=rgb(32,64,255)&gt;earning skill&lt;/font&gt; to progress further."/>
+          <text resource-bundle="hardcoded_values" key="profskill_note1"/>
         </properties>
       </component>
       <component id="7235a" class="javax.swing.JLabel">
@@ -106,7 +106,7 @@
           <font size="12" style="0"/>
           <horizontalAlignment value="0"/>
           <horizontalTextPosition value="0"/>
-          <text value="&lt;html&gt;&lt;b&gt;Note 2:&lt;/b&gt; if you don't add points to your advanced skills, you won't be able to use them in game.&lt;/html&gt;"/>
+          <text resource-bundle="hardcoded_values" key="profskill_note2"/>
         </properties>
       </component>
     </children>

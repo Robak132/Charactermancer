@@ -105,11 +105,12 @@
       </grid>
       <component id="78c76" class="javax.swing.JButton" binding="option1Button">
         <constraints>
-          <grid row="8" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="2" indent="1" use-parent-layout="false">
+          <grid row="8" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false">
             <preferred-size width="400" height="-1"/>
           </grid>
         </constraints>
         <properties>
+          <enabled value="false"/>
           <text value="OK"/>
         </properties>
       </component>
@@ -132,7 +133,7 @@
           <font size="12" style="0"/>
           <horizontalAlignment value="0"/>
           <horizontalTextPosition value="0"/>
-          <text value="&lt;html&gt;&lt;b&gt;Note:&lt;/b&gt; if you don't add points to advanced skills they may be lost unless they are &lt;font color=rgb(0,128,0)&gt;profession skills&lt;/font&gt;.&lt;/html&gt;"/>
+          <text resource-bundle="hardcoded_values" key="raceskill_note1"/>
         </properties>
       </component>
       <hspacer id="d92df">
@@ -140,7 +141,7 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
-      <component id="d563f" class="components.JIntegerField" binding="points5Field">
+      <component id="d563f" class="components.JIntegerField" binding="points5Field" custom-create="true">
         <constraints>
           <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="0" indent="0" use-parent-layout="false">
             <preferred-size width="50" height="-1"/>
@@ -150,10 +151,9 @@
           <editable value="false"/>
           <format value="5: %d/3" noi18n="true"/>
           <horizontalAlignment value="0"/>
-          <text value="5: 0/3"/>
         </properties>
       </component>
-      <component id="dde13" class="components.JIntegerField" binding="points3Field">
+      <component id="dde13" class="components.JIntegerField" binding="points3Field" custom-create="true">
         <constraints>
           <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="50" height="-1"/>
@@ -163,7 +163,6 @@
           <editable value="false"/>
           <format value="3: %d/3" noi18n="true"/>
           <horizontalAlignment value="0"/>
-          <text value="3: 0/3"/>
         </properties>
       </component>
       <component id="e4922" class="javax.swing.JLabel">

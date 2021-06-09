@@ -225,6 +225,7 @@ public class Race {
             raceSkill.linkAttributeMap(attributeMap);
             tempSkills.add(raceSkill);
         }
+        tempSkills.sort(Comparator.comparing(Skill::isAdv).thenComparing(e->e.name));
         return tempSkills;
     }
     public void setRaceSkills(List<Skill> raceSkills) {
