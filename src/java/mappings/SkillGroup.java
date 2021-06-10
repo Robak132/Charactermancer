@@ -84,9 +84,7 @@ public class SkillGroup extends Skill{
     }
     @Override
     public void setAdvValue(int advValue) {
-        for (Skill skill : skills) {
-            skill.setAdvValue(advValue);
-        }
+        skills.forEach(skill -> skill.setAdvValue(advValue));
     }
     @Override
     public boolean isAdvanceable() {
@@ -101,9 +99,7 @@ public class SkillGroup extends Skill{
     }
     @Override
     public void setAdvanceable(boolean advanceable) {
-        for (Skill skill : skills) {
-            skill.setAdvanceable(advanceable);
-        }
+        skills.forEach(skill -> skill.setAdvanceable(advanceable));
     }
     @Override
     public boolean isEarning() {

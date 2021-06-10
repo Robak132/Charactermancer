@@ -142,16 +142,14 @@ public class Profession {
         this.profSkills = profSkills;
     }
 
-    public List<Talent> getProfTalents(Map<Integer, Attribute> attributes) {
-//        for (TalentGroup talentGroup : profTalents) {
-//            for (Talent singleTalent : talentGroup.getTalents()) {
-//                if (singleTalent.getAttr() != null) {
-//                    Attribute attribute = attributes.get(singleTalent.getAttr().getID());
-//                    singleTalent.setLinkedAttribute(attribute);
-//                    singleTalent.setAdvanceable(true);
-//                }
-//            }
-//        }
+    public List<Talent> getProfTalents() {
+        return profTalents;
+    }
+    public List<Talent> getProfTalents(Map<Integer, Attribute> attributesMap) {
+        for (Talent profTalent : profTalents) {
+            profTalent.setAdvanceable(true);
+            profTalent.linkAttributeMap(attributesMap);
+        }
         return profTalents;
     }
     public void setProfTalents(List<Talent> profTalents) {

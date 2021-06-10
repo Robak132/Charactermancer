@@ -90,7 +90,7 @@ public class RaceSkillTab {
         this.addObserver("points5", points5Field);
 
         raceSkills = sheet.getRace().getRaceSkills(sheet.getAttributes(), sheet.getProfession().getProfSkills());
-        raceTalents = sheet.getRace().getRaceTalents(sheet.getAttributes());
+        raceTalents = sheet.getRace().getRaceTalents(sheet.getAttributes(), sheet.getProfession().getProfTalents());
 
         createSkillTable(raceSkills);
         createTalentTable(raceTalents, talentFieldDimensions);

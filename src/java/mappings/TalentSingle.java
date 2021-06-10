@@ -25,12 +25,6 @@ public class TalentSingle extends Talent {
     public int getCurrentLvl() {
         return currentLvl;
     }
-    public boolean isAdvanceable() {
-        return advanceable;
-    }
-    public void setAdvanceable(boolean advanceable) {
-        this.advanceable = advanceable;
-    }
     public int getMaxLvl() {
         return baseTalent.getMaxLvl();
     }
@@ -42,12 +36,28 @@ public class TalentSingle extends Talent {
     }
 
     @Override
+    public int getID() {
+        return ID;
+    }
+    @Override
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+    @Override
     public void setCurrentLvl(int currentLvl) {
         this.currentLvl = currentLvl;
     }
     @Override
     public void linkAttributeMap(Map<Integer, Attribute> attributeMap) {
         baseTalent.linkAttributeMap(attributeMap);
+    }
+    @Override
+    public boolean isAdvanceable() {
+        return advanceable;
+    }
+    @Override
+    public void setAdvanceable(boolean advanceable) {
+        this.advanceable = advanceable;
     }
 
     public Integer getMax() {

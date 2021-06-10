@@ -232,6 +232,7 @@ public class Race {
         this.raceSkills = raceSkills;
     }
 
+    // Talents
     public List<Talent> getRaceTalents() {
         raceTalents.forEach(e->e.setCurrentLvl(1));
         return raceTalents;
@@ -242,6 +243,23 @@ public class Race {
             talent.linkAttributeMap(attributeMap);
         }
         return raceTalents;
+    }
+    public List<Talent> getRaceTalents(Map<Integer, Attribute> attributeMap, List<Talent> profTalents) {
+        List<Talent> tempTalents = new ArrayList<>();
+        for (Talent raceTalent : raceTalents) {
+            for (Talent profTalent : profTalents) {
+                if (raceTalent.equals(profTalent)) {
+                    raceTalent = profTalent;
+                    raceTalent.setAdvanceable(true);
+                    raceTalent.setCurrentLvl(1);
+                    break;
+                }
+                profTalent.setCurrentLvl(1);
+            }
+            raceTalent.linkAttributeMap(attributeMap);
+            tempTalents.add(raceTalent);
+        }
+        return tempTalents;
     }
     public void setRaceTalents(List<Talent> raceTalents) {
         this.raceTalents = raceTalents;

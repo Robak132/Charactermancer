@@ -56,6 +56,14 @@ public class TalentGroup extends Talent {
     }
 
     @Override
+    public int getID() {
+        return ID;
+    }
+    @Override
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+    @Override
     public void setCurrentLvl(int currentLvl) {
         if (childTalents.size() > 0) {
             childTalents.forEach(e->e.setCurrentLvl(currentLvl));
@@ -66,6 +74,21 @@ public class TalentGroup extends Talent {
         for (Talent talent : childTalents) {
             talent.linkAttributeMap(attributeMap);
         }
+    }
+    @Override
+    public boolean isAdvanceable() {
+        boolean adv = true;
+        for (Talent talent : childTalents) {
+            if (!talent.isAdvanceable()) {
+                adv = false;
+                break;
+            }
+        }
+        return adv;
+    }
+    @Override
+    public void setAdvanceable(boolean advanceable) {
+        childTalents.forEach(e->e.setAdvanceable(advanceable));
     }
 
     @Override
