@@ -58,6 +58,14 @@ public class ProfessionCareer {
     public List<Profession> getProfessions() {
         return professions;
     }
+    public Profession getProfessionByLvl(int lvl) {
+        for (Profession profession : professions) {
+            if (profession.getLevel() == lvl) {
+                return profession;
+            }
+        }
+        return null;
+    }
     public void setProfessions(List<Profession> professions) {
         this.professions = professions;
     }

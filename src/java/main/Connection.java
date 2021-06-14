@@ -126,6 +126,20 @@ public class Connection {
         }
         return classes;
     }
+    public List<ProfessionCareer> getProfessionClasses(Subrace subrace) {
+        List<ProfessionCareer> careers = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query<ProfessionCareer> query = session.createQuery("FROM Race.raceCareers WHERE r.ID=:param");
+            query.setParameter("param", subrace.getID());
+            careers = query.getResultList();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return careers;
+    }
     public List<ProfessionCareer> getProfessionCareers(Race race) {
         if (race != null) {
             return race.getRaceCareers();

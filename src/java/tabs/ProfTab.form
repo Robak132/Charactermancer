@@ -96,25 +96,25 @@
           <text value="SELECT"/>
         </properties>
       </component>
-      <component id="7bf12" class="components.SearchableComboBox" binding="profOption4a">
+      <component id="6069a" class="javax.swing.JTextField" binding="profOption4a">
         <constraints>
-          <grid row="11" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+          <grid row="11" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="200" height="-1"/>
           </grid>
         </constraints>
         <properties>
-          <editable value="true"/>
+          <editable value="false"/>
           <enabled value="false"/>
+          <horizontalAlignment value="0"/>
         </properties>
       </component>
-      <component id="90b4a" class="components.SearchableComboBox" binding="profOption4b">
+      <component id="90b4a" class="components.FilteredComboBox" binding="profOption4b">
         <constraints>
-          <grid row="11" column="2" row-span="1" col-span="1" vsize-policy="2" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
+          <grid row="11" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="200" height="-1"/>
           </grid>
         </constraints>
         <properties>
-          <editable value="true"/>
           <enabled value="false"/>
         </properties>
       </component>

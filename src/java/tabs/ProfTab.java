@@ -1,7 +1,7 @@
 package tabs;
 
+import components.FilteredComboBox;
 import components.JIntegerField;
-import components.SearchableComboBox;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,6 @@ import main.CharacterSheet;
 import main.Connection;
 import mappings.Profession;
 import mappings.ProfessionCareer;
-import mappings.ProfessionClass;
 import org.apache.logging.log4j.LogManager;
 
 public class ProfTab {
@@ -33,8 +32,8 @@ public class ProfTab {
     private JTextField profOption3a;
     private JTextField profOption3b;
     private JButton profOption3Button;
-    private SearchableComboBox profOption4a;
-    private SearchableComboBox profOption4b;
+    private JTextField profOption4a;
+    private FilteredComboBox<ProfessionCareer> profOption4b;
     private JButton profOption4Button;
 
     private final JTextField[][] profOptions = {
@@ -46,8 +45,6 @@ public class ProfTab {
             profOption1Button, profOption2Button, profOption3Button, profOption4Button
     };
 
-    private List<ProfessionClass> professionClasses;
-    private List<ProfessionCareer> professionCareers;
     private final List<Profession> chosenProfessions = new ArrayList<>();
 
     public ProfTab() {
@@ -60,9 +57,8 @@ public class ProfTab {
     public void initialise(CharacterGen parent, CharacterSheet sheet, Connection connection) {
         this.sheet = sheet;
         this.parent = parent;
-        professionClasses = connection.getProfessionClasses();
-        professionCareers = connection.getProfessionCareers();
-        fillCombos();
+        profOption4b.addItems(sheet.getRace().getRaceCareers());
+        profOption4b.setUserFilter(ProfessionCareer::getName);
 
         profRollButton.addActionListener(e -> {
             Object[] result = CharacterGen.getRandomProf(connection, sheet.getSubrace());
@@ -123,47 +119,35 @@ public class ProfTab {
         profOption3Button.addActionListener(e -> lockAll(2));
         profOption3Button.setMnemonic(KeyEvent.VK_3);
 
-        profOption4a.addActionListener(e -> comboChangedClass());
-        profOption4Button.addActionListener(e -> comboChangedClass());
+        profOption4b.addActionListener(e -> {
+            try {
+                profOption4a.setText(((ProfessionCareer) profOption4b.getSelectedItem()).getProfessionClass().getName());
+            } catch (NullPointerException ex) {
+                profOption4a.setText("");
+            }
+        });
+        profOption4Button.addActionListener(e ->{
+            sheet.setProfession(((ProfessionCareer) profOption4b.getSelectedItem()).getProfessionByLvl(1));
+            lockAll();
+        });
+        profOption4Button.setMnemonic(KeyEvent.VK_4);
     }
 
     private void lockAll(int index) {
         sheet.setProfession(chosenProfessions.get(index));
         sheet.addExp(chosenProfessions.size() == 1 ? 50 : 25);
 
+        lockAll();
+    }
+    private void lockAll() {
         profRollButton.setEnabled(false);
         profRollResult.setEditable(false);
         profOKButton.setEnabled(false);
         for (JButton button : profButtons) {
             button.setEnabled(false);
         }
-        profOption4a.setLocked(true);
         profOption4b.setLocked(true);
 
         parent.moveToNextTab();
-    }
-
-    private void fillCombos() {
-        profOption4a.addItem(" ");
-        profOption4b.addItem(" ");
-        professionClasses.forEach(e -> profOption4a.addItem(e.getName()));
-        professionCareers.forEach(e -> profOption4b.addItem(e.getName()));
-        profOption4a.refresh();
-        profOption4b.refresh();
-    }
-    private void comboChangedClass() {
-        profOption4b.removeAllItems();
-        if (" ".equals(profOption4a.getSelectedItem())) {
-            profOption4b.addItem(" ");
-            professionCareers.forEach(e -> profOption4b.addItem(e.getName()));
-        } else {
-            ProfessionClass clss = professionClasses.get(profOption4a.getSelectedIndex());
-            for (ProfessionCareer career : professionCareers) {
-                if (career.getProfessionClass().equals(clss)) {
-                    profOption4b.addItem(career.getName());
-                }
-            }
-        }
-        profOption4b.refresh();
     }
 }
