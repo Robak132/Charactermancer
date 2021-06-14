@@ -71,8 +71,7 @@ public final class RaceTab {
         raceOKButton.setMnemonic(KeyEvent.VK_O);
         raceOption1Button.addActionListener(e -> {
             raceOption2Combo.setSelectedItem(race);
-            subraceOptionCombo.addItems(race.getSubraces());
-            subraceOptionCombo.setUserFilter(Subrace::getName);
+            subraces = race.getSubraces();
             sheet.addExp(20);
 
             moveToSubraces();
@@ -82,8 +81,7 @@ public final class RaceTab {
             race = (Race) raceOption2Combo.getSelectedItem();
             if (race != null) {
                 raceOption1.setText(race.getName());
-                subraceOptionCombo.addItems(race.getSubraces());
-                subraceOptionCombo.setUserFilter(Subrace::getName);
+                subraces = race.getSubraces();
             }
 
             moveToSubraces();
@@ -107,6 +105,9 @@ public final class RaceTab {
         raceOption1.setEditable(false);
         raceOption2Button.setEnabled(false);
         raceOption2Combo.setLocked(true);
+
+        subraceOptionCombo.addItems(subraces);
+        subraceOptionCombo.setUserFilter(Subrace::getName);
 
         if (subraces.size() == 1) {
             sheet.setSubrace((Subrace) subraceOptionCombo.getSelectedItem());
