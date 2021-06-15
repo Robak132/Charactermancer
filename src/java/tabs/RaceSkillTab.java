@@ -11,12 +11,13 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -30,6 +31,7 @@ import main.CharacterGen;
 import main.CharacterSheet;
 import main.Connection;
 import mappings.Skill;
+import mappings.SkillGroup;
 import mappings.SkillSingle;
 import mappings.Talent;
 import mappings.TalentGroup;
@@ -37,12 +39,13 @@ import mappings.TalentSingle;
 import org.apache.logging.log4j.LogManager;
 import tools.AbstractActionHelper;
 import tools.ColorPalette;
+import tools.Dice;
 import tools.MultiLineTooltip;
 
 public class RaceSkillTab {
     private CharacterSheet sheet;
     private Connection connection;
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private final PropertyChangeSupport observersManager = new PropertyChangeSupport(this);
 
     private GridPanel skillsPanel;
     private GridPanel talentsPanel;
@@ -56,7 +59,7 @@ public class RaceSkillTab {
     private JIntegerField points3Field;
     private JIntegerField points5Field;
 
-    private final Map<Integer, Integer> raceskillPoints = new ConcurrentHashMap<>();
+    private Map<Integer, Integer> raceskillPoints;
 
     private List<Skill> raceSkills = new ArrayList<>();
     private List<Talent> raceTalents = new ArrayList<>();
@@ -83,11 +86,9 @@ public class RaceSkillTab {
         this.sheet = sheet;
         this.connection = connection;
 
-        raceskillPoints.put(0, 0);
-        raceskillPoints.put(3, 3);
-        raceskillPoints.put(5, 3);
-        this.addObserver("points3", points3Field);
-        this.addObserver("points5", points5Field);
+        raceskillPoints = new ConcurrentHashMap<>(Map.of(0, 0, 3, 3, 5, 3));
+        observersManager.addPropertyChangeListener("points3", points3Field);
+        observersManager.addPropertyChangeListener("points5", points5Field);
 
         raceSkills = sheet.getRace().getRaceSkills(sheet.getAttributes(), sheet.getProfession().getProfSkills());
         raceTalents = sheet.getRace().getRaceTalents(sheet.getAttributes(), sheet.getProfession().getProfTalents());
@@ -132,7 +133,6 @@ public class RaceSkillTab {
     }
 
     private void createSkillTable(List<Skill> raceSkills) {
-        //TODO: Make Spinners block at max values selected
         List<Component> tabOrder = new ArrayList<>();
         int baseItr = 1;
         int advItr = 1;
@@ -145,7 +145,6 @@ public class RaceSkillTab {
             if (raceSkill.isAdv()) {
                 column = 4;
                 row = advItr++;
-                color = Color.red;
             } else {
                 column = 0;
                 row = baseItr++;
@@ -153,18 +152,22 @@ public class RaceSkillTab {
             int finalI = i;
             int finalRow = row;
             int finalColumn = column;
-            Color finalColor = color;
 
             SkillSingle activeSkill = skillsPanel.createComboIfNeeded(raceSkill, row, column++, color, visibleRaceSkills,
-                    newSkill -> updateSkillRow(finalI, finalRow, finalColumn, finalColor, newSkill));
+                    newSkill -> updateSkillRow(finalI, finalRow, finalColumn, color, newSkill));
 
             skillsPanel.createTextField(row, column++, activeSkill.getAttrName(), new Dimension(30, -1), false);
 
             AdvancedSpinner jSpinner = skillsPanel.createAdvancedSpinner(row, column++, new SpinnerListModel(Arrays.asList(0, 3, 5)), new Dimension(35, -1), true);
-            jSpinner.addChangeListener(e -> skillSpinnerChange(finalI, finalRow, finalColumn, jSpinner, finalColor));
+            jSpinner.addChangeListener(e -> {
+                if (!jSpinner.isLocked()) {
+                    skillSpinnerChange(finalI, finalRow, finalColumn, jSpinner, color);
+                }
+            });
 
             skillsPanel.createIntegerField(row, column++, activeSkill.getBaseSkill().getLinkedAttribute().getTotalValue(), new Dimension(30, -1), false);
 
+            updateSkillRow(finalI, finalRow, finalColumn, color);
             tabOrder.add(jSpinner.getTextField());
         }
         if (baseItr != 1) {
@@ -180,30 +183,50 @@ public class RaceSkillTab {
         skillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
     private void skillSpinnerChange(int idx, int row, int column, AdvancedSpinner jSpinner, Color color) {
-        int lastManual = visibleRaceSkills.get(idx).getAdvValue();
-        int lastAuto = (int) jSpinner.getLastValue();
+        int last = visibleRaceSkills.get(idx).getAdvValue();
         int now = (int) jSpinner.getValue();
 
-        if (lastManual != now) {
-            // Manual change of Spinner
-            pcs.firePropertyChange("points" + lastManual, (int) raceskillPoints.get(lastManual), raceskillPoints.get(lastManual) + 1);
-            pcs.firePropertyChange("points" + now, (int) raceskillPoints.get(now), raceskillPoints.get(now) - 1);
-            raceskillPoints.put(lastManual, raceskillPoints.get(lastManual) + 1);
+        if (last != now) {
+            observersManager.firePropertyChange("points" + last, (int) raceskillPoints.get(last), raceskillPoints.get(last) + 1);
+            observersManager.firePropertyChange("points" + now, (int) raceskillPoints.get(now), raceskillPoints.get(now) - 1);
+            raceskillPoints.put(last, raceskillPoints.get(last) + 1);
             raceskillPoints.put(now, raceskillPoints.get(now) - 1);
             visibleRaceSkills.get(idx).setAdvValue(now);
             updateSkillRow(idx, row, column, color);
-        } else if (lastAuto != now) {
-            // Automatic change via updateAll()
-            pcs.firePropertyChange("points" + lastAuto, (int) raceskillPoints.get(lastAuto), raceskillPoints.get(lastAuto) + 1);
-            pcs.firePropertyChange("points" + now, (int) raceskillPoints.get(now), raceskillPoints.get(now) - 1);
-            raceskillPoints.put(lastAuto, raceskillPoints.get(lastAuto) + 1);
-            raceskillPoints.put(now, raceskillPoints.get(now) - 1);
+        }
+        option1Button.setEnabled(raceskillPoints.get(3) == 0 && raceskillPoints.get(5) == 0);
+        setSpinnerLocks();
+    }
+
+    private void setSpinnerLocks() {
+        // Creating base list for models
+        Set<Integer> newModel = new TreeSet<>();
+        newModel.add(0);
+        for (int value : new int[] {3, 5}) {
+            if (raceskillPoints.get(value) != 0) {
+                newModel.add(value);
+            }
         }
 
-        option1Button.setEnabled(raceskillPoints.get(3) == 0 && raceskillPoints.get(5) == 0);
+        // Updating models (adding present value if needed)
+        for (int column : new int[] {2, 6}) {
+            skillsPanel.iterateThroughRows(column, (o, i) -> {
+                AdvancedSpinner spinner = (AdvancedSpinner) o;
+                Integer value = (Integer) spinner.getValue();
+                Set<Integer> activeModel = new TreeSet<>(newModel);
+                activeModel.add(value);
+
+                spinner.setLocked(true);
+                spinner.setModel(new SpinnerListModel(activeModel.toArray()));
+                spinner.setValue(value);
+                spinner.setHorizontalAlignment(JTextField.CENTER);
+                spinner.setLocked(false);
+            });
+        }
     }
+
     private void updateSkillRow(int idx, int row, int column, Color color, SkillSingle newSkill) {
-        boolean colorChange = newSkill.isAdv() && newSkill.getAdvValue()==0;
+        boolean colorChange = newSkill.isAdv() && newSkill.getAdvValue() == 0;
         if (skillsPanel.getComponent(column, row) instanceof JTextField) {
             ((JTextField) skillsPanel.getComponent(column, row)).setText(newSkill.getName());
         } else {
@@ -289,22 +312,27 @@ public class RaceSkillTab {
     }
 
     private void rollSkills() {
-        List<SkillSingle> updatedSkills = CharacterGen.randomizeSkillsWithList(raceSkills, new int[] {3, 3, 3, 5, 5, 5});
+        List<Integer> rollRange = Dice.randomIntegerList(raceSkills.size(), new int[] {3, 3, 3, 5, 5, 5});
+        skillsPanel.iterateThroughRows(2, (o, idx) -> ((AdvancedSpinner) o).setValue(0));
+        skillsPanel.iterateThroughRows(6, (o, idx) -> ((AdvancedSpinner) o).setValue(0));
+
         int baseItr = 1;
         int advItr = 1;
         int row;
         int column;
-        for (int i=0;i<updatedSkills.size();i++) {
-            Color color = updatedSkills.get(i).isAdvanceable() ? ColorPalette.HALF_GREEN : Color.black;
-
-            if (updatedSkills.get(i).isAdv()) {
+        for (int i=0;i<rollRange.size();i++) {
+            if (raceSkills.get(i).isAdv()) {
                 column = 4;
                 row = advItr++;
             } else {
                 column = 0;
                 row = baseItr++;
             }
-            updateSkillRow(i, row, column, color, updatedSkills.get(i));
+
+            if (raceSkills.get(i) instanceof SkillGroup) {
+                visibleRaceSkills.set(i, (SkillSingle) ((SkillGroup) raceSkills.get(i)).getRndSkill());
+            }
+            ((AdvancedSpinner) skillsPanel.getComponent(column + 2, row)).setValue(rollRange.get(i));
         }
     }
     private void rollTalents() {
@@ -371,10 +399,6 @@ public class RaceSkillTab {
     }
     private void rollRandomTalents() {
         rollRandomTalents(1);
-    }
-
-    private void addObserver(String propertyName, PropertyChangeListener l) {
-        pcs.addPropertyChangeListener(propertyName, l);
     }
 
     private void createUIComponents() {

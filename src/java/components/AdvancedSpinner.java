@@ -5,6 +5,7 @@ import javax.swing.*;
 public class AdvancedSpinner extends JSpinner {
     private final JTextField textField;
     private Object lastValue;
+    private boolean isLocked;
 
     public AdvancedSpinner(SpinnerModel model) {
         super(model);
@@ -19,13 +20,19 @@ public class AdvancedSpinner extends JSpinner {
         textField.setEditable(editable);
     }
     public void setHorizontalAlignment(int alignment) {
-        textField.setHorizontalAlignment(alignment);
+        ((JSpinner.DefaultEditor) getEditor()).getTextField().setHorizontalAlignment(alignment);
     }
     public JTextField getTextField() {
         return textField;
     }
     public Object getLastValue() {
         return lastValue;
+    }
+    public boolean isLocked() {
+        return isLocked;
+    }
+    public void setLocked(boolean locked) {
+        isLocked = locked;
     }
 
     @Override
