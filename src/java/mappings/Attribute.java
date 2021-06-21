@@ -1,5 +1,10 @@
 package mappings;
 
+import java.util.Collections;
+import javax.json.Json;
+import javax.json.JsonBuilderFactory;
+import javax.json.JsonObject;
+
 public class Attribute {
     private int rndValue;
     private int advValue;
@@ -62,6 +67,15 @@ public class Attribute {
     }
     public BaseAttribute getBaseAttribute() {
         return baseAttribute;
+    }
+
+    public JsonObject toJSON() {
+        JsonBuilderFactory builderFactory = Json.createBuilderFactory(Collections.emptyMap());
+
+        return builderFactory.createObjectBuilder()
+                .add("raceAttribute", raceAttribute.getID())
+                .add("rndValue", rndValue)
+                .add("advValue", advValue).build();
     }
 
     @Override

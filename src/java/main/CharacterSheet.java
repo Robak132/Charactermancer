@@ -2,6 +2,9 @@ package main;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -151,6 +154,30 @@ public class CharacterSheet {
 
     public void addObserver(String propertyName, PropertyChangeListener l) {
         pcs.addPropertyChangeListener(propertyName, l);
+    }
+
+    public void printSheet() {
+        JsonBuilderFactory builderFactory = Json.createBuilderFactory(Collections.emptyMap());
+
+        JsonArrayBuilder attributesJSONBuilder = builderFactory.createArrayBuilder();
+        for (Attribute attribute : attributes.values()) {
+            attributesJSONBuilder.add(attribute.toJSON());
+        }
+        JsonArray attributesJSON = attributesJSONBuilder.build();
+
+        JsonObject JSONSheet = builderFactory.createObjectBuilder()
+                .add("exp", exp)
+                .add("subrace", subrace.getID())
+                .add("attributes", attributesJSON).build();
+
+        Map<String, ?> config = Collections.singletonMap(JsonGenerator.PRETTY_PRINTING, true);
+        JsonWriterFactory writerFactory = Json.createWriterFactory(config);
+        try(Writer writer = new StringWriter()) {
+            writerFactory.createWriter(writer).write(JSONSheet);
+            System.out.println(writer + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
