@@ -1,7 +1,13 @@
 package mappings;
 
-import javax.persistence.*;
+import java.util.List;
 import java.util.Map;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 @Entity
 @DiscriminatorValue("SINGLE")
@@ -81,6 +87,11 @@ public class SkillSingle extends Skill {
     @Override
     public void setEarning(boolean earning) {
         this.earning = earning;
+    }
+
+    @Override
+    public List<SkillSingle> getSingleSkills() {
+        return List.of(this);
     }
 
     @Override

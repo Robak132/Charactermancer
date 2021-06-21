@@ -331,7 +331,7 @@ public class RaceSkillTab {
             }
 
             if (raceSkills.get(i) instanceof SkillGroup) {
-                visibleRaceSkills.set(i, (SkillSingle) ((SkillGroup) raceSkills.get(i)).getRndSkill());
+                visibleRaceSkills.set(i, ((SkillGroup) raceSkills.get(i)).getRndSkill());
             }
             ((AdvancedSpinner) skillsPanel.getComponent(column + 2, row)).setValue(rollRange.get(i));
         }
@@ -378,15 +378,15 @@ public class RaceSkillTab {
                     SearchableComboBox searchableComboBox = randomTalentsPanel.createSearchableComboBox(row, 0, dimension, false);
                     randomTalentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
 
-                    rollTalentGroup.getChildTalents().forEach(e->searchableComboBox.addItem(e.getName()));
+                    rollTalentGroup.getSingleTalents().forEach(e->searchableComboBox.addItem(e.getName()));
                     searchableComboBox.refresh();
                     searchableComboBox.setLocked(false);
                     searchableComboBox.setEditable(!rollTalentGroup.isLocked());
                     searchableComboBox.setToolTipText(MultiLineTooltip.splitToolTip(rollTalentGroup.getName()));
-                    visibleRandomTalents.add((TalentSingle) rollTalentGroup.getFirstTalent());
+                    visibleRandomTalents.add(rollTalentGroup.getSingleTalents().get(0));
 
                     searchableComboBox.addActionListener(e -> updateTalentRow(randomTalentsPanel, row, row, visibleRandomTalents,
-                            (TalentSingle) rollTalentGroup.getChildTalents().get(searchableComboBox.getSelectedIndex())));
+                            rollTalentGroup.getSingleTalents().get(searchableComboBox.getSelectedIndex())));
                 }
                 updateTalentRow(randomTalentsPanel, row, row, visibleRandomTalents);
 

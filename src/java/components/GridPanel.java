@@ -206,17 +206,17 @@ public class GridPanel extends JPanel {
             talentName.setForeground(color);
         } else {
             SkillGroup skillGroup = (SkillGroup) raceSkill;
-            activeSkill = (SkillSingle) skillGroup.getFirstSkill();
+            activeSkill = skillGroup.getSingleSkills().get(0);
             SearchableComboBox skillNameCombo = createSearchableComboBox(row, column, null, false);
             skillNameCombo.setToolTipText(MultiLineTooltip.splitToolTip(skillGroup.getName()));
-            for (Skill alternateSkill : skillGroup.getSkills()) {
+            for (SkillSingle alternateSkill : skillGroup.getSingleSkills()) {
                 skillNameCombo.addItem(alternateSkill.getName());
             }
             skillNameCombo.setPreferredSize(new Dimension(skillNameCombo.getSize().width, -1));
             skillNameCombo.setEditable(!skillGroup.isLocked());
             skillNameCombo.refresh();
             skillNameCombo.setForeground(color);
-            skillNameCombo.addActionListener(e-> runnable.run((SkillSingle) skillGroup.getSkills().get(skillNameCombo.getSelectedIndex())));
+            skillNameCombo.addActionListener(e-> runnable.run(skillGroup.getSingleSkills().get(skillNameCombo.getSelectedIndex())));
         }
         skillList.add(activeSkill);
         return activeSkill;
@@ -228,15 +228,15 @@ public class GridPanel extends JPanel {
             createTextField(row, column, activeTalent.getName(), null, false);
         } else {
             TalentGroup talentGroup = (TalentGroup) raceTalent;
-            activeTalent = (TalentSingle) talentGroup.getFirstTalent();
+            activeTalent = talentGroup.getSingleTalents().get(0);
             SearchableComboBox talentNameCombo = createSearchableComboBox(row, column, null, false);
             talentNameCombo.setToolTipText(MultiLineTooltip.splitToolTip(talentGroup.getName()));
-            for (Talent alternateTalent : talentGroup.getChildTalents()) {
+            for (TalentSingle alternateTalent : talentGroup.getSingleTalents()) {
                 talentNameCombo.addItem(alternateTalent.getName());
             }
             talentNameCombo.setPreferredSize(new Dimension(talentNameCombo.getSize().width, -1));
             talentNameCombo.refresh();
-            talentNameCombo.addActionListener(e -> runnable.run((TalentSingle) talentGroup.getChildTalents().get(talentNameCombo.getSelectedIndex())));
+            talentNameCombo.addActionListener(e -> runnable.run(talentGroup.getSingleTalents().get(talentNameCombo.getSelectedIndex())));
         }
         talentList.add(activeTalent);
         return activeTalent;

@@ -1,5 +1,6 @@
 package mappings;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -40,6 +41,8 @@ public abstract class Talent {
     public abstract void linkAttributeMap(Map<Integer, Attribute> attributeMap);
     public abstract boolean isAdvanceable();
     public abstract void setAdvanceable(boolean advanceable);
+
+    public abstract List<TalentSingle> getSingleTalents();
 
     @Override
     public boolean equals(Object o) {

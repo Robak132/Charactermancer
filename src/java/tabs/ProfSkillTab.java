@@ -209,16 +209,16 @@ public class ProfSkillTab {
             talentsPanel.createTextField(row, column, activeTalent.getName(), null, false);
         } else {
             TalentGroup talentGroup = (TalentGroup) raceTalent;
-            activeTalent = (TalentSingle) talentGroup.getFirstTalent();
+            activeTalent = talentGroup.getSingleTalents().get(0);
             SearchableComboBox talentNameCombo = talentsPanel.createSearchableComboBox(row, column, null, false);
             talentNameCombo.setToolTipText(MultiLineTooltip.splitToolTip(talentGroup.getName()));
-            for (Talent alternateTalent : talentGroup.getChildTalents()) {
+            for (TalentSingle alternateTalent : talentGroup.getSingleTalents()) {
                 talentNameCombo.addItem(alternateTalent.getName());
             }
             talentNameCombo.setPreferredSize(new Dimension(talentNameCombo.getSize().width, -1));
             talentNameCombo.refresh();
             talentNameCombo.addActionListener(e -> updateTalentRow(talentsPanel, idx, row, column, visibleRaceTalents,
-                    (TalentSingle) talentGroup.getChildTalents().get(talentNameCombo.getSelectedIndex())));
+                    talentGroup.getSingleTalents().get(talentNameCombo.getSelectedIndex())));
         }
         return activeTalent;
     }

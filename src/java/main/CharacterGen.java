@@ -160,7 +160,7 @@ public class CharacterGen {
                 startSkills.get(i).setAdvValue(0);
                 skills.add((SkillSingle) startSkills.get(i));
             } else {
-                skills.add((SkillSingle) ((SkillGroup) startSkills.get(i)).getRndSkill());
+                skills.add(((SkillGroup) startSkills.get(i)).getRndSkill());
             }
             lookupTable.add(i);
         }

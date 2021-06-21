@@ -1,5 +1,6 @@
 package mappings;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,21 +36,20 @@ public class TalentGroup extends Talent {
         this.locked = locked;
     }
 
-    public Talent getFirstTalent() {
-        /// TODO: make returns only TalentSingle
-        return childTalents.get(0);
+    @Override
+    public List<TalentSingle> getSingleTalents() {
+        List<TalentSingle> outputList = new ArrayList<>();
+        for (Talent talent : childTalents) {
+            outputList.addAll(talent.getSingleTalents());
+        }
+        return outputList;
     }
     public Talent getRndTalent() {
-        /// TODO: make returns only TalentSingle
-        return (Talent) Dice.randomItem(childTalents);
+        return (TalentSingle) Dice.randomItem(getSingleTalents());
     }
 
     public List<Talent> getChildTalents() {
-        /// TODO: make returns only TalentSingle
         return childTalents;
-    }
-    public int countChildTalents() {
-        return childTalents.size();
     }
     public void setChildTalents(List<Talent> talents) {
         this.childTalents = talents;
