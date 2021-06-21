@@ -185,6 +185,15 @@ public class Race {
         }
         return attributesMap;
     }
+    public Map<Integer, Attribute> getAttributes(int importance) {
+        Map<Integer, Attribute> attributeMap = new ConcurrentHashMap<>();
+        for (RaceAttribute raceAttribute : raceAttributes) {
+            if (raceAttribute.getBaseAttribute().getImportance() == importance) {
+                attributeMap.put(raceAttribute.getBaseAttribute().getID(), new Attribute(raceAttribute));
+            }
+        }
+        return attributeMap;
+    }
     public Attribute getAttribute(int index) {
         if (attributesMap == null) {
             createAttributeMap();
@@ -251,11 +260,10 @@ public class Race {
                 if (raceTalent.equals(profTalent)) {
                     raceTalent = profTalent;
                     raceTalent.setAdvanceable(true);
-                    raceTalent.setCurrentLvl(1);
                     break;
                 }
-                profTalent.setCurrentLvl(1);
             }
+            raceTalent.setCurrentLvl(1);
             raceTalent.linkAttributeMap(attributeMap);
             tempTalents.add(raceTalent);
         }
@@ -264,7 +272,6 @@ public class Race {
     public void setRaceTalents(List<Talent> raceTalents) {
         this.raceTalents = raceTalents;
     }
-
 
     @Override
     public String toString() {

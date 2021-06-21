@@ -47,7 +47,7 @@ public class AttributesTab {
 
     public void initialise(CharacterGen parent, CharacterSheet sheet, Connection connection) {
         this.sheet = sheet;
-        attributes = sheet.getRace().getAttributes();
+        attributes = sheet.getRace().getAttributes(0);
         createTable();
 
         attrRollButton.addActionListener(e -> roll());

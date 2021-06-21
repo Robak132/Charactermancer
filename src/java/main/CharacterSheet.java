@@ -3,10 +3,19 @@ package main;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.swing.*;
+import java.util.function.Predicate;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonBuilderFactory;
+import javax.json.JsonObject;
+import javax.json.JsonWriterFactory;
+import javax.json.stream.JsonGenerator;
+import javax.swing.JPanel;
 import mappings.Attribute;
 import mappings.Profession;
 import mappings.ProfessionCareer;
@@ -77,6 +86,17 @@ public class CharacterSheet {
     public void setSkillList(List<SkillSingle> skillList) {
         this.skillList = skillList;
     }
+    public void addSkills(List<SkillSingle> skillList) {
+        this.skillList.addAll(skillList);
+    }
+    public void addSkills(List<SkillSingle> skillList, Predicate<SkillSingle> condition) {
+        for (SkillSingle skill : skillList) {
+            if (condition.test(skill)) {
+                this.skillList.add(skill);
+            }
+        }
+    }
+
     public List<TalentSingle> getTalentList() {
         return talentList;
     }
