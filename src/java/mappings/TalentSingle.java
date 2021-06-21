@@ -1,5 +1,6 @@
 package mappings;
 
+import java.util.List;
 import java.util.Map;
 import javax.persistence.*;
 
@@ -58,6 +59,10 @@ public class TalentSingle extends Talent {
     @Override
     public void setAdvanceable(boolean advanceable) {
         this.advanceable = advanceable;
+    }
+    @Override
+    public List<TalentSingle> getSingleTalents() {
+        return List.of(this);
     }
 
     public Integer getMax() {

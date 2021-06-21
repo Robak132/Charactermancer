@@ -1,11 +1,16 @@
 package mappings;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 import org.hibernate.annotations.DiscriminatorFormula;
 import org.hibernate.annotations.DiscriminatorOptions;
-
-import javax.persistence.*;
-import java.util.Map;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -39,6 +44,8 @@ public abstract class Skill {
     public abstract boolean isEarning();
     public abstract void setEarning(boolean earning);
     public abstract void linkAttributeMap(Map<Integer, Attribute> attributeMap);
+
+    public abstract List<SkillSingle> getSingleSkills();
 
     @Override
     public boolean equals(Object o) {

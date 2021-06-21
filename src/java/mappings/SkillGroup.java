@@ -1,5 +1,6 @@
 package mappings;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.Column;
@@ -57,17 +58,19 @@ public class SkillGroup extends Skill{
         this.locked = locked;
     }
 
-    public Skill getFirstSkill() {
-        // TODO: make returns only SkillSingle
-        return skills.get(0);
+    @Override
+    public List<SkillSingle> getSingleSkills() {
+        List<SkillSingle> outputList = new ArrayList<>();
+        for (Skill skill : skills) {
+            outputList.addAll(skill.getSingleSkills());
+        }
+        return outputList;
     }
-    public Skill getRndSkill() {
-        // TODO: make returns only SkillSingle
-        return (Skill) Dice.randomItem(skills);
+    public SkillSingle getRndSkill() {
+        return (SkillSingle) Dice.randomItem(getSingleSkills());
     }
 
     public List<Skill> getSkills() {
-        // TODO: make returns only SkillSingle
         return skills;
     }
     public void setSkills(List<Skill> skills) {
