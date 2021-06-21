@@ -33,7 +33,9 @@ public class TalentBase {
     @Transient
     private Attribute linkedAttribute;
 
-    public TalentBase() {}
+    public TalentBase() {
+        // Needed for Hibernate/JPA
+    }
     public TalentBase(int ID, String name, String nameEng, String test, String desc) {
         this.ID = ID;
         this.name = name;

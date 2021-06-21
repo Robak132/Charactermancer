@@ -23,7 +23,9 @@ public class SkillBase {
     @Transient
     private Attribute linkedAttribute;
 
-    public SkillBase() {}
+    public SkillBase() {
+        // Needed for Hibernate/JPA
+    }
     public SkillBase(int ID, String name, boolean adv, String desc) {
         this.ID = ID;
         this.name = name;

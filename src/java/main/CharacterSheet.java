@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.swing.*;
+import java.util.function.Predicate;
+import javax.swing.JPanel;
 import mappings.Attribute;
 import mappings.Profession;
 import mappings.ProfessionCareer;
@@ -77,6 +78,17 @@ public class CharacterSheet {
     public void setSkillList(List<SkillSingle> skillList) {
         this.skillList = skillList;
     }
+    public void addSkills(List<SkillSingle> skillList) {
+        this.skillList.addAll(skillList);
+    }
+    public void addSkills(List<SkillSingle> skillList, Predicate<SkillSingle> condition) {
+        for (SkillSingle skill : skillList) {
+            if (condition.test(skill)) {
+                this.skillList.add(skill);
+            }
+        }
+    }
+
     public List<TalentSingle> getTalentList() {
         return talentList;
     }

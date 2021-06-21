@@ -109,9 +109,11 @@ public class RaceSkillTab {
             // TODO: Manual entering
         });
         option1Button.addActionListener(e -> {
-            sheet.setSkillList(visibleRaceSkills);
+            sheet.addSkills(visibleRaceSkills, skill -> skill.getAdvValue() > 0);
             sheet.setTalentList(visibleRaceTalents);
             sheet.addTalents(visibleRandomTalents);
+
+            System.out.print(sheet);
 
             skillsPanel.iterateThroughRows(0, (o, i) -> {
                 try {
@@ -182,6 +184,50 @@ public class RaceSkillTab {
 
         skillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
+    private void createTalentTable(List<Talent> raceTalents, Dimension[] fieldDimensions) {
+        talentsPanel.createJLabel(0,0,1,-1, "Talents");
+        for (int i = 0; i < raceTalents.size(); i++) {
+            Talent raceTalent = raceTalents.get(i);
+            int finalI = i;
+            int row = i + 1;
+            int column = 0;
+
+            TalentSingle activeTalent = talentsPanel.createComboIfNeeded(raceTalent, row, column++, visibleRaceTalents,
+                    newTalent -> updateTalentRow(talentsPanel, finalI, row, visibleRaceTalents, newTalent));
+
+            talentsPanel.createIntegerField(row, column++, activeTalent.getCurrentLvl(), fieldDimensions[column-1], false);
+
+            talentsPanel.createIntegerField(row, column++, activeTalent.getMax(), fieldDimensions[column-1], false);
+
+            JTextArea testArea = talentsPanel.createTextArea(row, column++, activeTalent.getBaseTalent().getTest(), fieldDimensions[column-1], false);
+            testArea.setFont(testArea.getFont().deriveFont(Font.PLAIN, 10));
+
+            String tooltip = activeTalent.getBaseTalent().getDesc();
+            talentsPanel.createJLabel(row, column, new ImageIcon("src/resources/images/info.png"), MultiLineTooltip.splitToolTip(tooltip, 75, 10));
+        }
+        talentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
+    }
+    private void createRandomTalentTable(Dimension[] fieldDimensions) {
+        if (sheet.getSubrace().getRandomTalents() != 0) {
+            rollPanel.setVisible(true);
+            for (int row=0; row < sheet.getSubrace().getRandomTalents(); row++) {
+                int column = 0;
+
+                randomTalentsPanel.createTextField(row, column++, "", fieldDimensions[column-1], false);
+
+                randomTalentsPanel.createIntegerField(row, column++, 0, fieldDimensions[column-1], false);
+
+                randomTalentsPanel.createIntegerField(row, column++, 0, fieldDimensions[column-1], false);
+
+                JTextArea testArea = randomTalentsPanel.createTextArea(row, column++, "", fieldDimensions[column-1], false);
+                testArea.setFont(testArea.getFont().deriveFont(Font.PLAIN, 10));
+
+                randomTalentsPanel.createJLabel(row, column, new ImageIcon("src/resources/images/info.png"), "");
+            }
+            randomTalentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
+        }
+    }
+
     private void skillSpinnerChange(int idx, int row, int column, AdvancedSpinner jSpinner, Color color) {
         int last = visibleRaceSkills.get(idx).getAdvValue();
         int now = (int) jSpinner.getValue();
@@ -197,7 +243,6 @@ public class RaceSkillTab {
         option1Button.setEnabled(raceskillPoints.get(3) == 0 && raceskillPoints.get(5) == 0);
         setSpinnerLocks();
     }
-
     private void setSpinnerLocks() {
         // Creating base list for models
         Set<Integer> newModel = new TreeSet<>();
@@ -247,68 +292,24 @@ public class RaceSkillTab {
         updateSkillRow(idx, row, column, color, visibleRaceSkills.get(idx));
     }
 
-    private void createTalentTable(List<Talent> raceTalents, Dimension[] fieldDimensions) {
-        talentsPanel.createJLabel(0,0,1,-1, "Talents");
-        for (int i = 0; i < raceTalents.size(); i++) {
-            Talent raceTalent = raceTalents.get(i);
-            int finalI = i;
-            int row = i + 1;
-            int column = 0;
-
-            TalentSingle activeTalent = talentsPanel.createComboIfNeeded(raceTalent, row, column++, visibleRaceTalents,
-                    newTalent -> updateTalentRow(talentsPanel, finalI, row, 0, visibleRaceTalents, newTalent));
-
-            talentsPanel.createIntegerField(row, column++, activeTalent.getCurrentLvl(), fieldDimensions[column-1], false);
-
-            talentsPanel.createIntegerField(row, column++, activeTalent.getMax(), fieldDimensions[column-1], false);
-
-            JTextArea testArea = talentsPanel.createTextArea(row, column++, activeTalent.getBaseTalent().getTest(), fieldDimensions[column-1], false);
-            testArea.setFont(testArea.getFont().deriveFont(Font.PLAIN, 10));
-
-            String tooltip = activeTalent.getBaseTalent().getDesc();
-            talentsPanel.createJLabel(row, column, new ImageIcon("src/resources/images/info.png"), MultiLineTooltip.splitToolTip(tooltip, 75, 10));
-        }
-        talentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
-    }
-    private void updateTalentRow(GridPanel panel, int idx, int row, int column, List<TalentSingle> talentList, TalentSingle newTalent) {
-        if (panel.getComponent(column, row) instanceof JTextField) {
-            ((JTextField) panel.getComponent(column, row)).setText(newTalent.getName());
+    private void updateTalentRow(GridPanel panel, int idx, int row, List<TalentSingle> talentList, TalentSingle newTalent) {
+        if (panel.getComponent(0, row) instanceof JTextField) {
+            ((JTextField) panel.getComponent(0, row)).setText(newTalent.getName());
         } else {
-            ((SearchableComboBox) panel.getComponent(column, row)).setSelectedItem(newTalent.getName());
+            ((SearchableComboBox) panel.getComponent(0, row)).setSelectedItem(newTalent.getName());
         }
 
-        ((JIntegerField) panel.getComponent(column + 1, row)).setValue(newTalent.getCurrentLvl());
-        ((JIntegerField) panel.getComponent(column + 2, row)).setValue(newTalent.getMax());
-        ((JTextArea) panel.getComponent(column + 3, row)).setText(newTalent.getBaseTalent().getTest());
-        ((JLabel) panel.getComponent(column + 4, row)).setToolTipText(MultiLineTooltip.splitToolTip(newTalent.getBaseTalent().getDesc()));
+        ((JIntegerField) panel.getComponent(1, row)).setValue(newTalent.getCurrentLvl());
+        ((JIntegerField) panel.getComponent(2, row)).setValue(newTalent.getMax());
+        ((JTextArea) panel.getComponent(3, row)).setText(newTalent.getBaseTalent().getTest());
+        ((JLabel) panel.getComponent(4, row)).setToolTipText(MultiLineTooltip.splitToolTip(newTalent.getBaseTalent().getDesc()));
 
         if (talentList.size() > idx) {
             talentList.set(idx, newTalent);
         }
     }
-    private void updateTalentRow(GridPanel panel, int idx, int row, int column, List<TalentSingle> talentList) {
-        updateTalentRow(panel, idx, row, column, talentList, talentList.get(idx));
-    }
-
-    private void createRandomTalentTable(Dimension[] fieldDimensions) {
-        if (sheet.getSubrace().getRandomTalents() != 0) {
-            rollPanel.setVisible(true);
-            for (int row=0; row < sheet.getSubrace().getRandomTalents(); row++) {
-                int column = 0;
-
-                randomTalentsPanel.createTextField(row, column++, "", fieldDimensions[column-1], false);
-
-                randomTalentsPanel.createIntegerField(row, column++, 0, fieldDimensions[column-1], false);
-
-                randomTalentsPanel.createIntegerField(row, column++, 0, fieldDimensions[column-1], false);
-
-                JTextArea testArea = randomTalentsPanel.createTextArea(row, column++, "", fieldDimensions[column-1], false);
-                testArea.setFont(testArea.getFont().deriveFont(Font.PLAIN, 10));
-
-                randomTalentsPanel.createJLabel(row, column, new ImageIcon("src/resources/images/info.png"), "");
-            }
-            randomTalentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
-        }
+    private void updateTalentRow(GridPanel panel, int idx, int row, List<TalentSingle> talentList) {
+        updateTalentRow(panel, idx, row, talentList, talentList.get(idx));
     }
 
     private void rollSkills() {
@@ -344,7 +345,7 @@ public class RaceSkillTab {
             } else {
                 activeTalent = (TalentSingle) ((TalentGroup) raceTalents.get(i)).getRndTalent();
             }
-            updateTalentRow(talentsPanel, i, i + 1, 0, visibleRaceTalents, activeTalent);
+            updateTalentRow(talentsPanel, i, i + 1, visibleRaceTalents, activeTalent);
         }
     }
     private void rollRandomTalents(int iterations) {
@@ -384,10 +385,10 @@ public class RaceSkillTab {
                     searchableComboBox.setToolTipText(MultiLineTooltip.splitToolTip(rollTalentGroup.getName()));
                     visibleRandomTalents.add((TalentSingle) rollTalentGroup.getFirstTalent());
 
-                    searchableComboBox.addActionListener(e -> updateTalentRow(randomTalentsPanel, row, row, 0, visibleRandomTalents,
+                    searchableComboBox.addActionListener(e -> updateTalentRow(randomTalentsPanel, row, row, visibleRandomTalents,
                             (TalentSingle) rollTalentGroup.getChildTalents().get(searchableComboBox.getSelectedIndex())));
                 }
-                updateTalentRow(randomTalentsPanel, row, row, 0, visibleRandomTalents);
+                updateTalentRow(randomTalentsPanel, row, row, visibleRandomTalents);
 
                 if (sheet.getSubrace().getRandomTalents() == randomTalents.size()) {
                     rollButton.setEnabled(false);
