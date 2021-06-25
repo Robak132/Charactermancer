@@ -40,23 +40,14 @@ public class FilteredComboBox<T> extends JComboBox<T> {
 
     public FilteredComboBox() {
         super();
+        init();
     }
     public FilteredComboBox(Function<T, String> stringParser) {
+        this();
         setUserFilter(stringParser);
-    }
-    public void setUserFilter(Function<T, String> stringParser) {
-        this.userFilter = (object, textToFilter) -> {
-            if (textToFilter.isEmpty()) {
-                return true;
-            }
-            return stringParser.apply(object).toLowerCase().contains(textToFilter.toLowerCase());
-        };
-        init();
-        setRenderer(new FilteredComboRenderer<T>(filterLabel, stringParser));
     }
 
     private void init() {
-        prepareComboFiltering();
         initFilterLabel();
         initComboPopupListener();
         initComboKeyListener();
@@ -166,8 +157,6 @@ public class FilteredComboBox<T> extends JComboBox<T> {
             }
             // preserve the selection
             model.setSelectedItem(selectedItem);
-            this.selectedItem = selectedItem;
-
             textHandler.reset();
         }
     }
@@ -197,14 +186,38 @@ public class FilteredComboBox<T> extends JComboBox<T> {
         filteredItems.forEach(model::addElement);
     }
 
+    public void setUserFilter(Function<T, String> stringParser) {
+        this.userFilter = (object, textToFilter) -> {
+            if (textToFilter.isEmpty()) {
+                return true;
+            }
+            return stringParser.apply(object).toLowerCase().contains(textToFilter.toLowerCase());
+        };
+        renderer = new FilteredComboRenderer<>(filterLabel, stringParser);
+        setRenderer(renderer);
+    }
     public void addItems(List<T> list) {
         list.forEach(this::addItem);
+        prepareComboFiltering();
+    }
+    public boolean isEditing() {
+        return textHandler.editing;
     }
 
     @Override
     public void setSelectedItem(Object selectedItem) {
+        Object lastObject = getModel().getSelectedItem();
         this.selectedItem = selectedItem;
+
         getModel().setSelectedItem(selectedItem);
+        if (lastObject == selectedItem) {
+            fireActionEvent();
+        }
+        resetFilterPopup();
+    }
+    @Override
+    public Object getSelectedItem() {
+        return super.getSelectedItem();
     }
 
     public void setLocked(boolean aFlag) {

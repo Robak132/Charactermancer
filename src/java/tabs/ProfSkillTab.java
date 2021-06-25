@@ -112,14 +112,14 @@ public class ProfSkillTab {
             int finalRow = row;
             int finalColumn = column;
 
-            SkillSingle activeSkill = skillsPanel.createComboIfNeeded(raceSkill, row, column++, color, visibleRaceSkills,
+            SkillSingle activeSkill = skillsPanel.createComboIfNeeded(raceSkill, row, column++, visibleRaceSkills, RaceSkillTab::getSkillColor,
                     newSkill -> updateSkillRow(finalI, finalRow, finalColumn, newSkill));
 
             skillsPanel.createTextField(row, column++, activeSkill.getAttrName(), new Dimension(30, -1), false);
 
             AdvancedSpinner jSpinner = skillsPanel.createAdvancedSpinner(row, column++,
                     new SpinnerNumberModel(activeSkill.getAdvValue(), activeSkill.getAdvValue(), 10, 1), new Dimension(35, -1), true);
-            jSpinner.addChangeListener(e -> skillSpinnerChange(finalI, finalRow, finalColumn, jSpinner));
+//            jSpinner.addChangeListener(e -> skillSpinnerChange(finalI, finalRow, finalColumn, jSpinner));
 
             skillsPanel.createIntegerField(row, column++, activeSkill.getBaseSkill().getLinkedAttribute().getTotalValue(), new Dimension(30, -1), false);
 

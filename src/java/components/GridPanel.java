@@ -10,6 +10,9 @@ import java.awt.Insets;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -25,7 +28,6 @@ import mappings.TalentSingle;
 import org.apache.logging.log4j.LogManager;
 import tools.DynamicMatrix2D;
 import tools.MultiLineTooltip;
-import tools.RunnableWithObject;
 
 public class GridPanel extends JPanel {
     private int columns = 1;
@@ -91,25 +93,25 @@ public class GridPanel extends JPanel {
         return components.get(row, col);
     }
 
-    public void iterateThroughRows(int col, RunnableWithObject runnable) {
-        iterateThroughRows(col, 0, components.getYSize(), runnable);
+    public void iterateThroughRows(int col, BiConsumer<Object, Integer> consumer) {
+        iterateThroughRows(col, 0, components.getYSize(), consumer);
     }
-    public void iterateThroughRows(int col, int rowStart, int rowEnd, RunnableWithObject runnable) {
+    public void iterateThroughRows(int col, int rowStart, int rowEnd, BiConsumer<Object, Integer> consumer) {
         for (int i = rowStart; i < rowEnd; i++) {
             Component active = getComponent(col, i);
             if (active != null) {
-                runnable.run(active, i);
+                consumer.accept(active, i);
             }
         }
     }
-    public void iterateThroughColumns(int row, RunnableWithObject runnable) {
-        iterateThroughColumns(row, 0, components.getXSize(row), runnable);
+    public void iterateThroughColumns(int row, BiConsumer<Object, Integer> consumer) {
+        iterateThroughColumns(row, 0, components.getXSize(row), consumer);
     }
-    public void iterateThroughColumns(int row, int columnStart, int columnEnd, RunnableWithObject runnable) {
+    public void iterateThroughColumns(int row, int columnStart, int columnEnd, BiConsumer<Object, Integer> consumer) {
         for (int i = columnStart; i < columnEnd; i++) {
             Component active = getComponent(i, row);
             if (active != null) {
-                runnable.run(active, i);
+                consumer.accept(active, i);
             }
         }
     }
@@ -198,25 +200,31 @@ public class GridPanel extends JPanel {
         return searchableComboBox;
     }
 
-    public SkillSingle createComboIfNeeded(Skill raceSkill, int row, int column, Color color, List<SkillSingle> skillList, UpdateSkillRow runnable) {
+    public <T> FilteredComboBox<T> createFilteredComboBox(int row, int column, Dimension dimension, Function<T, String> stringParser) {
+        FilteredComboBox<T> filteredComboBox = new FilteredComboBox<>(stringParser);
+        add(filteredComboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, dimension, null));
+        return filteredComboBox;
+    }
+
+    public SkillSingle createComboIfNeeded(Skill raceSkill, int row, int column, List<SkillSingle> skillList, Function<SkillSingle, Color> paintFunction, Consumer<SkillSingle> consumer) {
         SkillSingle activeSkill;
         if (raceSkill instanceof SkillSingle) {
             activeSkill = (SkillSingle) raceSkill;
             JTextField talentName = createTextField(row, column, activeSkill.getName(), null, false);
-            talentName.setForeground(color);
+            talentName.setHorizontalAlignment(JTextField.LEFT);
+            talentName.setForeground(paintFunction.apply(activeSkill));
         } else {
             SkillGroup skillGroup = (SkillGroup) raceSkill;
             activeSkill = skillGroup.getSingleSkills().get(0);
-            SearchableComboBox skillNameCombo = createSearchableComboBox(row, column, null, false);
+            FilteredComboBox<SkillSingle> skillNameCombo = createFilteredComboBox(row, column, null, SkillSingle::getName);
             skillNameCombo.setToolTipText(MultiLineTooltip.splitToolTip(skillGroup.getName()));
-            for (SkillSingle alternateSkill : skillGroup.getSingleSkills()) {
-                skillNameCombo.addItem(alternateSkill.getName());
-            }
-            skillNameCombo.setPreferredSize(new Dimension(skillNameCombo.getSize().width, -1));
-            skillNameCombo.setEditable(!skillGroup.isLocked());
-            skillNameCombo.refresh();
-            skillNameCombo.setForeground(color);
-            skillNameCombo.addActionListener(e-> runnable.run(skillGroup.getSingleSkills().get(skillNameCombo.getSelectedIndex())));
+            skillNameCombo.addItems(skillGroup.getSingleSkills());
+            skillNameCombo.setForeground(paintFunction.apply(activeSkill));
+            skillNameCombo.addActionListener(e -> {
+                if (!skillNameCombo.isEditing()) {
+                    consumer.accept((SkillSingle) skillNameCombo.getSelectedItem());
+                }
+            });
         }
         skillList.add(activeSkill);
         return activeSkill;
@@ -236,16 +244,14 @@ public class GridPanel extends JPanel {
             }
             talentNameCombo.setPreferredSize(new Dimension(talentNameCombo.getSize().width, -1));
             talentNameCombo.refresh();
-            talentNameCombo.addActionListener(e -> runnable.run(talentGroup.getSingleTalents().get(talentNameCombo.getSelectedIndex())));
+            talentNameCombo.addActionListener(e -> {
+                runnable.run(talentGroup.getSingleTalents().get(talentNameCombo.getSelectedIndex()));
+            });
         }
         talentList.add(activeTalent);
         return activeTalent;
     }
 
-    @FunctionalInterface
-    public interface UpdateSkillRow {
-        void run(SkillSingle newSkill);
-    }
     @FunctionalInterface
     public interface UpdateTalentRow {
         void run(TalentSingle newTalent);

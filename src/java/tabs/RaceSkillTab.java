@@ -2,6 +2,7 @@ package tabs;
 
 import components.AdvancedSpinner;
 import components.CustomFocusTraversalPolicy;
+import components.FilteredComboBox;
 import components.GridPanel;
 import components.JIntegerField;
 import components.SearchableComboBox;
@@ -155,21 +156,21 @@ public class RaceSkillTab {
             int finalRow = row;
             int finalColumn = column;
 
-            SkillSingle activeSkill = skillsPanel.createComboIfNeeded(raceSkill, row, column++, color, visibleRaceSkills,
-                    newSkill -> updateSkillRow(finalI, finalRow, finalColumn, color, newSkill));
+            SkillSingle activeSkill = skillsPanel.createComboIfNeeded(raceSkill, row, column++, visibleRaceSkills, RaceSkillTab::getSkillColor,
+                    newSkill -> updateSkillRow(finalI, finalRow, finalColumn, newSkill));
 
             skillsPanel.createTextField(row, column++, activeSkill.getAttrName(), new Dimension(30, -1), false);
 
             AdvancedSpinner jSpinner = skillsPanel.createAdvancedSpinner(row, column++, new SpinnerListModel(Arrays.asList(0, 3, 5)), new Dimension(35, -1), true);
             jSpinner.addChangeListener(e -> {
                 if (!jSpinner.isLocked()) {
-                    skillSpinnerChange(finalI, finalRow, finalColumn, jSpinner, color);
+                    skillSpinnerChange(finalI, finalRow, finalColumn, jSpinner);
                 }
             });
 
             skillsPanel.createIntegerField(row, column++, activeSkill.getBaseSkill().getLinkedAttribute().getTotalValue(), new Dimension(30, -1), false);
 
-            updateSkillRow(finalI, finalRow, finalColumn, color);
+            updateSkillRow(finalI, finalRow, finalColumn);
             tabOrder.add(jSpinner.getTextField());
         }
         if (baseItr != 1) {
@@ -228,7 +229,7 @@ public class RaceSkillTab {
         }
     }
 
-    private void skillSpinnerChange(int idx, int row, int column, AdvancedSpinner jSpinner, Color color) {
+    private void skillSpinnerChange(int idx, int row, int column, AdvancedSpinner jSpinner) {
         int last = visibleRaceSkills.get(idx).getAdvValue();
         int now = (int) jSpinner.getValue();
 
@@ -238,7 +239,7 @@ public class RaceSkillTab {
             raceskillPoints.put(last, raceskillPoints.get(last) + 1);
             raceskillPoints.put(now, raceskillPoints.get(now) - 1);
             visibleRaceSkills.get(idx).setAdvValue(now);
-            updateSkillRow(idx, row, column, color);
+            updateSkillRow(idx, row, column);
         }
         option1Button.setEnabled(raceskillPoints.get(3) == 0 && raceskillPoints.get(5) == 0);
         setSpinnerLocks();
@@ -270,26 +271,25 @@ public class RaceSkillTab {
         }
     }
 
-    private void updateSkillRow(int idx, int row, int column, Color color, SkillSingle newSkill) {
-        boolean colorChange = newSkill.isAdv() && newSkill.getAdvValue() == 0;
-        if (skillsPanel.getComponent(column, row) instanceof JTextField) {
-            ((JTextField) skillsPanel.getComponent(column, row)).setText(newSkill.getName());
+    public static Color getSkillColor(SkillSingle skill) {
+        if (skill.isAdv() && skill.getAdvValue() == 0) {
+            return Color.RED;
+        } else if (skill.isAdvanceable()) {
+            return ColorPalette.HALF_GREEN;
         } else {
-            ((SearchableComboBox) skillsPanel.getComponent(column, row)).setSelectedItem(newSkill.getName());
+            return Color.BLACK;
         }
-        skillsPanel.getComponent(column, row).setForeground(colorChange ? Color.RED : color);
-
+    }
+    private void updateSkillRow(int idx, int row, int column, SkillSingle newSkill) {
+        skillsPanel.getComponent(column, row).setForeground(getSkillColor(newSkill));
         ((JTextField) skillsPanel.getComponent(column + 1, row)).setText(newSkill.getAttrName());
         ((AdvancedSpinner) skillsPanel.getComponent(column + 2, row)).setValue(newSkill.getAdvValue());
         ((JIntegerField) skillsPanel.getComponent(column + 3, row)).setValue(newSkill.getTotalValue());
 
-
-        if (visibleRaceSkills.size() > idx) {
-            visibleRaceSkills.set(idx, newSkill);
-        }
+        visibleRaceSkills.set(idx, newSkill);
     }
-    private void updateSkillRow(int idx, int row, int column, Color color) {
-        updateSkillRow(idx, row, column, color, visibleRaceSkills.get(idx));
+    private void updateSkillRow(int idx, int row, int column) {
+        updateSkillRow(idx, row, column, visibleRaceSkills.get(idx));
     }
 
     private void updateTalentRow(GridPanel panel, int idx, int row, List<TalentSingle> talentList, TalentSingle newTalent) {
@@ -331,7 +331,9 @@ public class RaceSkillTab {
             }
 
             if (raceSkills.get(i) instanceof SkillGroup) {
-                visibleRaceSkills.set(i, ((SkillGroup) raceSkills.get(i)).getRndSkill());
+                SkillSingle newSkill = ((SkillGroup) raceSkills.get(i)).getRndSkill();
+                ((FilteredComboBox<?>) skillsPanel.getComponent(column, row)).setSelectedItem(newSkill);
+                visibleRaceSkills.set(i, newSkill);
             }
             ((AdvancedSpinner) skillsPanel.getComponent(column + 2, row)).setValue(rollRange.get(i));
         }

@@ -2,12 +2,11 @@ package components;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import javax.swing.*;
+import javax.swing.JTextField;
 import org.apache.logging.log4j.LogManager;
-import tools.RunnableWithObject;
 
 public class JIntegerField extends JTextField implements PropertyChangeListener {
-    private RunnableWithObject runnable;
+    private Runnable runnable;
     private String format;
     private int value;
 
@@ -55,14 +54,14 @@ public class JIntegerField extends JTextField implements PropertyChangeListener 
         this.value = value;
 
         if (runnable != null) {
-            runnable.run(this, null);
+            runnable.run();
         }
     }
 
-    public RunnableWithObject getRunnable() {
+    public Runnable getRunnable() {
         return runnable;
     }
-    public void setRunnable(RunnableWithObject runnable) {
+    public void setRunnable(Runnable runnable) {
         this.runnable = runnable;
     }
 
