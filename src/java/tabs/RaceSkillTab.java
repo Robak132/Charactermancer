@@ -5,7 +5,6 @@ import components.CustomFocusTraversalPolicy;
 import components.FilteredComboBox;
 import components.GridPanel;
 import components.JIntegerField;
-import components.SearchableComboBox;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -28,6 +27,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerListModel;
+import javax.swing.SpinnerModel;
 import main.CharacterGen;
 import main.CharacterSheet;
 import main.Connection;
@@ -118,13 +118,13 @@ public class RaceSkillTab {
 
             skillsPanel.iterateThroughRows(0, (o, i) -> {
                 try {
-                    ((SearchableComboBox) o).setLocked(true);
+                    ((FilteredComboBox<?>) o).setLocked(true);
                 } catch (ClassCastException ignored) {}
             });
             skillsPanel.iterateThroughRows(2, (o, i) -> ((AdvancedSpinner) o).setEnabled(false));
             skillsPanel.iterateThroughRows(4, (o, i) -> {
                 try {
-                    ((SearchableComboBox) o).setLocked(true);
+                    ((FilteredComboBox<?>) o).setLocked(true);
                 } catch (ClassCastException ignored) {}
             });
             skillsPanel.iterateThroughRows(6, (o, i) -> ((AdvancedSpinner) o).setEnabled(false));
@@ -139,38 +139,28 @@ public class RaceSkillTab {
         List<Component> tabOrder = new ArrayList<>();
         int baseItr = 1;
         int advItr = 1;
-        int row;
-        int column;
         for (int i = 0; i < raceSkills.size(); i++) {
             Skill raceSkill = raceSkills.get(i);
-            Color color = raceSkill.isAdvanceable() ? ColorPalette.HALF_GREEN : Color.black;
-
-            if (raceSkill.isAdv()) {
-                column = 4;
-                row = advItr++;
-            } else {
-                column = 0;
-                row = baseItr++;
-            }
+            int finalRow = raceSkill.isAdv() ? advItr++ : baseItr++;
+            int column = raceSkill.isAdv() ? 4 : 0;
             int finalI = i;
-            int finalRow = row;
             int finalColumn = column;
 
-            SkillSingle activeSkill = skillsPanel.createComboIfNeeded(raceSkill, row, column++, visibleRaceSkills, RaceSkillTab::getSkillColor,
+            SkillSingle activeSkill = skillsPanel.createComboIfNeeded(raceSkill, finalRow, column++, this::getSkillColor,
                     newSkill -> updateSkillRow(finalI, finalRow, finalColumn, newSkill));
+            visibleRaceSkills.add(activeSkill);
 
-            skillsPanel.createTextField(row, column++, activeSkill.getAttrName(), new Dimension(30, -1), false);
+            skillsPanel.createTextField(finalRow, column++, activeSkill.getAttrName(), new Dimension(30, -1), false);
 
-            AdvancedSpinner jSpinner = skillsPanel.createAdvancedSpinner(row, column++, new SpinnerListModel(Arrays.asList(0, 3, 5)), new Dimension(35, -1), true);
+            SpinnerModel model = new SpinnerListModel(Arrays.asList(0, 3, 5));
+            AdvancedSpinner jSpinner = skillsPanel.createAdvancedSpinner(finalRow, column++, model, new Dimension(35, -1), true);
             jSpinner.addChangeListener(e -> {
                 if (!jSpinner.isLocked()) {
                     skillSpinnerChange(finalI, finalRow, finalColumn, jSpinner);
                 }
             });
 
-            skillsPanel.createIntegerField(row, column++, activeSkill.getBaseSkill().getLinkedAttribute().getTotalValue(), new Dimension(30, -1), false);
-
-            updateSkillRow(finalI, finalRow, finalColumn);
+            skillsPanel.createIntegerField(finalRow, column++, activeSkill.getBaseSkill().getLinkedAttribute().getTotalValue(), new Dimension(30, -1), false);
             tabOrder.add(jSpinner.getTextField());
         }
         if (baseItr != 1) {
@@ -193,8 +183,8 @@ public class RaceSkillTab {
             int row = i + 1;
             int column = 0;
 
-            TalentSingle activeTalent = talentsPanel.createComboIfNeeded(raceTalent, row, column++, visibleRaceTalents,
-                    newTalent -> updateTalentRow(talentsPanel, finalI, row, visibleRaceTalents, newTalent));
+            TalentSingle activeTalent = talentsPanel.createComboIfNeeded(raceTalent, row, column++, newTalent -> updateTalentRow(talentsPanel, finalI, row, visibleRaceTalents, newTalent));
+            visibleRaceTalents.add(activeTalent);
 
             talentsPanel.createIntegerField(row, column++, activeTalent.getCurrentLvl(), fieldDimensions[column-1], false);
 
@@ -271,7 +261,7 @@ public class RaceSkillTab {
         }
     }
 
-    public static Color getSkillColor(SkillSingle skill) {
+    private Color getSkillColor(SkillSingle skill) {
         if (skill.isAdv() && skill.getAdvValue() == 0) {
             return Color.RED;
         } else if (skill.isAdvanceable()) {
@@ -293,20 +283,12 @@ public class RaceSkillTab {
     }
 
     private void updateTalentRow(GridPanel panel, int idx, int row, List<TalentSingle> talentList, TalentSingle newTalent) {
-        if (panel.getComponent(0, row) instanceof JTextField) {
-            ((JTextField) panel.getComponent(0, row)).setText(newTalent.getName());
-        } else {
-            ((SearchableComboBox) panel.getComponent(0, row)).setSelectedItem(newTalent.getName());
-        }
-
         ((JIntegerField) panel.getComponent(1, row)).setValue(newTalent.getCurrentLvl());
         ((JIntegerField) panel.getComponent(2, row)).setValue(newTalent.getMax());
         ((JTextArea) panel.getComponent(3, row)).setText(newTalent.getBaseTalent().getTest());
         ((JLabel) panel.getComponent(4, row)).setToolTipText(MultiLineTooltip.splitToolTip(newTalent.getBaseTalent().getDesc()));
 
-        if (talentList.size() > idx) {
-            talentList.set(idx, newTalent);
-        }
+        talentList.set(idx, newTalent);
     }
     private void updateTalentRow(GridPanel panel, int idx, int row, List<TalentSingle> talentList) {
         updateTalentRow(panel, idx, row, talentList, talentList.get(idx));
@@ -319,23 +301,17 @@ public class RaceSkillTab {
 
         int baseItr = 1;
         int advItr = 1;
-        int row;
-        int column;
-        for (int i=0;i<rollRange.size();i++) {
-            if (raceSkills.get(i).isAdv()) {
-                column = 4;
-                row = advItr++;
-            } else {
-                column = 0;
-                row = baseItr++;
-            }
+        for (int i=0; i<rollRange.size(); i++) {
+            Skill raceSkill = raceSkills.get(i);
+            int finalRow = raceSkill.isAdv() ? advItr++ : baseItr++;
+            int column = raceSkill.isAdv() ? 4 : 0;
 
-            if (raceSkills.get(i) instanceof SkillGroup) {
+            if (raceSkill instanceof SkillGroup) {
                 SkillSingle newSkill = ((SkillGroup) raceSkills.get(i)).getRndSkill();
-                ((FilteredComboBox<?>) skillsPanel.getComponent(column, row)).setSelectedItem(newSkill);
+                ((FilteredComboBox<?>) skillsPanel.getComponent(column, finalRow)).setSelectedItem(newSkill);
                 visibleRaceSkills.set(i, newSkill);
             }
-            ((AdvancedSpinner) skillsPanel.getComponent(column + 2, row)).setValue(rollRange.get(i));
+            ((AdvancedSpinner) skillsPanel.getComponent(column + 2, finalRow)).setValue(rollRange.get(i));
         }
     }
     private void rollTalents() {
@@ -377,18 +353,18 @@ public class RaceSkillTab {
                 } else {
                     TalentGroup rollTalentGroup = (TalentGroup) rollTalent;
                     Dimension dimension = new Dimension(textField.getWidth(), -1);
-                    SearchableComboBox searchableComboBox = randomTalentsPanel.createSearchableComboBox(row, 0, dimension, false);
+                    FilteredComboBox<TalentSingle> filteredComboBox = randomTalentsPanel.createFilteredComboBox(row, 0, dimension, TalentSingle::getName);
                     randomTalentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
 
-                    rollTalentGroup.getSingleTalents().forEach(e->searchableComboBox.addItem(e.getName()));
-                    searchableComboBox.refresh();
-                    searchableComboBox.setLocked(false);
-                    searchableComboBox.setEditable(!rollTalentGroup.isLocked());
-                    searchableComboBox.setToolTipText(MultiLineTooltip.splitToolTip(rollTalentGroup.getName()));
+                    filteredComboBox.addItems(rollTalentGroup.getSingleTalents());
+                    filteredComboBox.setToolTipText(MultiLineTooltip.splitToolTip(rollTalentGroup.getName()));
                     visibleRandomTalents.add(rollTalentGroup.getSingleTalents().get(0));
 
-                    searchableComboBox.addActionListener(e -> updateTalentRow(randomTalentsPanel, row, row, visibleRandomTalents,
-                            rollTalentGroup.getSingleTalents().get(searchableComboBox.getSelectedIndex())));
+                    filteredComboBox.addActionListener(e -> {
+                        if (!filteredComboBox.isEditing()) {
+                            updateTalentRow(randomTalentsPanel, row, row, visibleRandomTalents, (TalentSingle) filteredComboBox.getSelectedItem());
+                        }
+                    });
                 }
                 updateTalentRow(randomTalentsPanel, row, row, visibleRandomTalents);
 

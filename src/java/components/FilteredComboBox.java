@@ -193,8 +193,8 @@ public class FilteredComboBox<T> extends JComboBox<T> {
             }
             return stringParser.apply(object).toLowerCase().contains(textToFilter.toLowerCase());
         };
-        renderer = new FilteredComboRenderer<>(filterLabel, stringParser);
-        setRenderer(renderer);
+//        renderer = new FilteredComboRenderer<>(filterLabel, stringParser);
+        setRenderer(new FilteredComboRenderer<>(filterLabel, stringParser));
     }
     public void addItems(List<T> list) {
         list.forEach(this::addItem);

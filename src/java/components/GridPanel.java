@@ -8,7 +8,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -206,7 +205,7 @@ public class GridPanel extends JPanel {
         return filteredComboBox;
     }
 
-    public SkillSingle createComboIfNeeded(Skill raceSkill, int row, int column, List<SkillSingle> skillList, Function<SkillSingle, Color> paintFunction, Consumer<SkillSingle> consumer) {
+    public SkillSingle createComboIfNeeded(Skill raceSkill, int row, int column, Function<SkillSingle, Color> paintFunction, Consumer<SkillSingle> consumer) {
         SkillSingle activeSkill;
         if (raceSkill instanceof SkillSingle) {
             activeSkill = (SkillSingle) raceSkill;
@@ -226,10 +225,9 @@ public class GridPanel extends JPanel {
                 }
             });
         }
-        skillList.add(activeSkill);
         return activeSkill;
     }
-    public TalentSingle createComboIfNeeded(Talent raceTalent, int row, int column, List<TalentSingle> talentList, UpdateTalentRow runnable) {
+    public TalentSingle createComboIfNeeded(Talent raceTalent, int row, int column, Consumer<TalentSingle> consumer) {
         TalentSingle activeTalent;
         if (raceTalent instanceof TalentSingle) {
             activeTalent = (TalentSingle) raceTalent;
@@ -237,23 +235,15 @@ public class GridPanel extends JPanel {
         } else {
             TalentGroup talentGroup = (TalentGroup) raceTalent;
             activeTalent = talentGroup.getSingleTalents().get(0);
-            SearchableComboBox talentNameCombo = createSearchableComboBox(row, column, null, false);
+            FilteredComboBox<TalentSingle> talentNameCombo = createFilteredComboBox(row, column, null, TalentSingle::getName);
             talentNameCombo.setToolTipText(MultiLineTooltip.splitToolTip(talentGroup.getName()));
-            for (TalentSingle alternateTalent : talentGroup.getSingleTalents()) {
-                talentNameCombo.addItem(alternateTalent.getName());
-            }
-            talentNameCombo.setPreferredSize(new Dimension(talentNameCombo.getSize().width, -1));
-            talentNameCombo.refresh();
+            talentNameCombo.addItems(talentGroup.getSingleTalents());
             talentNameCombo.addActionListener(e -> {
-                runnable.run(talentGroup.getSingleTalents().get(talentNameCombo.getSelectedIndex()));
+                if (!talentNameCombo.isEditing()) {
+                    consumer.accept((TalentSingle) talentNameCombo.getSelectedItem());
+                }
             });
         }
-        talentList.add(activeTalent);
         return activeTalent;
-    }
-
-    @FunctionalInterface
-    public interface UpdateTalentRow {
-        void run(TalentSingle newTalent);
     }
 }

@@ -49,6 +49,9 @@ public class JIntegerField extends JTextField implements PropertyChangeListener 
         }
         return value;
     }
+    public Integer getSavedValue() {
+        return value;
+    }
     public void setValue(int value) {
         this.setText(String.format(format, value));
         this.value = value;
