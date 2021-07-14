@@ -63,7 +63,7 @@
           <editable value="false"/>
           <format value="%d/40" noi18n="true"/>
           <horizontalAlignment value="0"/>
-          <text value="0/40"/>
+          <text value="40/40"/>
         </properties>
       </component>
       <component id="e4922" class="javax.swing.JLabel">
