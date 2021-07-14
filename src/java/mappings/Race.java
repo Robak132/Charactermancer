@@ -1,5 +1,6 @@
 package mappings;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -225,6 +226,42 @@ public class Race {
             }
         }
         return raceTalents;
+    }
+    public Talent matchTalents(Talent firstTalent, Talent secondTalent) {
+        if (firstTalent instanceof TalentSingle) {
+            if (secondTalent instanceof TalentSingle) {
+                if (firstTalent.equals(secondTalent)) {
+                    secondTalent.setAdvanceable(true);
+                    return secondTalent;
+                } else {
+                    return firstTalent;
+                }
+            } else {
+                for (TalentSingle singleSecondTalent : secondTalent.getSingleTalents()) {
+                    matchTalents(firstTalent, singleSecondTalent);
+                }
+            }
+        } else {
+            List<Talent> tempList = new ArrayList<>();
+            for (TalentSingle singleFirstTalent : firstTalent.getSingleTalents()) {
+                tempList.add(matchTalents(singleFirstTalent, secondTalent));
+            }
+            ((TalentGroup) firstTalent).setChildTalents(tempList);
+            return firstTalent;
+        }
+        return null;
+    }
+    public List<Talent> getRaceTalents(Map<Integer, Attribute> attributeMap, List<Talent> profTalents) {
+        List<Talent> tempTalents = new ArrayList<>();
+        for (Talent raceTalent : raceTalents) {
+            for (Talent profTalent : profTalents) {
+                raceTalent = matchTalents(raceTalent, profTalent);
+            }
+            raceTalent.setCurrentLvl(1);
+            raceTalent.linkAttributeMap(attributeMap);
+            tempTalents.add(raceTalent);
+        }
+        return tempTalents;
     }
     public void setRaceTalents(List<Talent> raceTalents) {
         this.raceTalents = raceTalents;

@@ -129,6 +129,12 @@ public class RaceSkillTab extends SkillTab {
                 } catch (ClassCastException ignored) {}
             });
             skillsPanel.iterateThroughRows(6, (o, i) -> ((AdvancedSpinner) o).setEnabled(false));
+
+            talentsPanel.iterateThroughRows(0, (o, i) -> {
+                try {
+                    ((FilteredComboBox<?>) o).setLocked(true);
+                } catch (ClassCastException ignored) {}
+            });
             option1Button.setEnabled(false);
 
             parent.moveToNextTab();
