@@ -8,8 +8,8 @@ import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Map;
-import javax.swing.JButton;
-import javax.swing.JPanel;
+import javax.swing.*;
+
 import main.CharacterGen;
 import main.CharacterSheet;
 import main.Connection;
@@ -58,7 +58,34 @@ public class AttributesTab {
         });
         attrRollAllButton.setMnemonic(KeyEvent.VK_R);
         attrOKButton.addActionListener(e -> {
-            //TODO Add custom values given by user
+            JIntegerField fld;
+            int value;
+            int is_it_ok = 0;
+            for (int j = 1; j <= 10; j++) {
+                fld = (JIntegerField) attrAttributesTable.getComponent(j, 2);
+                value = fld.getValue();
+                if ((value <= 20) && (value >= 1)) {
+                    is_it_ok++;
+                }
+                else {
+                    break;
+                }
+            }
+            if (is_it_ok == 10) {
+                JOptionPane.showMessageDialog(mainPanel, "Jest ok", "Brawo!", JOptionPane.INFORMATION_MESSAGE);
+                for (int k = 1; k <= 10; k++) {
+                    fld = (JIntegerField) attrAttributesTable.getComponent(k, 2);
+                    fld.setEditable(false); //czy można potem przejść do kolejnej zakładki?
+                }
+            }
+            else {
+                JOptionPane.showMessageDialog(mainPanel, "Wpisano wartosci spoza zakresu", "Ogarnij sie, tworco", JOptionPane.ERROR_MESSAGE);
+                for (int l = 1; l <= 10; l++) {
+                    fld = (JIntegerField) attrAttributesTable.getComponent(l, 2);
+                    fld.setValue(0);
+                    fld.setEditable(true);
+                }
+            }
         });
         attrOption1Button.addActionListener(e -> {
             sheet.setAttributes(attributes);
