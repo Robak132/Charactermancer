@@ -80,7 +80,7 @@ public class AttributesTab {
             }
             else {
                 JOptionPane.showMessageDialog(mainPanel, "Wpisano wartosci spoza zakresu", "Ogarnij sie, tworco", JOptionPane.ERROR_MESSAGE);
-                for (int l = 1; l <= 10; l++) {
+                for (int l = attrItr; l <= 10; l++) {
                     fld = (JIntegerField) attrAttributesTable.getComponent(l, 2);
                     fld.setValue(0);
                     fld.setEditable(true);
@@ -154,7 +154,7 @@ public class AttributesTab {
             }
 
             JIntegerField attr = attrAttributesTable.createIntegerField(2, i, 0, new Dimension(30, -1));
-            attr.setFocusable(false);
+            //attr.setFocusable(false);
             attr.setForeground(foregroundColor);
             attr.setRunnable(() -> attributes.get(finalI).setRndValue(attr.getValue()));
             attr.addMouseListener((MouseClickedAdapter) this::replaceValues);
