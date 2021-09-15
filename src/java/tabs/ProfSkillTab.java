@@ -5,12 +5,12 @@ import components.CustomFocusTraversalPolicy;
 import components.GridPanel;
 import components.JIntegerField;
 import components.SearchableComboBox;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -31,20 +31,27 @@ import mappings.Talent;
 import mappings.TalentGroup;
 import mappings.TalentSingle;
 import tools.AbstractActionHelper;
-import tools.ColorPalette;
+import tools.Dice;
 import tools.MultiLineTooltip;
 
-public class ProfSkillTab {
+public class ProfSkillTab extends SkillTab {
+    private CharacterSheet sheet;
+    private Connection connection;
+    private final PropertyChangeSupport observersManager = new PropertyChangeSupport(this);
+
     private GridPanel skillsPanel;
     private GridPanel talentsPanel;
     private JPanel mainPanel;
     private JButton option1Button;
     private JIntegerField remainField;
 
+    private int remainValue = 40;
+
     private List<Skill> profSkills = new ArrayList<>();
-    private List<Talent> raceTalents = new ArrayList<>();
-    private final List<SkillSingle> visibleRaceSkills = new ArrayList<>();
-    private final List<TalentSingle> visibleRaceTalents = new ArrayList<>();
+    private List<Talent> profTalents = new ArrayList<>();
+
+    private final List<SkillSingle> visibleSkills = new ArrayList<>();
+    private final List<TalentSingle> visibleTalents = new ArrayList<>();
 
     private final Dimension[] talentFieldDimensions = {
             new Dimension(200, -1),
@@ -61,22 +68,30 @@ public class ProfSkillTab {
     }
 
     public void initialise(CharacterGen parent, CharacterSheet sheet, Connection connection) {
-        profSkills = sheet.getProfession().getProfSkills(sheet.getAttributes());
-        raceTalents = sheet.getProfession().getProfTalents(sheet.getAttributes());
+        this.sheet = sheet;
+        this.connection = connection;
+
+        observersManager.addPropertyChangeListener("points", remainField);
+
+        profSkills = new ArrayList<>(sheet.getProfession().getProfSkills().values());
+        profSkills.forEach(e->e.linkAttributeMap(sheet.getAttributes()));
+        profTalents = new ArrayList<>(sheet.getProfession().getProfTalents().values());
+        profTalents.forEach(e->e.linkAttributeMap(sheet.getAttributes()));
 
         createSkillTable(profSkills);
 //        createTalentTable(raceTalents, talentFieldDimensions);
 
         KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK);
         AbstractActionHelper.createActionMnemonic(mainPanel, stroke, () -> {
-            rollSkills();
+//            rollSkills();
             rollTalents();
         });
         option1Button.addActionListener(e -> {
-            sheet.setSkillList(visibleRaceSkills);
-            sheet.setTalentList(visibleRaceTalents);
+//            sheet.setSkillList(visibleRaceSkills);
+//            sheet.setTalentList(visibleRaceTalents);
 
-            System.out.println(sheet);
+            sheet.ToJSON();
+//            System.out.println(sheet);
         });
     }
 
@@ -92,8 +107,8 @@ public class ProfSkillTab {
             int finalColumn = column;
 
             SkillSingle activeSkill = skillsPanel.createComboIfNeeded(raceSkill, finalRow, column++, this::getSkillColor,
-                    newSkill -> updateSkillRow(finalI, finalRow, finalColumn, newSkill));
-            visibleRaceSkills.add(activeSkill);
+                    newSkill -> updateSkillRow(skillsPanel, visibleSkills, finalI, finalRow, finalColumn, newSkill));
+            visibleSkills.add(activeSkill);
 
             skillsPanel.createTextField(finalRow, column++, activeSkill.getAttrName(), new Dimension(30, -1), false);
 
@@ -129,7 +144,7 @@ public class ProfSkillTab {
             int column = 0;
 
             TalentSingle activeTalent = talentsPanel.createComboIfNeeded(raceTalent, row, column++,
-                    newTalent -> updateTalentRow(talentsPanel, finalI, row, 0, visibleRaceTalents, newTalent));
+                    newTalent -> updateTalentRow(talentsPanel, finalI, row, 0, visibleTalents, newTalent));
 
             talentsPanel.createIntegerField(row, column++, activeTalent.getCurrentLvl(), fieldDimensions[column-1], false);
 
@@ -145,36 +160,16 @@ public class ProfSkillTab {
     }
 
     private void skillSpinnerChange(int idx, int row, int column, AdvancedSpinner jSpinner) {
-        int last = visibleRaceSkills.get(idx).getAdvValue();
+        int last = visibleSkills.get(idx).getAdvValue();
         int now = (int) jSpinner.getValue();
 
         if (last != now) {
-            remainField.changeValue(last-now);
-            visibleRaceSkills.get(idx).setAdvValue(now);
-            updateSkillRow(idx, row, column);
+            observersManager.firePropertyChange("points", remainValue, remainValue+last-now);
+            remainValue = remainValue+last-now;
+            visibleSkills.get(idx).setAdvValue(now);
+            updateSkillRow(skillsPanel, visibleSkills, idx, row, column);
         }
-        option1Button.setEnabled(remainField.getSavedValue() == 0);
-    }
-
-    private Color getSkillColor(SkillSingle skill) {
-        if (skill.isAdv() && skill.getAdvValue() == 0) {
-            return Color.RED;
-        } else if (skill.isEarning()) {
-            return ColorPalette.BLUE;
-        } else {
-            return Color.BLACK;
-        }
-    }
-    private void updateSkillRow(int idx, int row, int column, SkillSingle newSkill) {
-        skillsPanel.getComponent(column, row).setForeground(getSkillColor(newSkill));
-        ((JTextField) skillsPanel.getComponent(column + 1, row)).setText(newSkill.getAttrName());
-        ((AdvancedSpinner) skillsPanel.getComponent(column + 2, row)).setValue(newSkill.getAdvValue());
-        ((JIntegerField) skillsPanel.getComponent(column + 3, row)).setValue(newSkill.getTotalValue());
-
-        visibleRaceSkills.set(idx, newSkill);
-    }
-    private void updateSkillRow(int idx, int row, int column) {
-        updateSkillRow(idx, row, column, visibleRaceSkills.get(idx));
+        option1Button.setEnabled(remainValue == 0);
     }
 
     private void updateTalentRow(GridPanel panel, int idx, int row, int column, List<TalentSingle> talentList, TalentSingle newTalent) {
@@ -198,7 +193,24 @@ public class ProfSkillTab {
     }
 
     private void rollSkills() {
-        List<SkillSingle> updatedSkills = CharacterGen.randomizeSkillsWithList(profSkills, new int[] {3, 3, 3, 5, 5, 5});
+        profSkills = new ArrayList<>(sheet.getProfession().getProfSkills().values());
+        profSkills.forEach(e->e.linkAttributeMap(sheet.getAttributes()));
+
+        List<SkillSingle> updatedSkills = new ArrayList<>();
+        for (Skill skill : profSkills) {
+            updatedSkills.add((SkillSingle) Dice.randomItem(skill.getSingleSkills()));
+        }
+
+        List<SkillSingle> lookupList = new ArrayList<>(updatedSkills);
+        for (int i=0; i<40; i++) {
+            int index = Dice.randomInt(0, lookupList.size()-1);
+            int newValue = lookupList.get(index).getAdvValue()+1;
+            lookupList.get(index).setAdvValue(newValue);
+            if (newValue == 10) {
+                lookupList.remove(index);
+            }
+        }
+
         int baseItr = 1;
         int advItr = 1;
         int row;
@@ -211,19 +223,19 @@ public class ProfSkillTab {
                 column = 0;
                 row = baseItr++;
             }
-            updateSkillRow(i, row, column, updatedSkills.get(i));
+            updateSkillRow(skillsPanel, visibleSkills, i, row, column, updatedSkills.get(i));
         }
     }
     private void rollTalents() {
-        for (int i = 0; i < raceTalents.size(); i++) {
-            Talent talent = raceTalents.get(i);
+        for (int i = 0; i < profTalents.size(); i++) {
+            Talent talent = profTalents.get(i);
             TalentSingle activeTalent;
             if (talent instanceof TalentSingle) {
-                activeTalent = (TalentSingle) raceTalents.get(i);
+                activeTalent = (TalentSingle) profTalents.get(i);
             } else {
-                activeTalent = (TalentSingle) ((TalentGroup) raceTalents.get(i)).getRndTalent();
+                activeTalent = (TalentSingle) ((TalentGroup) profTalents.get(i)).getRndTalent();
             }
-            updateTalentRow(talentsPanel, i, i + 1, 0, visibleRaceTalents, activeTalent);
+            updateTalentRow(talentsPanel, i, i + 1, 0, visibleTalents, activeTalent);
         }
     }
 

@@ -1,0 +1,141 @@
+{
+    "profession": {
+        "name": "Student",
+        "ID": 29
+    },
+    "skills": [
+        {
+            "base_skill_ID": 3,
+            "advanceable": false,
+            "name": "Broń Biała (Podstawowa)",
+            "ID": 9,
+            "adv_value": 5,
+            "earning": false
+        },
+        {
+            "base_skill_ID": 22,
+            "advanceable": false,
+            "name": "Charyzma",
+            "ID": 19,
+            "adv_value": 5,
+            "earning": false
+        },
+        {
+            "base_skill_ID": 23,
+            "advanceable": false,
+            "name": "Dowodzenie",
+            "ID": 20,
+            "adv_value": 3,
+            "earning": false
+        },
+        {
+            "base_skill_ID": 108,
+            "advanceable": false,
+            "name": "Wiedza (Imperium)",
+            "ID": 117,
+            "adv_value": 5,
+            "earning": false
+        },
+        {
+            "base_skill_ID": 28,
+            "advanceable": false,
+            "name": "Język (Bretoński)",
+            "ID": 25,
+            "adv_value": 3,
+            "earning": false
+        },
+        {
+            "base_skill_ID": 28,
+            "advanceable": false,
+            "name": "Język (Jałowej Krainy)",
+            "ID": 31,
+            "adv_value": 3,
+            "earning": false
+        }
+    ],
+    "attributes": [
+        {
+            "base_value": 20,
+            "name": "WW",
+            "rnd_value": 5,
+            "ID": 1,
+            "adv_value": 0
+        },
+        {
+            "base_value": 20,
+            "name": "US",
+            "rnd_value": 9,
+            "ID": 2,
+            "adv_value": 0
+        },
+        {
+            "base_value": 20,
+            "name": "S",
+            "rnd_value": 8,
+            "ID": 3,
+            "adv_value": 0
+        },
+        {
+            "base_value": 20,
+            "name": "Wt",
+            "rnd_value": 17,
+            "ID": 4,
+            "adv_value": 4
+        },
+        {
+            "base_value": 20,
+            "name": "I",
+            "rnd_value": 6,
+            "ID": 5,
+            "adv_value": 0
+        },
+        {
+            "base_value": 20,
+            "name": "Zw",
+            "rnd_value": 18,
+            "ID": 6,
+            "adv_value": 0
+        },
+        {
+            "base_value": 20,
+            "name": "Zr",
+            "rnd_value": 18,
+            "ID": 7,
+            "adv_value": 0
+        },
+        {
+            "base_value": 20,
+            "name": "Int",
+            "rnd_value": 13,
+            "ID": 8,
+            "adv_value": 0
+        },
+        {
+            "base_value": 20,
+            "name": "SW",
+            "rnd_value": 11,
+            "ID": 9,
+            "adv_value": 1
+        },
+        {
+            "base_value": 20,
+            "name": "Ogd",
+            "rnd_value": 12,
+            "ID": 10,
+            "adv_value": 0
+        },
+        {
+            "base_value": 4,
+            "name": "M",
+            "rnd_value": 0,
+            "ID": 11,
+            "adv_value": 0
+        }
+    ],
+    "exp": 120,
+    "subrace": {
+        "race_ID": 1,
+        "name": "Reiklandczyk",
+        "ID": 1
+    }
+}

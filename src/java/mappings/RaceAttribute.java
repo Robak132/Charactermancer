@@ -3,8 +3,6 @@ package mappings;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -15,10 +13,8 @@ public class RaceAttribute {
     private int ID;
     @Column(name = "VALUE")
     private int value;
-
-    @ManyToOne
-    @JoinColumn(name = "IDATTR")
-    private BaseAttribute baseAttribute;
+    @Column(name = "ID_ATTR")
+    private int attribute;
 
     public RaceAttribute(int ID, int value) {
         this.ID = ID;
@@ -40,10 +36,10 @@ public class RaceAttribute {
         this.value = value;
     }
 
-    public BaseAttribute getBaseAttribute() {
-        return baseAttribute;
+    public int getAttribute() {
+        return attribute;
     }
-    public void setBaseAttribute(BaseAttribute baseAttribute) {
-        this.baseAttribute = baseAttribute;
+    public void setAttribute(int baseAttribute) {
+        this.attribute = baseAttribute;
     }
 }

@@ -14,11 +14,9 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import mappings.Attribute;
 import mappings.Profession;
-import mappings.Race;
 import mappings.Skill;
 import mappings.SkillGroup;
 import mappings.SkillSingle;
-import mappings.Subrace;
 import mappings.Talent;
 import mappings.TalentGroup;
 import org.apache.logging.log4j.LogManager;
@@ -51,9 +49,9 @@ public class CharacterGen {
 
     public CharacterGen(JFrame frame, Main screen, Connection connection) {
         this.frame = frame;
-        previousScreen = screen;
+        this.previousScreen = screen;
         this.connection = connection;
-        sheet = new CharacterSheet();
+        sheet = new CharacterSheet(connection);
         sheet.addObserver("exp", expField);
 
         // Race //
@@ -99,7 +97,7 @@ public class CharacterGen {
         }
     }
     public void export() {
-        frame.setContentPane(new CharacterSheetBrowser(frame, sheet, connection).mainPanel);
+        frame.setContentPane(new CharacterSheetBrowser(frame, sheet, previousScreen, connection).mainPanel);
         frame.validate();
     }
     private void createUIComponents() {
@@ -107,34 +105,7 @@ public class CharacterGen {
     }
 
     // Base functions to use with GUI and text //
-    public static Object[] getRandomRace(Connection connection) {
-        Object[] returns = new Object[2];
-        int numeric = Dice.randomDice(1, 100);
-        returns[0] = numeric;
-        returns[1] = connection.getRaceFromTable(numeric);
-        return returns;
-    }
-    public static Object[] getRandomProf(Connection connection, Subrace subrace) {
-        Object[] returns = new Object[2];
-        int numeric = Dice.randomDice(1, 100);
-        returns[0] = numeric;
-        returns[1] = connection.getProfFromTable(subrace, numeric);
-        return returns;
-    }
-    public static Attribute getOneRandomAttr(int index, Race race) {
-        int numeric = Dice.randomDice(2, 10);
-        Attribute attribute = race.getAttribute(index);
-        attribute.setRndValue(numeric);
-        return attribute;
-    }
-    public static Map<Integer, Attribute> getAllRandomAttr(Race race) {
-        Map<Integer, Attribute> attributeMap = race.getAttributes();
-        for (int i = 0; i < attributeMap.size(); i++) {
-            int numeric = Dice.randomDice(2, 10);
-            attributeMap.get(i).setRndValue(numeric);
-        }
-        return attributeMap;
-    }
+
     public static Map<Integer, Attribute> randomAttributeAdvances(Profession profession, Map<Integer, Attribute> startAttributes, int maxPoints) {
         Map<Integer, Attribute> attributes = new ConcurrentHashMap<>(startAttributes);
         List<Attribute> profAttributes = profession.getAttributesList(attributes);

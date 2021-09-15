@@ -4,8 +4,6 @@ import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -25,10 +23,8 @@ public class TalentBase {
     private String desc;
     @Column(name = "CONST_LVL")
     private Integer constLvl;
-
-    @ManyToOne
-    @JoinColumn(name = "MAX_LVL")
-    private BaseAttribute attr;
+    @Column(name = "MAX_LVL")
+    private Integer attr;
 
     @Transient
     private Attribute linkedAttribute;
@@ -62,10 +58,10 @@ public class TalentBase {
     public void setNameEng(String nameEng) {
         this.nameEng = nameEng;
     }
-    public BaseAttribute getAttr() {
+    public Integer getAttr() {
         return attr;
     }
-    public void setAttr(BaseAttribute attr) {
+    public void setAttr(Integer attr) {
         this.attr = attr;
     }
     public String getTest() {
@@ -95,8 +91,6 @@ public class TalentBase {
     }
 
     public void linkAttributeMap(Map<Integer, Attribute> attributeMap) {
-        if (attr!=null) {
-            this.linkedAttribute = attributeMap.getOrDefault(attr.getID(), null);
-        }
+        this.linkedAttribute = attributeMap.getOrDefault(attr, null);
     }
 }

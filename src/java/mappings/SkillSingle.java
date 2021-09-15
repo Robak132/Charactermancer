@@ -49,7 +49,7 @@ public class SkillSingle extends Skill {
         this.baseSkill = baseSkill;
     }
     public String getAttrName() {
-        return baseSkill.getAttr().getName();
+        return baseSkill.getLinkedAttribute().getName();
     }
 
     public Integer getTotalValue() {

@@ -80,7 +80,7 @@ public class CharacterSheetMaker {
         this.frame = frame;
         this.parent = parent;
         this.connection = connection;
-        sheet = new CharacterSheet();
+        sheet = new CharacterSheet(connection);
 
         buildRace();
         buildProfession();
@@ -308,7 +308,7 @@ public class CharacterSheetMaker {
     }
 
     private void createTable() {
-        Map<Integer, Attribute> attributes = visibleRaces.get(0).getAttributes();
+        Map<Integer, Attribute> attributes = visibleRaces.get(0).getAttributes(connection);
         for (int i = 0; i < attributes.size(); i++) {
             attributesTable.createJLabel(0, i, attributes.get(i).getName());
             JIntegerField baseAttr = attributesTable.createIntegerField(1, i, 1, 1, 0, new Dimension(30, -1), true);

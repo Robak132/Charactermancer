@@ -13,6 +13,7 @@ import main.CharacterSheet;
 import main.Connection;
 import mappings.Profession;
 import mappings.ProfessionCareer;
+import org.apache.commons.collections4.KeyValue;
 import org.apache.logging.log4j.LogManager;
 
 public class ProfTab {
@@ -61,9 +62,10 @@ public class ProfTab {
         profOption4b.setUserFilter(ProfessionCareer::getName);
 
         profRollButton.addActionListener(e -> {
-            Object[] result = CharacterGen.getRandomProf(connection, sheet.getSubrace());
-            Profession rollProf = (Profession) result[1];
-            int rollResultNumeric = (int) result[0];
+            KeyValue<Integer, Profession> result = sheet.getSubrace().getRandomProf(connection);
+            Profession rollProf = result.getValue();
+            int rollResultNumeric = result.getKey();
+
             while (chosenProfessions.contains(rollProf)) {
                 LogManager.getLogger(getClass().getName()).debug(String.format("%d doubled, changing to %d", rollResultNumeric, rollResultNumeric % 100 + 1));
                 rollResultNumeric = rollResultNumeric % 100 + 1;

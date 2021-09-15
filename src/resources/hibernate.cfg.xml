@@ -11,7 +11,7 @@
         <property name="hibernate.enable_lazy_load_no_trans">true</property>
         <property name="PRAGMA foreign_keys">ON</property>
 
-        <mapping class="mappings.BaseAttribute" />
+        <mapping class="mappings.Attribute" />
         <mapping class="mappings.Skill" />
         <mapping class="mappings.Talent" />
         <mapping class="mappings.TalentGroup" />

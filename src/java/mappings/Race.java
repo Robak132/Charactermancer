@@ -1,8 +1,10 @@
 package mappings;
 
-import java.util.*;
-
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -13,6 +15,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import main.Connection;
+import org.apache.commons.collections4.KeyValue;
+import org.apache.commons.collections4.keyvalue.DefaultKeyValue;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import tools.Dice;
@@ -38,10 +43,10 @@ public class Race {
 
     @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany
-    @JoinColumn(name= "IDRACE")
+    @JoinColumn(name= "ID_RACE")
     private List<RaceAttribute> raceAttributes;
     @Transient
-    private Map<Integer, Attribute> attributesMap;
+    private List<Attribute> attributes;
 
     @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany
@@ -123,12 +128,6 @@ public class Race {
     public void setName(String name) {
         this.name = name;
     }
-    public int getM() {
-        return m;
-    }
-    public void setM(int m) {
-        this.m = m;
-    }
     public int getFate() {
         return fate;
     }
@@ -172,105 +171,68 @@ public class Race {
     }
 
     // Attributes
-    private void createAttributeMap() {
-        Map<Integer, Attribute> attributeMap = new ConcurrentHashMap<>();
-        for (RaceAttribute raceAttribute : raceAttributes) {
-            attributeMap.put(raceAttribute.getBaseAttribute().getID(), new Attribute(raceAttribute));
-        }
-        this.attributesMap = attributeMap;
+    public Map<Integer, Attribute> getAttributes(Connection connection) {
+        return getAttributes(connection, null);
     }
-    public Map<Integer, Attribute> getAttributes() {
-        if (attributesMap == null) {
-            createAttributeMap();
-        }
-        return attributesMap;
-    }
-    public Map<Integer, Attribute> getAttributes(int importance) {
-        Map<Integer, Attribute> attributeMap = new ConcurrentHashMap<>();
+    public Map<Integer, Attribute> getAttributes(Connection connection, Integer importance) {
+        attributes = connection.getAttributes(importance);
+        Map<Integer, Attribute> map = attributes.stream().collect(Collectors.toMap(Attribute::getID, Function.identity()));
         for (RaceAttribute raceAttribute : raceAttributes) {
-            if (raceAttribute.getBaseAttribute().getImportance() == importance) {
-                attributeMap.put(raceAttribute.getBaseAttribute().getID(), new Attribute(raceAttribute));
+            if (map.containsKey(raceAttribute.getAttribute())) {
+                map.get(raceAttribute.getAttribute()).setBaseValue(raceAttribute.getValue());
             }
         }
-        return attributeMap;
+        return map;
     }
-    public Attribute getAttribute(int index) {
-        if (attributesMap == null) {
-            createAttributeMap();
-        }
-        return attributesMap.get(index);
-    }
-
-    public List<RaceAttribute> getRaceAttributes() {
-        return raceAttributes;
-    }
-    public RaceAttribute getRaceAttribute(int attributeID) {
-        for (RaceAttribute raceAttribute: raceAttributes) {
-            if (raceAttribute.getBaseAttribute().getID() == attributeID) {
-                return raceAttribute;
-            }
-        }
-        return null;
+    public void setAttributes(List<Attribute> attributes) {
+        this.attributes = attributes;
     }
 
     // Skills
-    public List<Skill> getRaceSkills() {
-        return raceSkills;
+    public Map<Integer, Skill> getRaceSkills() {
+        return raceSkills.stream().collect(Collectors.toMap(Skill::getID, Function.identity()));
     }
-    public List<Skill> getRaceSkills(Map<Integer, Attribute> attributeMap) {
-        raceSkills.forEach(e->e.linkAttributeMap(attributeMap));
-        return raceSkills;
-    }
-    public List<Skill> getRaceSkills(Map<Integer, Attribute> attributeMap, List<Skill> profSkills) {
-        List<Skill> tempSkills = new ArrayList<>();
-        for (Skill raceSkill : raceSkills) {
-            for (Skill profSkill : profSkills) {
-                if (raceSkill.equals(profSkill)) {
-                    raceSkill = profSkill;
-                    raceSkill.setAdvanceable(true);
-                    break;
-                }
+    public Map<Integer, Skill> getRaceSkills(Map<Integer, Skill> profSkills) {
+        Map<Integer, Skill> raceSkills = getRaceSkills();
+        for (Skill profSkill : profSkills.values()) {
+            profSkill.setAdvanceable(true);
+            if (raceSkills.containsKey(profSkill.getID())) {
+                raceSkills.put(profSkill.getID(), profSkill);
             }
-            raceSkill.linkAttributeMap(attributeMap);
-            tempSkills.add(raceSkill);
         }
-        tempSkills.sort(Comparator.comparing(Skill::isAdv).thenComparing(e->e.name));
-        return tempSkills;
+        return raceSkills;
     }
     public void setRaceSkills(List<Skill> raceSkills) {
         this.raceSkills = raceSkills;
     }
 
     // Talents
-    public List<Talent> getRaceTalents() {
-        raceTalents.forEach(e->e.setCurrentLvl(1));
-        return raceTalents;
-    }
-    public List<Talent> getRaceTalents(Map<Integer, Attribute> attributeMap) {
+    public Map<Integer, Talent> getRaceTalents() {
+        Map<Integer, Talent> talentsMap = new HashMap<>();
         for (Talent talent : raceTalents) {
             talent.setCurrentLvl(1);
-            talent.linkAttributeMap(attributeMap);
+            talentsMap.put(talent.getID(), talent);
+        }
+        return talentsMap;
+    }
+    public Map<Integer, Talent> getRaceTalents(Map<Integer, Talent> profTalents) {
+        Map<Integer, Talent> raceTalents = getRaceTalents();
+        for (Talent talent : profTalents.values()) {
+            talent.setAdvanceable(true);
+            if (raceTalents.containsKey(talent.getID())) {
+                talent.setCurrentLvl(1);
+                raceTalents.put(talent.getID(), talent);
+            }
         }
         return raceTalents;
-    }
-    public List<Talent> getRaceTalents(Map<Integer, Attribute> attributeMap, List<Talent> profTalents) {
-        List<Talent> tempTalents = new ArrayList<>();
-        for (Talent raceTalent : raceTalents) {
-            for (Talent profTalent : profTalents) {
-                if (raceTalent.equals(profTalent)) {
-                    raceTalent = profTalent;
-                    raceTalent.setAdvanceable(true);
-                    break;
-                }
-            }
-            raceTalent.setCurrentLvl(1);
-            raceTalent.linkAttributeMap(attributeMap);
-            tempTalents.add(raceTalent);
-        }
-        return tempTalents;
     }
     public void setRaceTalents(List<Talent> raceTalents) {
         this.raceTalents = raceTalents;
+    }
+
+    public static KeyValue<Integer, Race> getRandomRace(Connection connection) {
+        int numeric = Dice.randomDice(1, 100);
+        return new DefaultKeyValue<>(numeric, connection.getRaceFromTable(numeric));
     }
 
     @Override

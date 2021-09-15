@@ -5,7 +5,6 @@ import components.CustomFocusTraversalPolicy;
 import components.FilteredComboBox;
 import components.GridPanel;
 import components.JIntegerField;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -39,11 +38,10 @@ import mappings.TalentGroup;
 import mappings.TalentSingle;
 import org.apache.logging.log4j.LogManager;
 import tools.AbstractActionHelper;
-import tools.ColorPalette;
 import tools.Dice;
 import tools.MultiLineTooltip;
 
-public class RaceSkillTab {
+public class RaceSkillTab extends SkillTab {
     private CharacterSheet sheet;
     private Connection connection;
     private final PropertyChangeSupport observersManager = new PropertyChangeSupport(this);
@@ -65,6 +63,7 @@ public class RaceSkillTab {
     private List<Skill> raceSkills = new ArrayList<>();
     private List<Talent> raceTalents = new ArrayList<>();
     private final List<Talent> randomTalents = new ArrayList<>();
+
     private final List<SkillSingle> visibleRaceSkills = new ArrayList<>();
     private final List<TalentSingle> visibleRaceTalents = new ArrayList<>();
     private final List<TalentSingle> visibleRandomTalents = new ArrayList<>();
@@ -91,8 +90,10 @@ public class RaceSkillTab {
         observersManager.addPropertyChangeListener("points3", points3Field);
         observersManager.addPropertyChangeListener("points5", points5Field);
 
-        raceSkills = sheet.getRace().getRaceSkills(sheet.getAttributes(), sheet.getProfession().getProfSkills());
-        raceTalents = sheet.getRace().getRaceTalents(sheet.getAttributes(), sheet.getProfession().getProfTalents());
+        raceSkills = new ArrayList<>(sheet.getRace().getRaceSkills(sheet.getProfession().getProfSkills()).values());
+        raceSkills.forEach(s -> s.linkAttributeMap(sheet.getAttributes()));
+        raceTalents = new ArrayList<>(sheet.getRace().getRaceTalents(sheet.getProfession().getProfTalents()).values());
+        raceTalents.forEach(s -> s.linkAttributeMap(sheet.getAttributes()));
 
         createSkillTable(raceSkills);
         createTalentTable(raceTalents, talentFieldDimensions);
@@ -110,7 +111,7 @@ public class RaceSkillTab {
             // TODO: Manual entering
         });
         option1Button.addActionListener(e -> {
-            sheet.addSkills(visibleRaceSkills, skill -> skill.getAdvValue() > 0);
+            visibleRaceSkills.forEach(sheet::addSkillMap);
             sheet.setTalentList(visibleRaceTalents);
             sheet.addTalents(visibleRandomTalents);
 
@@ -139,6 +140,7 @@ public class RaceSkillTab {
         List<Component> tabOrder = new ArrayList<>();
         int baseItr = 1;
         int advItr = 1;
+
         for (int i = 0; i < raceSkills.size(); i++) {
             Skill raceSkill = raceSkills.get(i);
             int finalRow = raceSkill.isAdv() ? advItr++ : baseItr++;
@@ -147,7 +149,7 @@ public class RaceSkillTab {
             int finalColumn = column;
 
             SkillSingle activeSkill = skillsPanel.createComboIfNeeded(raceSkill, finalRow, column++, this::getSkillColor,
-                    newSkill -> updateSkillRow(finalI, finalRow, finalColumn, newSkill));
+                    newSkill -> updateSkillRow(skillsPanel, visibleRaceSkills, finalI, finalRow, finalColumn, newSkill));
             visibleRaceSkills.add(activeSkill);
 
             skillsPanel.createTextField(finalRow, column++, activeSkill.getAttrName(), new Dimension(30, -1), false);
@@ -229,7 +231,7 @@ public class RaceSkillTab {
             raceskillPoints.put(last, raceskillPoints.get(last) + 1);
             raceskillPoints.put(now, raceskillPoints.get(now) - 1);
             visibleRaceSkills.get(idx).setAdvValue(now);
-            updateSkillRow(idx, row, column);
+            updateSkillRow(skillsPanel, visibleRaceSkills, idx, row, column);
         }
         option1Button.setEnabled(raceskillPoints.get(3) == 0 && raceskillPoints.get(5) == 0);
         setSpinnerLocks();
@@ -259,27 +261,6 @@ public class RaceSkillTab {
                 spinner.setLocked(false);
             });
         }
-    }
-
-    private Color getSkillColor(SkillSingle skill) {
-        if (skill.isAdv() && skill.getAdvValue() == 0) {
-            return Color.RED;
-        } else if (skill.isAdvanceable()) {
-            return ColorPalette.HALF_GREEN;
-        } else {
-            return Color.BLACK;
-        }
-    }
-    private void updateSkillRow(int idx, int row, int column, SkillSingle newSkill) {
-        skillsPanel.getComponent(column, row).setForeground(getSkillColor(newSkill));
-        ((JTextField) skillsPanel.getComponent(column + 1, row)).setText(newSkill.getAttrName());
-        ((AdvancedSpinner) skillsPanel.getComponent(column + 2, row)).setValue(newSkill.getAdvValue());
-        ((JIntegerField) skillsPanel.getComponent(column + 3, row)).setValue(newSkill.getTotalValue());
-
-        visibleRaceSkills.set(idx, newSkill);
-    }
-    private void updateSkillRow(int idx, int row, int column) {
-        updateSkillRow(idx, row, column, visibleRaceSkills.get(idx));
     }
 
     private void updateTalentRow(GridPanel panel, int idx, int row, List<TalentSingle> talentList, TalentSingle newTalent) {

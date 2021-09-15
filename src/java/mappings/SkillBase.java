@@ -15,10 +15,8 @@ public class SkillBase {
     private boolean adv;
     @Column(name = "DESCR")
     private String desc;
-
-    @ManyToOne
-    @JoinColumn(name = "ATTR")
-    private BaseAttribute attr;
+    @Column(name = "ATTR")
+    private int attr;
 
     @Transient
     private Attribute linkedAttribute;
@@ -45,17 +43,17 @@ public class SkillBase {
     public void setName(String name) {
         this.name = name;
     }
-    public BaseAttribute getAttr() {
-        return attr;
-    }
-    public void setAttr(BaseAttribute attr) {
-        this.attr = attr;
-    }
     public String getDesc() {
         return desc;
     }
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+    public int getAttr() {
+        return attr;
+    }
+    public void setAttr(int attr) {
+        this.attr = attr;
     }
     public boolean isAdv() {
         return adv;
@@ -71,8 +69,6 @@ public class SkillBase {
     }
 
     public void linkAttributeMap(Map<Integer, Attribute> attributeMap) {
-        if (attr!=null) {
-            this.linkedAttribute = attributeMap.getOrDefault(attr.getID(), null);
-        }
+        this.linkedAttribute = attributeMap.getOrDefault(attr, null);
     }
 }

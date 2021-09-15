@@ -12,6 +12,7 @@ import main.CharacterSheet;
 import main.Connection;
 import mappings.Race;
 import mappings.Subrace;
+import org.apache.commons.collections4.KeyValue;
 
 public final class RaceTab {
     private CharacterSheet sheet;
@@ -46,9 +47,9 @@ public final class RaceTab {
         raceOption2Combo.setUserFilter(Race::getName);
 
         raceRollButton.addActionListener(e -> {
-            Object[] result = CharacterGen.getRandomRace(connection);
-            int rollResultNumeric = (int) result[0];
-            race = (Race) result[1];
+            KeyValue<Integer, Race> result = Race.getRandomRace(connection);
+            int rollResultNumeric = result.getKey();
+            race = result.getValue();
             subraces = race.getSubraces();
 
             setRace(rollResultNumeric, race.getName());

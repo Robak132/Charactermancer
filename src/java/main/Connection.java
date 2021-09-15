@@ -80,6 +80,21 @@ public class Connection {
         }
         return races;
     }
+    public Subrace getSubrace(int ID, String name) {
+        Subrace subrace = null;
+        try {
+            Session session = factory.openSession();
+            Query<Subrace> query = session.createQuery("FROM Subrace WHERE ID=:ID AND name=:name");
+            query.setParameter("ID", ID);
+            query.setParameter("name", name);
+            subrace = query.list().size()==0 ? null : query.list().get(0);
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return subrace;
+    }
     public List<Subrace> getSubraces(Race race) {
         if (race != null) {
             return race.getSubraces();
@@ -98,6 +113,54 @@ public class Connection {
         return subraces;
     }
 
+    public Attribute getAttribute(int ID, String name) {
+        Attribute attribute = null;
+        try {
+            Session session = factory.openSession();
+            Query<Attribute> query = session.createQuery("FROM Attribute WHERE ID=:ID AND name=:name");
+            query.setParameter("ID", ID);
+            query.setParameter("name", name);
+            attribute = query.list().size()==0 ? null : query.list().get(0);
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return attribute;
+    }
+    public List<Attribute> getAttributes(Integer importance) {
+        List<Attribute> attributes = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            if (importance == null) {
+                Query<Attribute> query = session.createQuery("FROM Attribute");
+                attributes = query.list().size()==0 ? null : query.list();
+            } else {
+                Query<Attribute> query = session.createQuery("FROM Attribute WHERE importance=:importance");
+                query.setParameter("importance", importance);
+                attributes = query.list().size()==0 ? null : query.list();
+            }
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return attributes;
+    }
+    public List<Attribute> getAttributes() {
+        List<Attribute> attributes = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query<Attribute> query = session.createQuery("FROM Attribute");
+            attributes = query.list().size()==0 ? null : query.list();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return attributes;
+    }
+
     public Profession getProfFromTable(Subrace subrace, int n) {
         Profession prof = null;
         try {
@@ -106,6 +169,21 @@ public class Connection {
             query.setParameter("param1", n);
             query.setParameter("param2", subrace);
             prof = query.list().size()==0 ? null : (Profession) query.list().get(0);
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return prof;
+    }
+    public Profession getProfession(int ID, String name) {
+        Profession prof = null;
+        try {
+            Session session = factory.openSession();
+            Query<Profession> query = session.createQuery("FROM Profession WHERE ID=:ID AND name=:name");
+            query.setParameter("ID", ID);
+            query.setParameter("name", name);
+            prof = query.list().size()==0 ? null : query.list().get(0);
             session.close();
         } catch (Exception ex) {
             abort();
@@ -125,66 +203,6 @@ public class Connection {
             ex.printStackTrace();
         }
         return classes;
-    }
-    public List<ProfessionCareer> getProfessionClasses(Subrace subrace) {
-        List<ProfessionCareer> careers = new ArrayList<>();
-        try {
-            Session session = factory.openSession();
-            Query<ProfessionCareer> query = session.createQuery("FROM Race.raceCareers WHERE r.ID=:param");
-            query.setParameter("param", subrace.getID());
-            careers = query.getResultList();
-            session.close();
-        } catch (Exception ex) {
-            abort();
-            ex.printStackTrace();
-        }
-        return careers;
-    }
-    public List<ProfessionCareer> getProfessionCareers(Race race) {
-        if (race != null) {
-            return race.getRaceCareers();
-        }
-
-        List<ProfessionCareer> careers = new ArrayList<>();
-        try {
-            Session session = factory.openSession();
-            Query query = session.createQuery("FROM ProfessionCareer C WHERE C.professionClass.name != 'Zwierzę'");
-            careers = query.list();
-            session.close();
-        } catch (Exception ex) {
-            abort();
-            ex.printStackTrace();
-        }
-        return careers;
-    }
-    public List<ProfessionCareer> getProfessionCareers() {
-        List<ProfessionCareer> careers = new ArrayList<>();
-        try {
-            Session session = factory.openSession();
-            Query query = session.createQuery("From ProfessionCareer");
-            careers = query.list();
-            session.close();
-        } catch (Exception ex) {
-            abort();
-            ex.printStackTrace();
-        }
-        return careers;
-    }
-    public List<Profession> getProfessions(Subrace subrace, ProfessionClass clss, ProfessionCareer career) {
-        List<Profession> professions = new ArrayList<>();
-        try {
-            Session session = factory.openSession();
-            Query query = session.createQuery("SELECT DISTINCT t.prof FROM ProfTable t WHERE t.subrace=:param AND t.prof.career.professionClass=:param2 AND t.prof.career=:param3");
-            query.setParameter("param", subrace);
-            query.setParameter("param2", clss);
-            query.setParameter("param3", career);
-            professions = query.list();
-            session.close();
-        } catch (Exception ex) {
-            abort();
-            ex.printStackTrace();
-        }
-        return professions;
     }
     public List<Profession> getProfessions() {
         List<Profession> professions = new ArrayList<>();
@@ -213,22 +231,19 @@ public class Connection {
         }
         return profs;
     }
-    public List<Profession> getProfs(int race, String clss) {
-        if (clss == null)
-            return getProfs(race);
-        List<Profession> profs = new ArrayList<>();
+
+    public List<SkillSingle> getSimpleSkills() {
+        List<SkillSingle> skills = new ArrayList<>();
         try {
             Session session = factory.openSession();
-            Query<Profession> query = session.createQuery("SELECT t.prof FROM ProfTable t JOIN t.prof WHERE t.prof.career.professionClass = :param2 AND t.subrace.id =:param");
-            query.setParameter("param", race);
-            query.setParameter("param2", clss);
-            profs = query.list();
+            Query<SkillSingle> query = session.createQuery("FROM SkillSingle WHERE baseSkill.adv=false");
+            skills = query.list().size()==0 ? null : query.list();
             session.close();
         } catch (Exception ex) {
             abort();
             ex.printStackTrace();
         }
-        return profs;
+        return skills;
     }
 
     public Talent getRandomTalent(int n) {
@@ -245,7 +260,6 @@ public class Connection {
         }
         return talent;
     }
-
     public List<Talent> getAllTalents() {
         List<Talent> talents = new ArrayList<>();
         try {

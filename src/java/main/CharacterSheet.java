@@ -2,6 +2,10 @@ package main;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,21 +23,29 @@ import mappings.SkillSingle;
 import mappings.Subrace;
 import mappings.Talent;
 import mappings.TalentSingle;
+import org.apache.logging.log4j.LogManager;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class CharacterSheet {
     public JPanel mainPanel;
-    private final PropertyChangeSupport pcs = new  PropertyChangeSupport(this);
+    public Connection connection;
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     private final int MOVE = 11;
+
+    private int exp;
     private int healthPoints;
     private Subrace subrace;
-    private Profession prof;
+    private Profession profession;
     private Map<Integer, Attribute> attributes = new ConcurrentHashMap<>();
+    private Map<Integer, SkillSingle> skills = new ConcurrentHashMap<>();
     private List<SkillSingle> skillList = new ArrayList<>();
     private List<TalentSingle> talentList = new ArrayList<>();
-    private int exp;
 
-    public CharacterSheet() {}
+    public CharacterSheet(Connection connection) {
+        this.connection = connection;
+    }
 
     public Race getRace() {
         return subrace.getBaseRace();
@@ -50,20 +62,23 @@ public class CharacterSheet {
     }
 
     public Profession getProfession() {
-        return prof;
+        return profession;
     }
     public ProfessionCareer getProfessionCareer() {
-        return prof.getProfessionCareer();
+        return profession.getProfessionCareer();
     }
     public ProfessionClass getProfessionClass() {
-        return prof.getProfessionCareer().getProfessionClass();
+        return profession.getProfessionCareer().getProfessionClass();
     }
     public void setProfession(Profession prof) {
-        this.prof = prof;
+        this.profession = prof;
     }
 
     public Map<Integer, Attribute> getAttributes() {
         return attributes;
+    }
+    public Attribute getAttribute(int index) {
+        return attributes.get(index);
     }
     public void setAttributes(Map<Integer, Attribute> attributes) {
         this.attributes = attributes;
@@ -87,6 +102,20 @@ public class CharacterSheet {
                 this.skillList.add(skill);
             }
         }
+    }
+    public void addSkill(SkillSingle skill) {
+        if (skillList.contains(skill)) {
+            LogManager.getLogger(getClass().getName()).warn(String.format("Skill already exists, replacing [%s]", skill.getName()));
+            skillList.remove(skill);
+        }
+        skillList.add(skill);
+    }
+
+    public void addSkillMap(SkillSingle skill) {
+        skills.put(skill.getID(), skill);
+    }
+    public Map<Integer, SkillSingle> getSkillMap() {
+        return skills;
     }
 
     public List<TalentSingle> getTalentList() {
@@ -151,7 +180,7 @@ public class CharacterSheet {
         ret.append("CharacterSheet {\n")
             .append("exp = ").append(exp).append("\n")
             .append(subrace).append("\n")
-            .append(prof).append("\n")
+            .append(profession).append("\n")
             .append(printAttributes())
             .append("]\n")
             .append("Skills = [\n");
@@ -166,5 +195,87 @@ public class CharacterSheet {
         ret.append("]");
 
         return ret.toString();
+    }
+    public void ToJSON() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("exp", exp);
+
+        JSONObject subraceObject = new JSONObject();
+        subraceObject.put("ID", subrace.getID());
+        subraceObject.put("race_ID", subrace.getBaseRace().getID());
+        subraceObject.put("name", subrace.getName());
+        jsonObject.put("subrace", subraceObject);
+
+        JSONObject professionObject = new JSONObject();
+        professionObject.put("ID", profession.getID());
+        professionObject.put("name", profession.getName());
+        jsonObject.put("profession", professionObject);
+
+        JSONArray attributesArray = new JSONArray();
+        for (Attribute attribute : attributes.values()) {
+            JSONObject attributeJSON = new JSONObject();
+            attributeJSON.put("ID", attribute.getID());
+            attributeJSON.put("name", attribute.getName());
+            attributeJSON.put("base_value", attribute.getBaseValue());
+            attributeJSON.put("rnd_value", attribute.getRndValue());
+            attributeJSON.put("adv_value", attribute.getAdvValue());
+            attributesArray.put(attributeJSON);
+        }
+        jsonObject.put("attributes", attributesArray);
+
+        JSONArray skillsArray = new JSONArray();
+        for (SkillSingle skill : skills.values()) {
+            if (skill.getAdvValue() > 0) {
+                JSONObject skillJSON = new JSONObject();
+                skillJSON.put("ID", skill.getID());
+                skillJSON.put("base_skill_ID", skill.getBaseSkill().getID());
+                skillJSON.put("name", skill.getName());
+                skillJSON.put("earning", skill.isEarning());
+                skillJSON.put("advanceable", skill.isAdvanceable());
+                skillJSON.put("adv_value", skill.getAdvValue());
+                skillsArray.put(skillJSON);
+            }
+        }
+        jsonObject.put("skills", skillsArray);
+
+        try (PrintWriter file = new PrintWriter(Paths.get("src/resources/test.json").toFile())) {
+            file.println(jsonObject.toString(4));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(jsonObject.toString(4));
+    }
+    public void loadJSON(String filename) {
+        try {
+            String content = new String(Files.readAllBytes(Paths.get(filename)));
+            JSONObject jsonObject = new JSONObject(content);
+            exp = jsonObject.getInt("exp");
+
+            JSONObject subraceObject = jsonObject.getJSONObject("subrace");
+            int ID = subraceObject.getInt("ID");
+            String name = subraceObject.getString("name");
+            subrace = connection.getSubrace(ID, name);
+
+            JSONObject professionObject = jsonObject.getJSONObject("profession");
+            ID = professionObject.getInt("ID");
+            name = professionObject.getString("name");
+            profession = connection.getProfession(ID, name);
+
+            JSONArray attributesArray = jsonObject.getJSONArray("attributes");
+            for (int i=0; i<attributesArray.length(); i++) {
+                JSONObject object = attributesArray.getJSONObject(i);
+                ID = object.getInt("ID");
+                name = object.getString("name");
+                Attribute attribute = connection.getAttribute(ID, name);
+                attribute.setBaseValue(object.getInt("base_value"));
+                attribute.setRndValue(object.getInt("rnd_value"));
+                attribute.setAdvValue(object.getInt("adv_value"));
+                attributes.put(ID, attribute);
+            }
+
+            System.out.println(jsonObject.toString(4));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,6 +1,7 @@
 package mappings;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -43,7 +44,7 @@ public class Profession {
     @JoinTable(name="PROF_ATTRIBUTES",
             joinColumns = @JoinColumn(name = "ID_PROF"),
             inverseJoinColumns = @JoinColumn(name = "ID_ATTR"))
-    private List<BaseAttribute> profAttributes;
+    private List<Attribute> profAttributes;
 
     @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany
@@ -91,13 +92,12 @@ public class Profession {
     }
 
     // Attributes
-    public List<BaseAttribute> getProfAttributes() {
+    public List<Attribute> getProfAttributes() {
         return profAttributes;
     }
-    public void setProfAttributes(List<BaseAttribute> profAttributes) {
+    public void setProfAttributes(List<Attribute> profAttributes) {
         this.profAttributes = profAttributes;
     }
-
     public List<Attribute> getAttributesList(Map<Integer, Attribute> attributes) {
         if (attributesMap == null) {
             createAttributeMap(attributes);
@@ -106,51 +106,40 @@ public class Profession {
         return new ArrayList<>(attributesMap.values());
     }
     public boolean hasAttribute(int ID) {
-        for (BaseAttribute attr : profAttributes) {
+        for (Attribute attr : profAttributes) {
             if (attr.getID() == ID) {
                 return true;
             }
         }
         return false;
     }
-    public void setAttributes(List<BaseAttribute> profAttributes) {
+    public void setAttributes(List<Attribute> profAttributes) {
         this.profAttributes = profAttributes;
     }
 
     // Skills
-    public List<Skill> getProfSkills() {
-        List<Skill> tempList = new ArrayList<>();
-        for (ProfSkill profSkill : profSkills) {
-            Skill skill = profSkill.getSkill();
-            skill.setAdvanceable(true);
-            tempList.add(skill);
-        }
-        return tempList;
-    }
-    public List<Skill> getProfSkills(Map<Integer, Attribute> attributesMap) {
-        List<Skill> tempList = new ArrayList<>();
+    public Map<Integer, Skill> getProfSkills() {
+        Map<Integer, Skill> skillsMap = new HashMap<>();
         for (ProfSkill profSkill : profSkills) {
             Skill skill = profSkill.getSkill();
             skill.setAdvanceable(true);
             skill.setEarning(profSkill.isEarning());
-            skill.linkAttributeMap(attributesMap);
-            tempList.add(skill);
+            skillsMap.put(skill.getID(), skill);
         }
-        return tempList;
+        return skillsMap;
     }
     public void setProfSkills(List<ProfSkill> profSkills) {
         this.profSkills = profSkills;
     }
 
-    public List<Talent> getProfTalents() {
-        return profTalents;
-    }
-    public List<Talent> getProfTalents(Map<Integer, Attribute> attributesMap) {
-        for (Talent profTalent : profTalents) {
-            profTalent.setAdvanceable(true);
-            profTalent.linkAttributeMap(attributesMap);
+    // Talents
+    public Map<Integer, Talent> getProfTalents() {
+        Map<Integer, Talent> talentsMap = new HashMap<>();
+        for (Talent talent : profTalents) {
+            talent.setAdvanceable(true);
+            talent.setCurrentLvl(0);
         }
-        return profTalents;
+        return talentsMap;
     }
     public void setProfTalents(List<Talent> profTalents) {
         this.profTalents = profTalents;
@@ -158,8 +147,8 @@ public class Profession {
 
     private void createAttributeMap(Map<Integer, Attribute> attributes) {
         attributesMap = new ConcurrentHashMap<>();
-        for (BaseAttribute baseAttribute : profAttributes) {
-            attributesMap.put(baseAttribute.getID(), attributes.get(baseAttribute.getID()));
+        for (Attribute attribute : profAttributes) {
+            attributesMap.put(attribute.getID(), attributes.get(attribute.getID()));
         }
     }
 
@@ -174,12 +163,10 @@ public class Profession {
         Profession that = (Profession) o;
         return ID == that.ID && Objects.equals(name, that.name);
     }
-
     @Override
     public int hashCode() {
         return Objects.hash(ID, name);
     }
-
     @Override
     public String toString() {
         return String.format("Profession {ID = %d, name = %s}", ID, name);

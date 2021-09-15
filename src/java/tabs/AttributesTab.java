@@ -47,24 +47,23 @@ public class AttributesTab {
 
     public void initialise(CharacterGen parent, CharacterSheet sheet, Connection connection) {
         this.sheet = sheet;
-        attributes = sheet.getRace().getAttributes(0);
+        attributes = sheet.getRace().getAttributes(connection, 0);
         createTable();
 
         attrRollButton.addActionListener(e -> roll());
         attrRollAllButton.addActionListener(e -> {
-            for (int i = 0; i < 10; i++) {
+            for (int i = attrItr; i <= 10; i++) {
                 roll();
             }
         });
         attrRollAllButton.setMnemonic(KeyEvent.VK_R);
         attrOKButton.addActionListener(e -> {
             JIntegerField fld;
-            int value;
             int is_it_ok = 0;
             for (int j = 1; j <= 10; j++) {
                 fld = (JIntegerField) attrAttributesTable.getComponent(j, 2);
-                value = fld.getValue();
-                if ((value <= 20) && (value >= 1)) {
+                int value = fld.getValue();
+                if ((value <= 20) && (value >= 2)) {
                     is_it_ok++;
                 }
                 else {
@@ -72,11 +71,17 @@ public class AttributesTab {
                 }
             }
             if (is_it_ok == 10) {
-                JOptionPane.showMessageDialog(mainPanel, "Jest ok", "Brawo!", JOptionPane.INFORMATION_MESSAGE);
-                for (int k = 1; k <= 10; k++) {
+//                JOptionPane.showMessageDialog(mainPanel, "Jest ok", "Brawo!", JOptionPane.INFORMATION_MESSAGE);
+                for (int k = attrItr; k <= 10; k++) {
                     fld = (JIntegerField) attrAttributesTable.getComponent(k, 2);
-                    fld.setEditable(false); //czy można potem przejść do kolejnej zakładki?
+                    int value = fld.getValue();
+                    attrSumField.changeValue(value);
+                    attributes.get(k).setRndValue(value);
+                    ((JIntegerField) attrAttributesTable.getComponent(k, 3)).setValue(attributes.get(k).getTotalValue());
+                    fld.setEditable(false); // czy można potem przejść do kolejnej zakładki?
+                    calculateHP();
                 }
+                moveToOptions();
             }
             else {
                 JOptionPane.showMessageDialog(mainPanel, "Wpisano wartosci spoza zakresu", "Ogarnij sie, tworco", JOptionPane.ERROR_MESSAGE);
@@ -102,42 +107,46 @@ public class AttributesTab {
     }
 
     private void roll() {
-        Attribute attribute = CharacterGen.getOneRandomAttr(attrItr, sheet.getRace());
+        Attribute active = attributes.get(attrItr);
+        int value = active.roll();
 
         JIntegerField field1 = (JIntegerField) attrAttributesTable.getComponent(attrItr, 2);
-        field1.setValue(attribute.getRndValue());
+        field1.setValue(value);
         field1.setEditable(false);
+        field1.setFocusable(false);
         JIntegerField field2 = (JIntegerField) attrAttributesTable.getComponent(attrItr, 3);
-        field2.setValue(attribute.getTotalValue());
+        field2.setValue(active.getTotalValue());
 
         calculateHP();
-        attrSumField.changeValue(attribute.getRndValue());
-        sheet.addAttribute(attribute.getID(), attribute);
+        attrSumField.changeValue(value);
 
         attrItr++;
         if (attrItr == 11) {
-            int HP = sheet.getMaxHealthPoints();
-            attrLocked = false;
-            attrRollButton.setEnabled(false);
-            attrRollAllButton.setEnabled(false);
-            attrOKButton.setEnabled(false);
-            attrOption1Button.setEnabled(true);
-            attrOption3Button.setEnabled(true);
-
-            if (attrSumField.getValue() > 100) {
-                attrOption3Button.setForeground(Color.RED);
-                attrOption3Button.setText("SELECT (You will lose some points)");
-            }
+            moveToOptions();
         }
     }
+    private void moveToOptions() {
+        attrLocked = false;
+        attrRollButton.setEnabled(false);
+        attrRollAllButton.setEnabled(false);
+        attrOKButton.setEnabled(false);
+        attrOption1Button.setEnabled(true);
+        attrOption3Button.setEnabled(true);
+
+        if (attrSumField.getValue() > 100) {
+            attrOption3Button.setForeground(Color.RED);
+            attrOption3Button.setText("SELECT (You will lose some points)");
+        }
+    }
+
     private void calculateHP() {
         JIntegerField field3 = (JIntegerField) attrAttributesTable.getComponent(12, 1);
         field3.setValue(sheet.getMaxHealthPoints());
     }
 
     private void createTable() {
-        attrAttributesTable.createJLabel(0, 0, attributes.get(11).getName());
-        attrAttributesTable.createIntegerField(1, 0, 3, 1, attributes.get(11).getBaseValue(), new Dimension(30, -1), false);
+        attrAttributesTable.createJLabel(0, 0, attributes.get(Attribute.MOVE).getName());
+        attrAttributesTable.createIntegerField(1, 0, 3, 1, attributes.get(Attribute.MOVE).getBaseValue(), new Dimension(30, -1), false);
 
         for (int i = 1; i < attributes.size(); i++) {
             int finalI = i;
@@ -154,9 +163,8 @@ public class AttributesTab {
             }
 
             JIntegerField attr = attrAttributesTable.createIntegerField(2, i, 0, new Dimension(30, -1));
-            //attr.setFocusable(false);
             attr.setForeground(foregroundColor);
-            attr.setRunnable(() -> attributes.get(finalI).setRndValue(attr.getValue()));
+            attr.addActionListener(e -> attributes.get(finalI).setRndValue(attr.getValue()));
             attr.addMouseListener((MouseClickedAdapter) this::replaceValues);
             if (changeBackground) {
                 attr.setBackground(ColorPalette.WHITE_BLUE);
@@ -182,7 +190,7 @@ public class AttributesTab {
                 mouseSource = (JIntegerField) e.getSource();
                 mouseColor = mouseSource.getForeground();
                 mouseSource.setForeground(Color.red);
-                mouseSource.setFont(new Font(mouseSource.getFont().getName(),Font.BOLD, mouseSource.getFont().getSize()));
+                mouseSource.setFont(new Font(mouseSource.getFont().getName(), Font.BOLD, mouseSource.getFont().getSize()));
             }
             else {
                 JIntegerField target = (JIntegerField) e.getSource();
@@ -190,7 +198,7 @@ public class AttributesTab {
                 target.setValue(mouseSource.getValue());
                 mouseSource.setValue(temp);
                 mouseSource.setForeground(mouseColor);
-                mouseSource.setFont(new Font(mouseSource.getFont().getName(),Font.PLAIN, mouseSource.getFont().getSize()));
+                mouseSource.setFont(new Font(mouseSource.getFont().getName(), Font.PLAIN, mouseSource.getFont().getSize()));
                 mouseSource = null;
             }
             attrMaxExp = 25;
