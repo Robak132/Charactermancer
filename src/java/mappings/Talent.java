@@ -43,6 +43,7 @@ public abstract class Talent {
     public abstract void setAdvanceable(boolean advanceable);
 
     public abstract List<TalentSingle> getSingleTalents();
+    public abstract void update(Map<Integer, TalentSingle> talentMap);
 
     @Override
     public boolean equals(Object o) {

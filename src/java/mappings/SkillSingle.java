@@ -51,12 +51,15 @@ public class SkillSingle extends Skill {
     public String getAttrName() {
         return baseSkill.getLinkedAttribute().getName();
     }
+    public boolean isGrouped() {
+        return baseSkill.isGrouped();
+    }
 
     public Integer getTotalValue() {
-        try {
+        if (advValue != 0 || !baseSkill.isAdv()) {
             return baseSkill.getLinkedAttribute().getTotalValue() + advValue;
-        } catch (Exception ex) {
-            return null;
+        } else {
+            return 0;
         }
     }
 

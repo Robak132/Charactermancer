@@ -1,6 +1,5 @@
 package mappings;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -217,51 +216,16 @@ public class Race {
         return talentsMap;
     }
     public Map<Integer, Talent> getRaceTalents(Map<Integer, Talent> profTalents) {
-        Map<Integer, Talent> raceTalents = getRaceTalents();
-        for (Talent talent : profTalents.values()) {
-            talent.setAdvanceable(true);
-            if (raceTalents.containsKey(talent.getID())) {
-                talent.setCurrentLvl(1);
-                raceTalents.put(talent.getID(), talent);
-            }
+        Map<Integer, TalentSingle> profTalentsMap = new HashMap<>();
+        profTalents.values().forEach(talent -> talent.getSingleTalents().forEach(e -> profTalentsMap.put(e.getID(), e)));
+
+        Map<Integer, Talent> outputMap = getRaceTalents();
+        for (Talent talent : outputMap.values()) {
+            talent.update(profTalentsMap);
+            talent.setCurrentLvl(1);
         }
-        return raceTalents;
-    }
-    public Talent matchTalents(Talent firstTalent, Talent secondTalent) {
-        if (firstTalent instanceof TalentSingle) {
-            if (secondTalent instanceof TalentSingle) {
-                if (firstTalent.equals(secondTalent)) {
-                    secondTalent.setAdvanceable(true);
-                    return secondTalent;
-                } else {
-                    return firstTalent;
-                }
-            } else {
-                for (TalentSingle singleSecondTalent : secondTalent.getSingleTalents()) {
-                    matchTalents(firstTalent, singleSecondTalent);
-                }
-            }
-        } else {
-            List<Talent> tempList = new ArrayList<>();
-            for (TalentSingle singleFirstTalent : firstTalent.getSingleTalents()) {
-                tempList.add(matchTalents(singleFirstTalent, secondTalent));
-            }
-            ((TalentGroup) firstTalent).setChildTalents(tempList);
-            return firstTalent;
-        }
-        return null;
-    }
-    public List<Talent> getRaceTalents(Map<Integer, Attribute> attributeMap, List<Talent> profTalents) {
-        List<Talent> tempTalents = new ArrayList<>();
-        for (Talent raceTalent : raceTalents) {
-            for (Talent profTalent : profTalents) {
-                raceTalent = matchTalents(raceTalent, profTalent);
-            }
-            raceTalent.setCurrentLvl(1);
-            raceTalent.linkAttributeMap(attributeMap);
-            tempTalents.add(raceTalent);
-        }
-        return tempTalents;
+
+        return outputMap;
     }
     public void setRaceTalents(List<Talent> raceTalents) {
         this.raceTalents = raceTalents;

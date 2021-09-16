@@ -5,6 +5,7 @@ import components.CustomFocusTraversalPolicy;
 import components.FilteredComboBox;
 import components.GridPanel;
 import components.JIntegerField;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -38,6 +39,7 @@ import mappings.TalentGroup;
 import mappings.TalentSingle;
 import org.apache.logging.log4j.LogManager;
 import tools.AbstractActionHelper;
+import tools.ColorPalette;
 import tools.Dice;
 import tools.MultiLineTooltip;
 
@@ -159,16 +161,9 @@ public class RaceSkillTab extends SkillTab {
             visibleRaceSkills.add(activeSkill);
 
             skillsPanel.createTextField(finalRow, column++, activeSkill.getAttrName(), new Dimension(30, -1), false);
-
-            SpinnerModel model = new SpinnerListModel(Arrays.asList(0, 3, 5));
-            AdvancedSpinner jSpinner = skillsPanel.createAdvancedSpinner(finalRow, column++, model, new Dimension(35, -1), true);
-            jSpinner.addChangeListener(e -> {
-                if (!jSpinner.isLocked()) {
-                    skillSpinnerChange(finalI, finalRow, finalColumn, jSpinner);
-                }
-            });
-
+            AdvancedSpinner jSpinner = createSpinner(skillsPanel, finalI, finalRow, finalColumn, column++);
             skillsPanel.createIntegerField(finalRow, column++, activeSkill.getBaseSkill().getLinkedAttribute().getTotalValue(), new Dimension(30, -1), false);
+
             tabOrder.add(jSpinner.getTextField());
         }
         if (baseItr != 1) {
@@ -183,6 +178,16 @@ public class RaceSkillTab extends SkillTab {
 
         skillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
+    private AdvancedSpinner createSpinner(GridPanel panel, int index, int row, int columnStart, int column) {
+        SpinnerModel model = new SpinnerListModel(Arrays.asList(0, 3, 5));
+        AdvancedSpinner jSpinner = panel.createAdvancedSpinner(row, column, model, new Dimension(35, -1), true);
+        jSpinner.addChangeListener(e -> {
+            if (!jSpinner.isLocked()) {
+                skillSpinnerChange(index, row, columnStart, jSpinner);
+            }
+        });
+        return jSpinner;
+    }
     private void createTalentTable(List<Talent> raceTalents, Dimension[] fieldDimensions) {
         talentsPanel.createJLabel(0,0,1,-1, "Talents");
         for (int i = 0; i < raceTalents.size(); i++) {
@@ -194,10 +199,10 @@ public class RaceSkillTab extends SkillTab {
             TalentSingle activeTalent = talentsPanel.createComboIfNeeded(raceTalent, row, column++, newTalent -> updateTalentRow(talentsPanel, finalI, row, visibleRaceTalents, newTalent));
             visibleRaceTalents.add(activeTalent);
 
-            talentsPanel.createIntegerField(row, column++, activeTalent.getCurrentLvl(), fieldDimensions[column-1], false);
-
-            talentsPanel.createIntegerField(row, column++, activeTalent.getMax(), fieldDimensions[column-1], false);
-
+            JIntegerField currentLvl = talentsPanel.createIntegerField(row, column++, activeTalent.getCurrentLvl(), fieldDimensions[column-1], false);
+            currentLvl.setForeground(activeTalent.isAdvanceable() ? ColorPalette.HALF_GREEN : Color.BLACK);
+            JIntegerField maxLvl = talentsPanel.createIntegerField(row, column++, activeTalent.getMax(), fieldDimensions[column-1], false);
+            maxLvl.setForeground(activeTalent.isAdvanceable() ? ColorPalette.HALF_GREEN : Color.BLACK);
             JTextArea testArea = talentsPanel.createTextArea(row, column++, activeTalent.getBaseTalent().getTest(), fieldDimensions[column-1], false);
             testArea.setFont(testArea.getFont().deriveFont(Font.PLAIN, 10));
 
@@ -270,8 +275,11 @@ public class RaceSkillTab extends SkillTab {
     }
 
     private void updateTalentRow(GridPanel panel, int idx, int row, List<TalentSingle> talentList, TalentSingle newTalent) {
+        panel.getComponent(0, row).setForeground(newTalent.isAdvanceable() ? ColorPalette.HALF_GREEN : Color.BLACK);
         ((JIntegerField) panel.getComponent(1, row)).setValue(newTalent.getCurrentLvl());
+        panel.getComponent(1, row).setForeground(newTalent.isAdvanceable() ? ColorPalette.HALF_GREEN : Color.BLACK);
         ((JIntegerField) panel.getComponent(2, row)).setValue(newTalent.getMax());
+        panel.getComponent(2, row).setForeground(newTalent.isAdvanceable() ? ColorPalette.HALF_GREEN : Color.BLACK);
         ((JTextArea) panel.getComponent(3, row)).setText(newTalent.getBaseTalent().getTest());
         ((JLabel) panel.getComponent(4, row)).setToolTipText(MultiLineTooltip.splitToolTip(newTalent.getBaseTalent().getDesc()));
 

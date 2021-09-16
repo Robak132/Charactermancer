@@ -67,6 +67,8 @@ public class TalentSingle extends Talent {
         tempList.add(this);
         return tempList;
     }
+    @Override
+    public void update(Map<Integer, TalentSingle> talentMap) {}
 
     public Integer getMax() {
         return baseTalent.getMaxLvl();

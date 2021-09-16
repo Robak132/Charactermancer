@@ -138,6 +138,7 @@ public class Profession {
         for (Talent talent : profTalents) {
             talent.setAdvanceable(true);
             talent.setCurrentLvl(0);
+            talentsMap.put(talent.getID(), talent);
         }
         return talentsMap;
     }

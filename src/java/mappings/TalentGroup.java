@@ -44,6 +44,19 @@ public class TalentGroup extends Talent {
         }
         return outputList;
     }
+    @Override
+    public void update(Map<Integer, TalentSingle> talentMap) {
+        List<Talent> tempList = new ArrayList<>();
+        for (Talent talent : childTalents) {
+            if (talentMap.containsKey(talent.getID())) {
+                tempList.add(talentMap.get(talent.getID()));
+            } else {
+                tempList.add(talent);
+            }
+        }
+        setChildTalents(tempList);
+    }
+
     public Talent getRndTalent() {
         return (TalentSingle) Dice.randomItem(getSingleTalents());
     }

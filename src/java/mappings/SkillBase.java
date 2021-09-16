@@ -17,6 +17,8 @@ public class SkillBase {
     private String desc;
     @Column(name = "ATTR")
     private int attr;
+    @Column(name = "GROUPED")
+    private boolean grouped;
 
     @Transient
     private Attribute linkedAttribute;
@@ -61,6 +63,13 @@ public class SkillBase {
     public void setAdv(boolean adv) {
         this.adv = adv;
     }
+    public boolean isGrouped() {
+        return grouped;
+    }
+    public void setGrouped(boolean grouped) {
+        this.grouped = grouped;
+    }
+
     public Attribute getLinkedAttribute() {
         return linkedAttribute;
     }
