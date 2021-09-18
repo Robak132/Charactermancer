@@ -1,5 +1,6 @@
 package mappings;
 
+import java.util.Objects;
 import javax.persistence.*;
 import java.util.Map;
 
@@ -83,5 +84,21 @@ public class SkillBase {
 
     public void linkAttributeMap(Map<Integer, Attribute> attributeMap) {
         this.linkedAttribute = attributeMap.getOrDefault(attr, null);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SkillBase skillBase = (SkillBase) o;
+        return ID == skillBase.ID && Objects.equals(name, skillBase.name);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(ID, name);
     }
 }

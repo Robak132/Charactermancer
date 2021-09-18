@@ -75,6 +75,7 @@ public class ProfSkillTab extends SkillTab {
 
         profSkills = new ArrayList<>(sheet.getProfession().getProfSkills().values());
         profSkills.forEach(e->e.linkAttributeMap(sheet.getAttributes()));
+        profSkills.forEach(Skill::updateMinimalValue);
         profTalents = new ArrayList<>(sheet.getProfession().getProfTalents().values());
         profTalents.forEach(e->e.linkAttributeMap(sheet.getAttributes()));
 
@@ -83,11 +84,11 @@ public class ProfSkillTab extends SkillTab {
 
         KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK);
         AbstractActionHelper.createActionMnemonic(mainPanel, stroke, () -> {
-//            rollSkills();
-            rollTalents();
+            rollSkills();
+//            rollTalents();
         });
         option1Button.addActionListener(e -> {
-//            sheet.setSkillList(visibleRaceSkills);
+            visibleSkills.forEach(sheet::addSkill);
 //            sheet.setTalentList(visibleRaceTalents);
 
             sheet.ToJSON();
@@ -112,7 +113,7 @@ public class ProfSkillTab extends SkillTab {
 
             skillsPanel.createTextField(finalRow, column++, activeSkill.getAttrName(), new Dimension(30, -1), false);
 
-            SpinnerModel model = new SpinnerNumberModel(activeSkill.getAdvValue(), activeSkill.getAdvValue(), 10, 1);
+            SpinnerModel model = new SpinnerNumberModel(activeSkill.getAdvValue(), activeSkill.getAdvValue(), activeSkill.getAdvValue()+10, 1);
             AdvancedSpinner jSpinner = skillsPanel.createAdvancedSpinner(finalRow, column++, model, new Dimension(35, -1), true);
             jSpinner.addChangeListener(e -> {
                 if (!jSpinner.isLocked()) {
@@ -193,37 +194,24 @@ public class ProfSkillTab extends SkillTab {
     }
 
     private void rollSkills() {
-        profSkills = new ArrayList<>(sheet.getProfession().getProfSkills().values());
-        profSkills.forEach(e->e.linkAttributeMap(sheet.getAttributes()));
-
-        List<SkillSingle> updatedSkills = new ArrayList<>();
-        for (Skill skill : profSkills) {
-            updatedSkills.add((SkillSingle) Dice.randomItem(skill.getSingleSkills()));
-        }
-
-        List<SkillSingle> lookupList = new ArrayList<>(updatedSkills);
-        for (int i=0; i<40; i++) {
-            int index = Dice.randomInt(0, lookupList.size()-1);
-            int newValue = lookupList.get(index).getAdvValue()+1;
-            lookupList.get(index).setAdvValue(newValue);
-            if (newValue == 10) {
-                lookupList.remove(index);
-            }
-        }
+        int[] values = Dice.randomInts(8, 0, 10, 40);
 
         int baseItr = 1;
         int advItr = 1;
         int row;
         int column;
-        for (int i=0;i<updatedSkills.size();i++) {
-            if (updatedSkills.get(i).isAdv()) {
+        for (int i=0; i<profSkills.size(); i++) {
+            if (profSkills.get(i).isAdv()) {
                 column = 4;
                 row = advItr++;
             } else {
                 column = 0;
                 row = baseItr++;
             }
-            updateSkillRow(skillsPanel, visibleSkills, i, row, column, updatedSkills.get(i));
+
+            SkillSingle newSkill = Dice.randomItem(profSkills.get(i).getSingleSkills());
+            visibleSkills.set(i, newSkill);
+            ((AdvancedSpinner) skillsPanel.getComponent(column + 2, row)).setValue(newSkill.getMinimalValue()+ values[i]);
         }
     }
     private void rollTalents() {

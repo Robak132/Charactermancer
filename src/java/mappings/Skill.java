@@ -38,6 +38,8 @@ public abstract class Skill {
     }
 
     public abstract boolean isAdv();
+    public abstract void updateMinimalValue();
+    public abstract void resetAdvValue();
     public abstract void setAdvValue(int advValue);
     public abstract boolean isAdvanceable();
     public abstract void setAdvanceable(boolean advanceable);

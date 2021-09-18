@@ -86,6 +86,14 @@ public class SkillGroup extends Skill{
         skills.forEach(skill -> skill.setAdvValue(advValue));
     }
     @Override
+    public void updateMinimalValue() {
+        skills.forEach(Skill::updateMinimalValue);
+    }
+    @Override
+    public void resetAdvValue() {
+        skills.forEach(Skill::resetAdvValue);
+    }
+    @Override
     public boolean isAdvanceable() {
         return skills.stream().allMatch(Skill::isAdvanceable);
     }
