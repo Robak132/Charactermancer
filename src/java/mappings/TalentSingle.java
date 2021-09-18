@@ -1,9 +1,11 @@
 package mappings;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.*;
+import tools.ColorPalette;
 
 @Entity
 @DiscriminatorValue("SINGLE")
@@ -35,6 +37,10 @@ public class TalentSingle extends Talent {
     }
     public void setBaseTalent(TalentBase baseTalent) {
         this.baseTalent = baseTalent;
+    }
+
+    public Color getColor() {
+        return isAdvanceable() ? ColorPalette.HALF_GREEN : Color.BLACK;
     }
 
     @Override

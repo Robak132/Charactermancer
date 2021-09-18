@@ -44,7 +44,7 @@ public final class RaceTab {
         this.parent = parent;
 
         raceOption2Combo.addItems(connection.getRaces());
-        raceOption2Combo.setUserFilter(Race::getName);
+        raceOption2Combo.setListRenderer(Race::getName);
 
         raceRollButton.addActionListener(e -> {
             KeyValue<Integer, Race> result = Race.getRandomRace(connection);
@@ -108,7 +108,7 @@ public final class RaceTab {
         raceOption2Combo.setLocked(true);
 
         subraceOptionCombo.addItems(subraces);
-        subraceOptionCombo.setUserFilter(Subrace::getName);
+        subraceOptionCombo.setListRenderer(Subrace::getName);
 
         if (subraces.size() == 1) {
             sheet.setSubrace((Subrace) subraceOptionCombo.getSelectedItem());

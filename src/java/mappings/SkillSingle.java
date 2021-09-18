@@ -1,5 +1,6 @@
 package mappings;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.DiscriminatorValue;
@@ -8,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
+import tools.ColorPalette;
 
 @Entity
 @DiscriminatorValue("SINGLE")
@@ -63,6 +65,16 @@ public class SkillSingle extends Skill {
         }
     }
 
+    public Color getColor() {
+        if (isAdv() && getAdvValue() == 0) {
+            return Color.RED;
+        } else if (isEarning()) {
+            return ColorPalette.BLUE;
+        } else {
+            return Color.BLACK;
+        }
+    }
+
     @Override
     public void linkAttributeMap(Map<Integer, Attribute> attributeMap) {
         baseSkill.linkAttributeMap(attributeMap);
@@ -96,6 +108,8 @@ public class SkillSingle extends Skill {
     public List<SkillSingle> getSingleSkills() {
         return List.of(this);
     }
+    @Override
+    public void update(Map<Integer, SkillSingle> skillMap) {}
 
     @Override
     public String toString() {

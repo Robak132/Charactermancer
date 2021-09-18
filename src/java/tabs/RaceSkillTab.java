@@ -21,7 +21,6 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -113,11 +112,9 @@ public class RaceSkillTab extends SkillTab {
             // TODO: Manual entering
         });
         option1Button.addActionListener(e -> {
-            visibleRaceSkills.forEach(sheet::addSkillMap);
-            sheet.setTalentList(visibleRaceTalents);
-            sheet.addTalents(visibleRandomTalents);
-
-            System.out.print(sheet);
+            visibleRaceSkills.forEach(sheet::addSkill);
+            visibleRaceTalents.forEach(sheet::addTalent);
+            visibleRandomTalents.forEach(sheet::addTalent);
 
             skillsPanel.iterateThroughRows(0, (o, i) -> {
                 try {
@@ -156,7 +153,7 @@ public class RaceSkillTab extends SkillTab {
             int finalI = i;
             int finalColumn = column;
 
-            SkillSingle activeSkill = skillsPanel.createComboIfNeeded(raceSkill, finalRow, column++, this::getSkillColor,
+            SkillSingle activeSkill = skillsPanel.createComboIfNeeded(raceSkill, finalRow, column++, SkillSingle::getColor,
                     newSkill -> updateSkillRow(skillsPanel, visibleRaceSkills, finalI, finalRow, finalColumn, newSkill));
             visibleRaceSkills.add(activeSkill);
 
@@ -196,7 +193,8 @@ public class RaceSkillTab extends SkillTab {
             int row = i + 1;
             int column = 0;
 
-            TalentSingle activeTalent = talentsPanel.createComboIfNeeded(raceTalent, row, column++, newTalent -> updateTalentRow(talentsPanel, finalI, row, visibleRaceTalents, newTalent));
+            TalentSingle activeTalent = talentsPanel.createComboIfNeeded(raceTalent, row, column++, TalentSingle::getColor,
+                    newTalent -> updateTalentRow(talentsPanel, finalI, row, visibleRaceTalents, newTalent));
             visibleRaceTalents.add(activeTalent);
 
             JIntegerField currentLvl = talentsPanel.createIntegerField(row, column++, activeTalent.getCurrentLvl(), fieldDimensions[column-1], false);
@@ -272,21 +270,6 @@ public class RaceSkillTab extends SkillTab {
                 spinner.setLocked(false);
             });
         }
-    }
-
-    private void updateTalentRow(GridPanel panel, int idx, int row, List<TalentSingle> talentList, TalentSingle newTalent) {
-        panel.getComponent(0, row).setForeground(newTalent.isAdvanceable() ? ColorPalette.HALF_GREEN : Color.BLACK);
-        ((JIntegerField) panel.getComponent(1, row)).setValue(newTalent.getCurrentLvl());
-        panel.getComponent(1, row).setForeground(newTalent.isAdvanceable() ? ColorPalette.HALF_GREEN : Color.BLACK);
-        ((JIntegerField) panel.getComponent(2, row)).setValue(newTalent.getMax());
-        panel.getComponent(2, row).setForeground(newTalent.isAdvanceable() ? ColorPalette.HALF_GREEN : Color.BLACK);
-        ((JTextArea) panel.getComponent(3, row)).setText(newTalent.getBaseTalent().getTest());
-        ((JLabel) panel.getComponent(4, row)).setToolTipText(MultiLineTooltip.splitToolTip(newTalent.getBaseTalent().getDesc()));
-
-        talentList.set(idx, newTalent);
-    }
-    private void updateTalentRow(GridPanel panel, int idx, int row, List<TalentSingle> talentList) {
-        updateTalentRow(panel, idx, row, talentList, talentList.get(idx));
     }
 
     private void rollSkills() {

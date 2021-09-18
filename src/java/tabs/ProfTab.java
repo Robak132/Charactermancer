@@ -59,7 +59,7 @@ public class ProfTab {
         this.sheet = sheet;
         this.parent = parent;
         profOption4b.addItems(sheet.getRace().getRaceCareers());
-        profOption4b.setUserFilter(ProfessionCareer::getName);
+        profOption4b.setListRenderer(ProfessionCareer::getName);
 
         profRollButton.addActionListener(e -> {
             KeyValue<Integer, Profession> result = sheet.getSubrace().getRandomProf(connection);

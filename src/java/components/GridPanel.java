@@ -204,6 +204,11 @@ public class GridPanel extends JPanel {
         add(filteredComboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, dimension, null));
         return filteredComboBox;
     }
+    public <T> FilteredComboBox<T> createFilteredComboBox(int row, int column, Dimension dimension, Function<T, String> stringParser, Function<T, Color> colorParser) {
+        FilteredComboBox<T> filteredComboBox = new FilteredComboBox<>(stringParser, colorParser);
+        add(filteredComboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, dimension, null));
+        return filteredComboBox;
+    }
 
     public SkillSingle createComboIfNeeded(Skill raceSkill, int row, int column, Function<SkillSingle, Color> paintFunction, Consumer<SkillSingle> consumer) {
         SkillSingle activeSkill;
@@ -227,15 +232,16 @@ public class GridPanel extends JPanel {
         }
         return activeSkill;
     }
-    public TalentSingle createComboIfNeeded(Talent raceTalent, int row, int column, Consumer<TalentSingle> consumer) {
+    public TalentSingle createComboIfNeeded(Talent raceTalent, int row, int column, Function<TalentSingle, Color> color, Consumer<TalentSingle> consumer) {
         TalentSingle activeTalent;
         if (raceTalent instanceof TalentSingle) {
             activeTalent = (TalentSingle) raceTalent;
-            createTextField(row, column, activeTalent.getName(), null, false);
+            JTextField textField = createTextField(row, column, activeTalent.getName(), null, false);
+            textField.setForeground(color.apply(activeTalent));
         } else {
             TalentGroup talentGroup = (TalentGroup) raceTalent;
             activeTalent = talentGroup.getSingleTalents().get(0);
-            FilteredComboBox<TalentSingle> talentNameCombo = createFilteredComboBox(row, column, null, TalentSingle::getName);
+            FilteredComboBox<TalentSingle> talentNameCombo = createFilteredComboBox(row, column, null, TalentSingle::getName, TalentSingle::getColor);
             talentNameCombo.setToolTipText(MultiLineTooltip.splitToolTip(talentGroup.getName()));
             talentNameCombo.addItems(talentGroup.getSingleTalents());
             talentNameCombo.addActionListener(e -> {

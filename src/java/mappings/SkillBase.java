@@ -70,6 +70,10 @@ public class SkillBase {
         this.grouped = grouped;
     }
 
+    public Integer getValue() {
+        return linkedAttribute.getTotalValue();
+    }
+
     public Attribute getLinkedAttribute() {
         return linkedAttribute;
     }

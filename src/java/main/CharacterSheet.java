@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
 import javax.swing.JPanel;
 import mappings.Attribute;
 import mappings.Profession;
@@ -23,7 +22,6 @@ import mappings.SkillSingle;
 import mappings.Subrace;
 import mappings.Talent;
 import mappings.TalentSingle;
-import org.apache.logging.log4j.LogManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -40,6 +38,7 @@ public class CharacterSheet {
     private Profession profession;
     private Map<Integer, Attribute> attributes = new ConcurrentHashMap<>();
     private Map<Integer, SkillSingle> skills = new ConcurrentHashMap<>();
+    private Map<Integer, TalentSingle> talents = new ConcurrentHashMap<>();
     private List<SkillSingle> skillList = new ArrayList<>();
     private List<TalentSingle> talentList = new ArrayList<>();
 
@@ -87,39 +86,18 @@ public class CharacterSheet {
         attributes.put(key, value);
     }
 
-    public List<SkillSingle> getSkillList() {
-        return skillList;
-    }
-    public void setSkillList(List<SkillSingle> skillList) {
-        this.skillList = skillList;
-    }
-    public void addSkills(List<SkillSingle> skillList) {
-        this.skillList.addAll(skillList);
-    }
-    public void addSkills(List<SkillSingle> skillList, Predicate<SkillSingle> condition) {
-        for (SkillSingle skill : skillList) {
-            if (condition.test(skill)) {
-                this.skillList.add(skill);
-            }
-        }
-    }
     public void addSkill(SkillSingle skill) {
-        if (skillList.contains(skill)) {
-            LogManager.getLogger(getClass().getName()).warn(String.format("Skill already exists, replacing [%s]", skill.getName()));
-            skillList.remove(skill);
-        }
-        skillList.add(skill);
-    }
-
-    public void addSkillMap(SkillSingle skill) {
         skills.put(skill.getID(), skill);
     }
-    public Map<Integer, SkillSingle> getSkillMap() {
+    public Map<Integer, SkillSingle> getSkills() {
         return skills;
     }
 
-    public List<TalentSingle> getTalentList() {
-        return talentList;
+    public void addTalent(TalentSingle talent) {
+        talents.put(talent.getID(), talent);
+    }
+    public Map<Integer, TalentSingle> getTalents() {
+        return talents;
     }
     public void setTalentList(List<TalentSingle> talentList) {
         this.talentList = talentList;
@@ -238,6 +216,17 @@ public class CharacterSheet {
         }
         jsonObject.put("skills", skillsArray);
 
+        JSONArray talentsArray = new JSONArray();
+        for (TalentSingle talent : talents.values()) {
+            JSONObject talentJSON = new JSONObject();
+            talentJSON.put("ID", talent.getID());
+            talentJSON.put("name", talent.getName());
+            talentJSON.put("lvl", talent.getCurrentLvl());
+            talentJSON.put("advanceable", talent.isAdvanceable());
+            talentsArray.put(talentJSON);
+        }
+        jsonObject.put("talents", talentsArray);
+
         try (PrintWriter file = new PrintWriter(Paths.get("src/resources/test.json").toFile())) {
             file.println(jsonObject.toString(4));
         } catch (IOException e) {
@@ -271,6 +260,29 @@ public class CharacterSheet {
                 attribute.setRndValue(object.getInt("rnd_value"));
                 attribute.setAdvValue(object.getInt("adv_value"));
                 attributes.put(ID, attribute);
+            }
+
+            JSONArray skillsArray = jsonObject.getJSONArray("skills");
+            for (int i=0; i<skillsArray.length(); i++) {
+                JSONObject object = skillsArray.getJSONObject(i);
+                ID = object.getInt("ID");
+                name = object.getString("name");
+                SkillSingle skill = connection.getSkill(ID, name);
+                skill.setAdvValue(object.getInt("adv_value"));
+                skill.setAdvanceable(object.getBoolean("advanceable"));
+                skill.setEarning(object.getBoolean("earning"));
+                skills.put(ID, skill);
+            }
+
+            JSONArray talentsArray = jsonObject.getJSONArray("talents");
+            for (int i=0; i<talentsArray.length(); i++) {
+                JSONObject object = talentsArray.getJSONObject(i);
+                ID = object.getInt("ID");
+                name = object.getString("name");
+                TalentSingle talent = connection.getTalent(ID, name);
+                talent.setCurrentLvl(object.getInt("lvl"));
+                talent.setAdvanceable(object.getBoolean("advanceable"));
+                talents.put(ID, talent);
             }
 
             System.out.println(jsonObject.toString(4));

@@ -4,17 +4,19 @@ import components.AdvancedSpinner;
 import components.CustomFocusTraversalPolicy;
 import components.GridPanel;
 import components.JIntegerField;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JLabel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import mappings.Skill;
 import mappings.SkillSingle;
-import tools.ColorPalette;
+import mappings.TalentSingle;
+import tools.MultiLineTooltip;
 
 public class SkillTab {
     protected void createSkillTable(GridPanel skillsPanel, List<Skill> raceSkills, List<SkillSingle> visibleRaceSkills, AdvancedSpinner jspinner) {
@@ -28,7 +30,7 @@ public class SkillTab {
             int finalI = i;
             int finalColumn = column;
 
-            SkillSingle activeSkill = skillsPanel.createComboIfNeeded(raceSkill, finalRow, column++, this::getSkillColor,
+            SkillSingle activeSkill = skillsPanel.createComboIfNeeded(raceSkill, finalRow, column++, SkillSingle::getColor,
                     newSkill -> updateSkillRow(skillsPanel, visibleRaceSkills, finalI, finalRow, finalColumn, newSkill));
             visibleRaceSkills.add(activeSkill);
 
@@ -53,7 +55,7 @@ public class SkillTab {
         skillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
     protected void updateSkillRow(GridPanel panel, List<SkillSingle> visibleSkills, int idx, int row, int column, SkillSingle newSkill) {
-        panel.getComponent(column, row).setForeground(getSkillColor(newSkill));
+        panel.getComponent(column, row).setForeground(newSkill.getColor());
         ((JTextField) panel.getComponent(column + 1, row)).setText(newSkill.getAttrName());
         ((AdvancedSpinner) panel.getComponent(column + 2, row)).setValue(newSkill.getAdvValue());
         ((JIntegerField) panel.getComponent(column + 3, row)).setValue(newSkill.getTotalValue());
@@ -63,13 +65,22 @@ public class SkillTab {
     protected void updateSkillRow(GridPanel panel, List<SkillSingle> visibleSkills, int idx, int row, int column) {
         updateSkillRow(panel,visibleSkills, idx, row, column, visibleSkills.get(idx));
     }
-    protected Color getSkillColor(SkillSingle skill) {
-        if (skill.isAdv() && skill.getAdvValue() == 0) {
-            return Color.RED;
-        } else if (skill.isEarning()) {
-            return ColorPalette.BLUE;
-        } else {
-            return Color.BLACK;
-        }
+
+    protected void updateTalentRow(GridPanel panel, int idx, int row, List<TalentSingle> talentList, TalentSingle newTalent) {
+        panel.getComponent(0, row).setForeground(newTalent.getColor());
+
+        ((JIntegerField) panel.getComponent(1, row)).setValue(newTalent.getCurrentLvl());
+        panel.getComponent(1, row).setForeground(newTalent.getColor());
+
+        ((JIntegerField) panel.getComponent(2, row)).setValue(newTalent.getMax());
+        panel.getComponent(2, row).setForeground(newTalent.getColor());
+
+        ((JTextArea) panel.getComponent(3, row)).setText(newTalent.getBaseTalent().getTest());
+        ((JLabel) panel.getComponent(4, row)).setToolTipText(MultiLineTooltip.splitToolTip(newTalent.getBaseTalent().getDesc()));
+        talentList.set(idx, newTalent);
     }
+    protected void updateTalentRow(GridPanel panel, int idx, int row, List<TalentSingle> talentList) {
+        updateTalentRow(panel, idx, row, talentList, talentList.get(idx));
+    }
+
 }

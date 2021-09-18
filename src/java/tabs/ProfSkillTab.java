@@ -106,7 +106,7 @@ public class ProfSkillTab extends SkillTab {
             int finalI = i;
             int finalColumn = column;
 
-            SkillSingle activeSkill = skillsPanel.createComboIfNeeded(raceSkill, finalRow, column++, this::getSkillColor,
+            SkillSingle activeSkill = skillsPanel.createComboIfNeeded(raceSkill, finalRow, column++, SkillSingle::getColor,
                     newSkill -> updateSkillRow(skillsPanel, visibleSkills, finalI, finalRow, finalColumn, newSkill));
             visibleSkills.add(activeSkill);
 
@@ -143,7 +143,7 @@ public class ProfSkillTab extends SkillTab {
             int row = i + 1;
             int column = 0;
 
-            TalentSingle activeTalent = talentsPanel.createComboIfNeeded(raceTalent, row, column++,
+            TalentSingle activeTalent = talentsPanel.createComboIfNeeded(raceTalent, row, column++, TalentSingle::getColor,
                     newTalent -> updateTalentRow(talentsPanel, finalI, row, 0, visibleTalents, newTalent));
 
             talentsPanel.createIntegerField(row, column++, activeTalent.getCurrentLvl(), fieldDimensions[column-1], false);

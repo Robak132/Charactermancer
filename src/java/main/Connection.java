@@ -1,5 +1,8 @@
 package main;
 
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import mappings.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -232,20 +235,50 @@ public class Connection {
         return profs;
     }
 
-    public List<SkillSingle> getSimpleSkills() {
-        List<SkillSingle> skills = new ArrayList<>();
+    public SkillSingle getSkill(int ID, String name) {
+        SkillSingle skill = null;
         try {
             Session session = factory.openSession();
-            Query<SkillSingle> query = session.createQuery("FROM SkillSingle WHERE baseSkill.adv=false");
-            skills = query.list().size()==0 ? null : query.list();
+            Query<SkillSingle> query = session.createQuery("FROM Skill WHERE ID=:ID AND name=:name");
+            query.setParameter("ID", ID);
+            query.setParameter("name", name);
+            skill = query.list().size()==0 ? null : query.list().get(0);
             session.close();
         } catch (Exception ex) {
             abort();
             ex.printStackTrace();
         }
-        return skills;
+        return skill;
+    }
+    public Map<Integer, SkillSingle> getSingleSkills() {
+        List<SkillSingle> skills = new ArrayList<>();
+        try {
+            Session session = factory.openSession();
+            Query<SkillSingle> query = session.createQuery("FROM SkillSingle");
+            skills = query.list();
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return skills.stream().collect(Collectors.toMap(Skill::getID, Function.identity()));
     }
 
+    public TalentSingle getTalent(int ID, String name) {
+        TalentSingle talent = null;
+        try {
+            Session session = factory.openSession();
+            Query<TalentSingle> query = session.createQuery("FROM Talent WHERE ID=:ID AND name=:name");
+            query.setParameter("ID", ID);
+            query.setParameter("name", name);
+            talent = query.list().size()==0 ? null : query.list().get(0);
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return talent;
+    }
     public Talent getRandomTalent(int n) {
         Talent talent = null;
         try {

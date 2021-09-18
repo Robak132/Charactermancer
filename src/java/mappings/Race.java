@@ -193,14 +193,21 @@ public class Race {
         return raceSkills.stream().collect(Collectors.toMap(Skill::getID, Function.identity()));
     }
     public Map<Integer, Skill> getRaceSkills(Map<Integer, Skill> profSkills) {
-        Map<Integer, Skill> raceSkills = getRaceSkills();
-        for (Skill profSkill : profSkills.values()) {
-            profSkill.setAdvanceable(true);
-            if (raceSkills.containsKey(profSkill.getID())) {
-                raceSkills.put(profSkill.getID(), profSkill);
+        Map<Integer, SkillSingle> profSkillsMap = new HashMap<>();
+        profSkills.values().forEach(skill -> skill.getSingleSkills().forEach(e -> profSkillsMap.put(e.getID(), e)));
+
+        Map<Integer, Skill> outputMap = new HashMap<>();
+        for (Skill skill : getRaceSkills().values()) {
+            int ID = skill.getID();
+            if (profSkillsMap.containsKey(ID)) {
+                skill = profSkillsMap.get(ID);
+            } else {
+                skill.update(profSkillsMap);
             }
+            outputMap.put(ID, skill);
         }
-        return raceSkills;
+
+        return outputMap;
     }
     public void setRaceSkills(List<Skill> raceSkills) {
         this.raceSkills = raceSkills;
@@ -219,10 +226,16 @@ public class Race {
         Map<Integer, TalentSingle> profTalentsMap = new HashMap<>();
         profTalents.values().forEach(talent -> talent.getSingleTalents().forEach(e -> profTalentsMap.put(e.getID(), e)));
 
-        Map<Integer, Talent> outputMap = getRaceTalents();
-        for (Talent talent : outputMap.values()) {
-            talent.update(profTalentsMap);
+        Map<Integer, Talent> outputMap = new HashMap<>();
+        for (Talent talent : getRaceTalents().values()) {
+            int ID = talent.getID();
+            if (profTalentsMap.containsKey(ID)) {
+                talent = profTalentsMap.get(ID);
+            } else {
+                talent.update(profTalentsMap);
+            }
             talent.setCurrentLvl(1);
+            outputMap.put(ID, talent);
         }
 
         return outputMap;

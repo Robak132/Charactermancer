@@ -81,12 +81,10 @@ public class SkillGroup extends Skill{
     public boolean isAdv() {
         return skills.stream().allMatch(Skill::isAdv);
     }
-
     @Override
     public void setAdvValue(int advValue) {
         skills.forEach(skill -> skill.setAdvValue(advValue));
     }
-
     @Override
     public boolean isAdvanceable() {
         return skills.stream().allMatch(Skill::isAdvanceable);
@@ -95,7 +93,6 @@ public class SkillGroup extends Skill{
     public void setAdvanceable(boolean advanceable) {
         skills.forEach(skill -> skill.setAdvanceable(advanceable));
     }
-
     @Override
     public boolean isEarning() {
         return skills.stream().allMatch(Skill::isEarning);
@@ -110,6 +107,18 @@ public class SkillGroup extends Skill{
         for (Skill skill : skills) {
             skill.linkAttributeMap(attributeMap);
         }
+    }
+    @Override
+    public void update(Map<Integer, SkillSingle> skillMap) {
+        List<Skill> tempList = new ArrayList<>();
+        for (Skill skill : skills) {
+            if (skillMap.containsKey(skill.getID())) {
+                tempList.add(skillMap.get(skill.getID()));
+            } else {
+                tempList.add(skill);
+            }
+        }
+        setSkills(tempList);
     }
 
     @Override

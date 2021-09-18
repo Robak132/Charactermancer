@@ -44,7 +44,11 @@ public class FilteredComboBox<T> extends JComboBox<T> {
     }
     public FilteredComboBox(Function<T, String> stringParser) {
         this();
-        setUserFilter(stringParser);
+        setListRenderer(stringParser);
+    }
+    public FilteredComboBox(Function<T, String> stringParser, Function<T, Color> colorParser) {
+        this();
+        setListRenderer(stringParser, colorParser);
     }
 
     private void init() {
@@ -108,8 +112,7 @@ public class FilteredComboBox<T> extends JComboBox<T> {
     private void initComboPopupListener() {
         addPopupMenuListener(new PopupMenuListener() {
             @Override
-            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-            }
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
             @Override
             public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
                 resetFilterPopup();
@@ -132,7 +135,9 @@ public class FilteredComboBox<T> extends JComboBox<T> {
             filterPopup = PopupFactory.getSharedInstance().getPopup(this, filterLabel, p.x, p.y - filterLabel.getPreferredSize().height);
             selectedItem = getSelectedItem();
         }
-        filterPopup.show();
+        if (!isLocked) {
+            filterPopup.show();
+        }
     }
     private void resetFilterPopup() {
         if (!textHandler.isEditing()) {
@@ -186,15 +191,17 @@ public class FilteredComboBox<T> extends JComboBox<T> {
         filteredItems.forEach(model::addElement);
     }
 
-    public void setUserFilter(Function<T, String> stringParser) {
+    public void setListRenderer(Function<T, String> stringParser, Function<T, Color> colorParser) {
         this.userFilter = (object, textToFilter) -> {
             if (textToFilter.isEmpty()) {
                 return true;
             }
             return stringParser.apply(object).toLowerCase().contains(textToFilter.toLowerCase());
         };
-//        renderer = new FilteredComboRenderer<>(filterLabel, stringParser);
-        setRenderer(new FilteredComboRenderer<>(filterLabel, stringParser));
+        setRenderer(new FilteredComboRenderer<>(filterLabel, stringParser, colorParser));
+    }
+    public void setListRenderer(Function<T, String> stringParser) {
+        setListRenderer(stringParser, null);
     }
     public void addItems(List<T> list) {
         list.forEach(this::addItem);

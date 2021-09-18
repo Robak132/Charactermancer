@@ -46,6 +46,7 @@ public abstract class Skill {
     public abstract void linkAttributeMap(Map<Integer, Attribute> attributeMap);
 
     public abstract List<SkillSingle> getSingleSkills();
+    public abstract void update(Map<Integer, SkillSingle> skillMap);
 
     @Override
     public boolean equals(Object o) {
