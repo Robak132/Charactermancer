@@ -20,6 +20,8 @@ public class SkillSingle extends Skill {
     @ManyToOne
     @JoinColumn(name = "IDBASE")
     private SkillBase baseSkill;
+    @Transient
+    private int minimalValue;
 
     @Transient
     private int advValue=0;
@@ -40,9 +42,11 @@ public class SkillSingle extends Skill {
     public void setID(int ID) {
         this.ID = ID;
     }
-
     public int getAdvValue() {
         return advValue;
+    }
+    public int getMinimalValue() {
+        return minimalValue;
     }
     public SkillBase getBaseSkill() {
         return baseSkill;
@@ -75,6 +79,14 @@ public class SkillSingle extends Skill {
         }
     }
 
+    @Override
+    public void resetAdvValue() {
+        advValue=minimalValue;
+    }
+    @Override
+    public void updateMinimalValue() {
+        this.minimalValue = advValue;
+    }
     @Override
     public void linkAttributeMap(Map<Integer, Attribute> attributeMap) {
         baseSkill.linkAttributeMap(attributeMap);

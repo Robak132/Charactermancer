@@ -1,6 +1,8 @@
 package tools;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +43,34 @@ public final class Dice {
             lookupTable.remove(index);
         }
         return new ArrayList<>(map.values());
+    }
+    public static int[] randomInts(int amount, int minimum, int maximum, int sum) {
+        int[] numberList = new int[amount];
+
+        for (int index = 0; index<amount-1; index++) {
+            int rest = amount - (index + 1);
+
+            int restMinimum = minimum * rest;
+            int restMaximum = maximum * rest;
+
+            minimum = Math.max(minimum, sum - restMaximum);
+            maximum = Math.min(maximum, sum - restMinimum);
+
+            int newRandomValue = Dice.randomInt(minimum, maximum);
+            numberList[index] = newRandomValue;
+            sum -= newRandomValue;
+        }
+        numberList[amount-1] = sum;
+
+        return numberList;
+    }
+    public static List<Integer> randomIntPermutation(int amount, Integer[] values) {
+        List<Integer> integerList = new ArrayList<>(Arrays.asList(values));
+        for (int i=integerList.size(); i<amount; i++) {
+            integerList.add(0);
+        }
+        Collections.shuffle(integerList);
+        return integerList;
     }
 
     private static ThreadLocalRandom randomThread() {

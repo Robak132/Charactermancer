@@ -2,6 +2,7 @@ package tabs;
 
 import components.AdvancedSpinner;
 import components.CustomFocusTraversalPolicy;
+import components.FilteredComboBox;
 import components.GridPanel;
 import components.JIntegerField;
 import java.awt.Component;
@@ -55,7 +56,11 @@ public class SkillTab {
         skillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
     protected void updateSkillRow(GridPanel panel, List<SkillSingle> visibleSkills, int idx, int row, int column, SkillSingle newSkill) {
+        if (panel.getComponent(column, row) instanceof FilteredComboBox<?>) {
+            ((FilteredComboBox<?>) panel.getComponent(column, row)).setSelectedItem(newSkill);
+        }
         panel.getComponent(column, row).setForeground(newSkill.getColor());
+
         ((JTextField) panel.getComponent(column + 1, row)).setText(newSkill.getAttrName());
         ((AdvancedSpinner) panel.getComponent(column + 2, row)).setValue(newSkill.getAdvValue());
         ((JIntegerField) panel.getComponent(column + 3, row)).setValue(newSkill.getTotalValue());
@@ -67,7 +72,11 @@ public class SkillTab {
     }
 
     protected void updateTalentRow(GridPanel panel, int idx, int row, List<TalentSingle> talentList, TalentSingle newTalent) {
-        panel.getComponent(0, row).setForeground(newTalent.getColor());
+        Component nameField = panel.getComponent(0, row);
+        if (nameField instanceof FilteredComboBox) {
+            ((FilteredComboBox<?>) nameField).setSelectedItem(newTalent);
+        }
+        nameField.setForeground(newTalent.getColor());
 
         ((JIntegerField) panel.getComponent(1, row)).setValue(newTalent.getCurrentLvl());
         panel.getComponent(1, row).setForeground(newTalent.getColor());
