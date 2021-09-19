@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Random;
 
 public final class Dice {
     private Dice() {
@@ -14,7 +14,7 @@ public final class Dice {
     }
 
     public static int randomDice(int sides) {
-        return 1 + randomThread().nextInt(sides);
+        return 1 + new Random().nextInt(sides);
     }
     public static int randomDice(int amount, int sides) {
         int sum = 0;
@@ -24,7 +24,7 @@ public final class Dice {
         return sum;
     }
     public static int randomInt(int min, int max) {
-        return min + randomThread().nextInt(max-min+1);
+        return min + new Random().nextInt(max-min+1);
     }
     public static <T> T randomItem(List<T> list) {
         int rnd = randomInt(0, list.size()-1);
@@ -71,9 +71,5 @@ public final class Dice {
         }
         Collections.shuffle(integerList);
         return integerList;
-    }
-
-    private static ThreadLocalRandom randomThread() {
-        return ThreadLocalRandom.current();
     }
 }
