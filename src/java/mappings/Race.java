@@ -3,6 +3,7 @@ package mappings;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
@@ -157,7 +158,7 @@ public class Race {
         return subraces;
     }
     public Subrace getRndSubrace() {
-        return (Subrace) Dice.randomItem(subraces);
+        return Dice.randomItem(subraces);
     }
     public void setSubraces(List<Subrace> subraces) {
         this.subraces = subraces;
@@ -252,5 +253,21 @@ public class Race {
     @Override
     public String toString() {
         return String.format("Race {ID = %d, name = %s}", ID, name);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Race race = (Race) o;
+        return ID == race.ID && Objects.equals(name, race.name);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(ID, name);
     }
 }

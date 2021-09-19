@@ -43,9 +43,6 @@ public final class RaceTab {
         this.sheet = sheet;
         this.parent = parent;
 
-        raceOption2Combo.addItems(connection.getRaces());
-        raceOption2Combo.setListRenderer(Race::getName);
-
         raceRollButton.addActionListener(e -> {
             KeyValue<Integer, Race> result = Race.getRandomRace(connection);
             int rollResultNumeric = result.getKey();
@@ -53,6 +50,12 @@ public final class RaceTab {
             subraces = race.getSubraces();
 
             setRace(rollResultNumeric, race.getName());
+
+            List<Race> races = connection.getRaces();
+            races.remove(race);
+            raceOption2Combo.addItems(races);
+            raceOption2Combo.setListRenderer(Race::getName);
+
             moveToOptions();
         });
         raceRollButton.setMnemonic(KeyEvent.VK_R);
@@ -71,7 +74,6 @@ public final class RaceTab {
         });
         raceOKButton.setMnemonic(KeyEvent.VK_O);
         raceOption1Button.addActionListener(e -> {
-            raceOption2Combo.setSelectedItem(race);
             subraces = race.getSubraces();
             sheet.addExp(20);
 
