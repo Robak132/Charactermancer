@@ -40,6 +40,30 @@
               </grid>
             </children>
           </scrollpane>
+          <scrollpane id="bdb4b">
+            <constraints>
+              <tabbedpane title="Talents"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children/>
+          </scrollpane>
+          <scrollpane id="aa00">
+            <constraints>
+              <tabbedpane title="XP"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children/>
+          </scrollpane>
+          <scrollpane id="cd6fc">
+            <constraints>
+              <tabbedpane title="Log"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children/>
+          </scrollpane>
         </children>
       </tabbedpane>
       <vspacer id="c7a1c">

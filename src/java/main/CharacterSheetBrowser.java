@@ -130,11 +130,16 @@ public class CharacterSheetBrowser {
 
                 JTextField attributeField = skillsPanel.createTextField(finalRow, column++, skill.getAttrName(), new Dimension(30, -1), false);
                 attributeField.setBackground(skill.isGrouped() ? ColorPalette.WHITE_BLUE : nameField.getBackground());
+                attributeField.setForeground(skill.isAdvanceable() ? ColorPalette.HALF_GREEN : Color.BLACK);
+
                 JIntegerField advField = skillsPanel.createIntegerField(finalRow, column++, skill.getAdvValue(), new Dimension(30, -1), false);
                 advField.setBackground(skill.isGrouped() ? ColorPalette.WHITE_BLUE : nameField.getBackground());
+                advField.setForeground(skill.isAdvanceable() ? ColorPalette.HALF_GREEN : Color.BLACK);
+
                 JIntegerField totalField = skillsPanel.createIntegerField(finalRow, column++, skill.getTotalValue(), new Dimension(30, -1), false);
                 totalField.setBackground(skill.isGrouped() ? ColorPalette.WHITE_BLUE : nameField.getBackground());
                 totalField.setFont(new Font(totalField.getFont().getName(), Font.ITALIC + Font.BOLD, totalField.getFont().getSize() + 2));
+                totalField.setForeground(skill.isAdvanceable() ? ColorPalette.HALF_GREEN : Color.BLACK);
             }
         }
         if (baseItr != 1) {
