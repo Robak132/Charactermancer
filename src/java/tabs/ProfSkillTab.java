@@ -1,10 +1,12 @@
 package tabs;
 
+import com.intellij.uiDesigner.core.GridConstraints;
 import components.AdvancedSpinner;
 import components.CustomFocusTraversalPolicy;
 import components.GridPanel;
 import components.JIntegerField;
 import components.SearchableComboBox;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -13,10 +15,12 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -80,7 +84,7 @@ public class ProfSkillTab extends SkillTab {
         profTalents.forEach(e->e.linkAttributeMap(sheet.getAttributes()));
 
         createSkillTable(profSkills);
-//        createTalentTable(raceTalents, talentFieldDimensions);
+        createTalentTable(profTalents, talentFieldDimensions);
 
         KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK);
         AbstractActionHelper.createActionMnemonic(mainPanel, stroke, () -> {
@@ -96,12 +100,12 @@ public class ProfSkillTab extends SkillTab {
         });
     }
 
-    private void createSkillTable(List<Skill> raceSkills) {
+    private void createSkillTable(List<Skill> profSkills) {
         List<Component> tabOrder = new ArrayList<>();
         int baseItr = 1;
         int advItr = 1;
-        for (int i = 0; i < raceSkills.size(); i++) {
-            Skill raceSkill = raceSkills.get(i);
+        for (int i = 0; i < profSkills.size(); i++) {
+            Skill raceSkill = profSkills.get(i);
             int finalRow = raceSkill.isAdv() ? advItr++ : baseItr++;
             int column = raceSkill.isAdv() ? 4 : 0;
             int finalI = i;
@@ -136,16 +140,17 @@ public class ProfSkillTab extends SkillTab {
 
         skillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
-    private void createTalentTable(List<Talent> raceTalents, Dimension[] fieldDimensions) {
+    private void createTalentTable(List<Talent> profTalents, Dimension[] fieldDimensions) {
+        ButtonGroup buttonGroup = new ButtonGroup();
         talentsPanel.createJLabel(0,0,1,-1, "Talents");
-        for (int i = 0; i < raceTalents.size(); i++) {
-            Talent raceTalent = raceTalents.get(i);
+        for (int i = 0; i < profTalents.size(); i++) {
+            Talent raceTalent = profTalents.get(i);
             int finalI = i;
             int row = i + 1;
             int column = 0;
 
-            TalentSingle activeTalent = talentsPanel.createComboIfNeeded(raceTalent, row, column++, TalentSingle::getColor,
-                    newTalent -> updateTalentRow(talentsPanel, finalI, row, 0, visibleTalents, newTalent));
+            TalentSingle activeTalent = talentsPanel.createComboIfNeeded(raceTalent, row, column++, t -> Color.BLACK, newTalent ->
+                    updateTalentRow(talentsPanel, finalI, row, 0, visibleTalents, newTalent));
 
             talentsPanel.createIntegerField(row, column++, activeTalent.getCurrentLvl(), fieldDimensions[column-1], false);
 
@@ -155,7 +160,16 @@ public class ProfSkillTab extends SkillTab {
             testArea.setFont(testArea.getFont().deriveFont(Font.PLAIN, 10));
 
             String tooltip = activeTalent.getBaseTalent().getDesc();
-            talentsPanel.createJLabel(row, column, new ImageIcon("src/resources/images/info.png"), MultiLineTooltip.splitToolTip(tooltip, 75, 10));
+            talentsPanel.createJLabel(row, column++, new ImageIcon("src/resources/images/info.png"), MultiLineTooltip.splitToolTip(tooltip, 75, 10));
+
+            JRadioButton radioButton = new JRadioButton();
+            if (activeTalent.getCurrentLvl()==1) {
+                radioButton.setSelected(true);
+                radioButton.setEnabled(false);
+            } else {
+                buttonGroup.add(radioButton);
+            }
+            talentsPanel.add(radioButton, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
         }
         talentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
@@ -194,23 +208,17 @@ public class ProfSkillTab extends SkillTab {
     }
 
     private void rollSkills() {
-        int[] values = Dice.randomInts(8, 0, 10, 40);
+        int[] values = Dice.randomInts(profSkills.size(), 0, 10, 40);
 
         int baseItr = 1;
         int advItr = 1;
-        int row;
-        int column;
         for (int i=0; i<profSkills.size(); i++) {
-            if (profSkills.get(i).isAdv()) {
-                column = 4;
-                row = advItr++;
-            } else {
-                column = 0;
-                row = baseItr++;
-            }
+            Skill profSkill = profSkills.get(i);
+            int row = profSkill.isAdv() ? advItr++ : baseItr++;
+            int column = profSkill.isAdv() ? 4 : 0;
 
             SkillSingle newSkill = Dice.randomItem(profSkills.get(i).getSingleSkills());
-            visibleSkills.set(i, newSkill);
+            updateSkillRow(skillsPanel, visibleSkills, i, row, column, newSkill);
             ((AdvancedSpinner) skillsPanel.getComponent(column + 2, row)).setValue(newSkill.getMinimalValue()+ values[i]);
         }
     }

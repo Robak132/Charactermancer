@@ -70,13 +70,16 @@ public class SkillSingle extends Skill {
     }
 
     public Color getColor() {
+        if (isEarning()) {
+            return ColorPalette.BLUE;
+        }
+        if (isAdvanceable()) {
+            return ColorPalette.HALF_GREEN;
+        }
         if (isAdv() && getAdvValue() == 0) {
             return Color.RED;
-        } else if (isEarning()) {
-            return ColorPalette.BLUE;
-        } else {
-            return Color.BLACK;
         }
+        return Color.BLACK;
     }
 
     @Override

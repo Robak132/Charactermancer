@@ -31,7 +31,6 @@ import main.CharacterGen;
 import main.CharacterSheet;
 import main.Connection;
 import mappings.Skill;
-import mappings.SkillGroup;
 import mappings.SkillSingle;
 import mappings.Talent;
 import mappings.TalentGroup;
@@ -273,23 +272,20 @@ public class RaceSkillTab extends SkillTab {
     }
 
     private void rollSkills() {
-        List<Integer> rollRange = Dice.randomIntegerList(raceSkills.size(), new int[] {3, 3, 3, 5, 5, 5});
+        List<Integer> values = Dice.randomIntPermutation(raceSkills.size(), new Integer[] {3, 3, 3, 5, 5, 5});
         skillsPanel.iterateThroughRows(2, (o, idx) -> ((AdvancedSpinner) o).setValue(0));
         skillsPanel.iterateThroughRows(6, (o, idx) -> ((AdvancedSpinner) o).setValue(0));
 
         int baseItr = 1;
         int advItr = 1;
-        for (int i=0; i<rollRange.size(); i++) {
+        for (int i=0; i<raceSkills.size(); i++) {
             Skill raceSkill = raceSkills.get(i);
-            int finalRow = raceSkill.isAdv() ? advItr++ : baseItr++;
+            int row = raceSkill.isAdv() ? advItr++ : baseItr++;
             int column = raceSkill.isAdv() ? 4 : 0;
 
-            if (raceSkill instanceof SkillGroup) {
-                SkillSingle newSkill = ((SkillGroup) raceSkills.get(i)).getRndSkill();
-                ((FilteredComboBox<?>) skillsPanel.getComponent(column, finalRow)).setSelectedItem(newSkill);
-                visibleRaceSkills.set(i, newSkill);
-            }
-            ((AdvancedSpinner) skillsPanel.getComponent(column + 2, finalRow)).setValue(rollRange.get(i));
+            SkillSingle newSkill = Dice.randomItem(raceSkill.getSingleSkills());
+            updateSkillRow(skillsPanel, visibleRaceSkills, i, row, column, newSkill);
+            ((AdvancedSpinner) skillsPanel.getComponent(column + 2, row)).setValue(values.get(i));
         }
     }
     private void rollTalents() {
