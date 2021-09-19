@@ -82,7 +82,7 @@ public class TalentBase {
     public void setConstLvl(int constLvl) {
         this.constLvl = constLvl;
     }
-    public int getMaxLvl() {
+    public Integer getMaxLvl() {
         if (linkedAttribute!=null) {
             return linkedAttribute.getBonus();
         } else {

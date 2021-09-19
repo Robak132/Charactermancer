@@ -147,13 +147,13 @@ public class GridPanel extends JPanel {
         return label;
     }
 
-    public JIntegerField createIntegerField(int row, int column, int value, Dimension dimension) {
+    public JIntegerField createIntegerField(int row, int column, Integer value, Dimension dimension) {
         return createIntegerField(row, column, 1, 1, value, dimension, true);
     }
-    public JIntegerField createIntegerField(int row, int column, int value, Dimension dimension, boolean editable) {
+    public JIntegerField createIntegerField(int row, int column, Integer value, Dimension dimension, boolean editable) {
         return createIntegerField(row, column, 1, 1, value, dimension, editable);
     }
-    public JIntegerField createIntegerField(int row, int column, int rowSpan, int colSpan, int value, Dimension dimension, boolean editable) {
+    public JIntegerField createIntegerField(int row, int column, int rowSpan, int colSpan, Integer value, Dimension dimension, boolean editable) {
         JIntegerField integerField = new JIntegerField(value);
         integerField.setHorizontalAlignment(JTextField.CENTER);
         integerField.setEditable(editable);

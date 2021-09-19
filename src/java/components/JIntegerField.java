@@ -8,15 +8,15 @@ import org.apache.logging.log4j.LogManager;
 public class JIntegerField extends JTextField implements PropertyChangeListener {
     private Runnable runnable;
     private String format;
-    private int value;
+    private Integer value;
 
     public JIntegerField() {
         this(0);
     }
-    public JIntegerField(int value) {
+    public JIntegerField(Integer value) {
         this(value,"%d");
     }
-    public JIntegerField(int value, String format) {
+    public JIntegerField(Integer value, String format) {
         this.format = format;
         setValue(value);
     }
@@ -24,7 +24,7 @@ public class JIntegerField extends JTextField implements PropertyChangeListener 
     public void decrement() {
         changeValue(-1);
     }
-    public void changeValue(int number) {
+    public void changeValue(Integer number) {
         this.setValue(value + number);
     }
     public void increment() {
@@ -52,8 +52,12 @@ public class JIntegerField extends JTextField implements PropertyChangeListener 
     public Integer getSavedValue() {
         return value;
     }
-    public void setValue(int value) {
-        this.setText(String.format(format, value));
+    public void setValue(Integer value) {
+        if (value==null) {
+            this.setText("");
+        } else {
+            this.setText(String.format(format, value));
+        }
         this.value = value;
 
         if (runnable != null) {

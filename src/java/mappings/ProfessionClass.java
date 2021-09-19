@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity
 @Table(name = "PROFESSIONS_CLASSES")
@@ -18,8 +20,9 @@ public class ProfessionClass {
     @Column(name = "NAME")
     private String name;
 
+    @LazyCollection(LazyCollectionOption.TRUE)
     @OneToMany
-    @JoinColumn(name= "IDCLSS")
+    @JoinColumn(name= "ID_CLASS")
     private List<ProfessionCareer> careers;
 
     public ProfessionClass() {}

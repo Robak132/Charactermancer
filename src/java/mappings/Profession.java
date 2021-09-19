@@ -8,7 +8,6 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -35,7 +34,8 @@ public class Profession {
     @Transient
     private Map<Integer, Attribute> attributesMap;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @ManyToOne
     @JoinColumn(name = "IDCAREER")
     private ProfessionCareer career;
 
@@ -137,7 +137,6 @@ public class Profession {
         Map<Integer, Talent> talentsMap = new HashMap<>();
         for (Talent talent : profTalents) {
             talent.setAdvanceable(true);
-            talent.setCurrentLvl(0);
             talentsMap.put(talent.getID(), talent);
         }
         return talentsMap;

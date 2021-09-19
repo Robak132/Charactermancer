@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -27,8 +26,9 @@ public class ProfessionCareer {
     @JoinColumn(name= "IDCAREER")
     private List<Profession> professions;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDCLSS")
+    @LazyCollection(LazyCollectionOption.TRUE)
+    @ManyToOne
+    @JoinColumn(name = "ID_CLASS")
     private ProfessionClass professionClass;
 
     public ProfessionCareer() {}
