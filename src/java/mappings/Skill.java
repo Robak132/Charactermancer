@@ -23,6 +23,8 @@ public abstract class Skill {
     private int ID;
     @Column(name = "NAME")
     protected String name;
+    @Column(name = "NAME_ENG")
+    protected String nameEng;
 
     public int getID() {
         return ID;
@@ -35,6 +37,12 @@ public abstract class Skill {
     }
     public void setName(String name) {
         this.name = name;
+    }
+    public String getNameCode() {
+        return name.toUpperCase().replace(" ", "");
+    }
+    public String getNameEngCode() {
+        return nameEng.toUpperCase().replace(" ", "");
     }
 
     public abstract boolean isAdv();
