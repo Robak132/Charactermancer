@@ -250,6 +250,20 @@ public class Connection {
         }
         return skill;
     }
+    public Skill getSkill(String name) {
+        Skill skill = null;
+        try {
+            Session session = factory.openSession();
+            Query<Skill> query = session.createQuery("FROM Skill WHERE REPLACE(UPPER(name), ' ', '')=:name OR REPLACE(UPPER(nameEng), ' ', '')=:name");
+            query.setParameter("name", name);
+            skill = query.list().size()==0 ? null : query.list().get(0);
+            session.close();
+        } catch (Exception ex) {
+            abort();
+            ex.printStackTrace();
+        }
+        return skill;
+    }
     public Map<Integer, SkillSingle> getSingleSkills() {
         List<SkillSingle> skills = new ArrayList<>();
         try {

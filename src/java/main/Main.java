@@ -18,6 +18,7 @@ public class Main {
     private JComboBox<ImageIcon> comboBox1;
     private JButton createcharButton;
     private JButton createsheetButton;
+    private JButton statBlockParserButton;
     private final Locale[] languages = {Locale.ENGLISH, new Locale("pl", "PL")};
     private Dimension activeDimension = null;
 
@@ -49,6 +50,11 @@ public class Main {
             frame.validate();
         });
         createsheetButton.setMnemonic(KeyEvent.VK_2);
+        statBlockParserButton.addActionListener(e -> {
+            frame.setContentPane(new StatBlockParser(frame, null,this, connection).mainPanel);
+            frame.validate();
+        });
+        statBlockParserButton.setMnemonic(KeyEvent.VK_3);
         comboBox1.addActionListener(e -> Locale.setDefault(languages[comboBox1.getSelectedIndex()]));
         frame.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent componentEvent) {
