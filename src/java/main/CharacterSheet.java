@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,6 +26,7 @@ import mappings.Subrace;
 import mappings.Talent;
 import mappings.TalentSingle;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CharacterSheet {
@@ -33,6 +37,8 @@ public class CharacterSheet {
     private final int MOVE = 11;
 
     private int exp;
+    private int freeExp;
+    private boolean player;
     private int healthPoints;
     private Subrace subrace;
     private Profession profession;
@@ -41,6 +47,8 @@ public class CharacterSheet {
     private Map<Integer, TalentSingle> talents = new ConcurrentHashMap<>();
     private List<SkillSingle> skillList = new ArrayList<>();
     private List<TalentSingle> talentList = new ArrayList<>();
+
+    private List<DateEntry> history = new ArrayList<>();
 
     public CharacterSheet(Connection connection) {
         this.connection = connection;
@@ -82,9 +90,6 @@ public class CharacterSheet {
     public void setAttributes(Map<Integer, Attribute> attributes) {
         this.attributes = attributes;
     }
-    public void addAttribute(Integer key, Attribute value) {
-        attributes.put(key, value);
-    }
 
     public void addSkill(SkillSingle skill) {
         skills.put(skill.getID(), skill);
@@ -99,15 +104,40 @@ public class CharacterSheet {
     public Map<Integer, TalentSingle> getTalents() {
         return talents;
     }
-    public void setTalentList(List<TalentSingle> talentList) {
-        this.talentList = talentList;
-    }
-    public void addTalents(List<TalentSingle> talents) {
-        this.talentList.addAll(talents);
-    }
 
+    public boolean isPlayer() {
+        return player;
+    }
+    public void setPlayer(boolean player) {
+        this.player = player;
+    }
     public int getExp() {
         return exp;
+    }
+    public int getFreeExp() {
+        return freeExp;
+    }
+    public void setFreeExp(int freeExp) {
+        this.freeExp = freeExp;
+    }
+    public int getUsedExp() {
+        int usedExp = 0;
+        for (Attribute attribute : attributes.values()) {
+            usedExp += calculateExp(attribute.getAdvValue(), 25);
+        }
+        for (SkillSingle skill : skills.values()) {
+            usedExp += calculateExp(skill.getAdvValue(), 10);
+        }
+        for (TalentSingle talent : talents.values()) {
+            usedExp += talent.getCurrentLvl() * talent.getCurrentLvl() * 50;
+        }
+        return usedExp - freeExp;
+    }
+    private int calculateExp(int advances, int baseCost) {
+        if (advances==0) {
+            return 0;
+        }
+        return baseCost + 5*((advances-1)/5) + calculateExp(advances-1, baseCost);
     }
     public void setExp(int exp) {
         pcs.firePropertyChange("exp", this.exp, exp);
@@ -136,6 +166,13 @@ public class CharacterSheet {
     }
     public void resetHealthPoints() {
         this.healthPoints = getMaxHealthPoints();
+    }
+
+    public List<DateEntry> getHistory() {
+        return history;
+    }
+    public void setHistory(List<DateEntry> history) {
+        this.history = history;
     }
 
     public String printAttributes() {
@@ -174,9 +211,11 @@ public class CharacterSheet {
 
         return ret.toString();
     }
-    public void ToJSON() {
+    public JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("exp", exp);
+        jsonObject.put("free_exp", getUsedExp());
+        jsonObject.put("player", true);
 
         JSONObject subraceObject = new JSONObject();
         subraceObject.put("ID", subrace.getID());
@@ -189,6 +228,13 @@ public class CharacterSheet {
         professionObject.put("name", profession.getName());
         jsonObject.put("profession", professionObject);
 
+        JSONArray historyArray = new JSONArray();
+        JSONObject entryJSON = new JSONObject();
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        entryJSON.put("date", formatter.format(new Date(System.currentTimeMillis())));
+
+        // Attributes
         JSONArray attributesArray = new JSONArray();
         for (Attribute attribute : attributes.values()) {
             JSONObject attributeJSON = new JSONObject();
@@ -199,11 +245,12 @@ public class CharacterSheet {
             attributeJSON.put("adv_value", attribute.getAdvValue());
             attributesArray.put(attributeJSON);
         }
-        jsonObject.put("attributes", attributesArray);
+        entryJSON.put("attributes", attributesArray);
 
+        // Skills
         JSONArray skillsArray = new JSONArray();
         for (SkillSingle skill : skills.values()) {
-            if (skill.getAdvValue() > 0) {
+            if (skill.getAdvValue() > 0 || skill.isAdvanceable()) {
                 JSONObject skillJSON = new JSONObject();
                 skillJSON.put("ID", skill.getID());
                 skillJSON.put("base_skill_ID", skill.getBaseSkill().getID());
@@ -214,8 +261,9 @@ public class CharacterSheet {
                 skillsArray.put(skillJSON);
             }
         }
-        jsonObject.put("skills", skillsArray);
+        entryJSON.put("skills", skillsArray);
 
+        // Talents
         JSONArray talentsArray = new JSONArray();
         for (TalentSingle talent : talents.values()) {
             JSONObject talentJSON = new JSONObject();
@@ -225,68 +273,112 @@ public class CharacterSheet {
             talentJSON.put("advanceable", talent.isAdvanceable());
             talentsArray.put(talentJSON);
         }
-        jsonObject.put("talents", talentsArray);
+        entryJSON.put("talents", talentsArray);
 
-        try (PrintWriter file = new PrintWriter(Paths.get("src/resources/test.json").toFile())) {
-            file.println(jsonObject.toString(4));
+        historyArray.put(entryJSON);
+        jsonObject.put("history", historyArray);
+
+        return jsonObject;
+    }
+    public void printJSON() {
+        System.out.println(toJSON().toString(4));
+    }
+    public void saveJSON(String filename) {
+        try (PrintWriter file = new PrintWriter(Paths.get(filename).toFile())) {
+            file.println(toJSON().toString(4));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(jsonObject.toString(4));
     }
     public void loadJSON(String filename) {
         try {
             String content = new String(Files.readAllBytes(Paths.get(filename)));
             JSONObject jsonObject = new JSONObject(content);
+
+            player = jsonObject.getBoolean("player");
             exp = jsonObject.getInt("exp");
+            freeExp = jsonObject.getInt("free_exp");
 
             JSONObject subraceObject = jsonObject.getJSONObject("subrace");
             int ID = subraceObject.getInt("ID");
             String name = subraceObject.getString("name");
             subrace = connection.getSubrace(ID, name);
+            if (subrace == null)
+                throw new JSONException(String.format("Cannot load subrace: %s", name));
 
             JSONObject professionObject = jsonObject.getJSONObject("profession");
             ID = professionObject.getInt("ID");
             name = professionObject.getString("name");
             profession = connection.getProfession(ID, name);
+            if (profession == null)
+                throw new JSONException(String.format("Cannot load profession: %s", name));
 
-            JSONArray attributesArray = jsonObject.getJSONArray("attributes");
-            for (int i=0; i<attributesArray.length(); i++) {
-                JSONObject object = attributesArray.getJSONObject(i);
-                ID = object.getInt("ID");
-                name = object.getString("name");
-                Attribute attribute = connection.getAttribute(ID, name);
-                attribute.setBaseValue(object.getInt("base_value"));
-                attribute.setRndValue(object.getInt("rnd_value"));
-                attribute.setAdvValue(object.getInt("adv_value"));
-                attributes.put(ID, attribute);
+            JSONArray historyArray = jsonObject.getJSONArray("history");
+            for (int i = 0; i < historyArray.length(); i++) {
+                JSONObject entryJSON = historyArray.getJSONObject(i);
+                SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+                Date date = formatter.parse(entryJSON.getString("date"));
+                DateEntry entry = new DateEntry(date);
+
+                JSONArray attributesArray = entryJSON.getJSONArray("attributes");
+                for (int j = 0; j < attributesArray.length(); j++) {
+                    JSONObject object = attributesArray.getJSONObject(j);
+                    ID = object.getInt("ID");
+                    name = object.getString("name");
+                    Attribute attribute = connection.getAttribute(ID, name);
+                    if (attribute == null) {
+                        throw new JSONException(String.format("Cannot load attribute: %s", name));
+                    }
+                    attribute.setBaseValue(object.getInt("base_value"));
+                    attribute.setRndValue(object.getInt("rnd_value"));
+                    attribute.setAdvValue(object.getInt("adv_value"));
+
+                    attributes.put(ID, attribute);
+                    if (attribute.getAdvValue() > 0) {
+                        entry.add(attribute, 0, attribute.getAdvValue());
+                    }
+                }
+
+                JSONArray skillsArray = entryJSON.getJSONArray("skills");
+                for (int j = 0; j < skillsArray.length(); j++) {
+                    JSONObject object = skillsArray.getJSONObject(j);
+                    ID = object.getInt("ID");
+                    name = object.getString("name");
+                    SkillSingle skill = connection.getSkill(ID, name);
+                    if (skill == null) {
+                        throw new JSONException(String.format("Cannot load skill: %s", name));
+                    }
+                    skill.setAdvValue(object.getInt("adv_value"));
+                    skill.setAdvanceable(object.getBoolean("advanceable"));
+                    skill.setEarning(object.getBoolean("earning"));
+
+                    skills.put(ID, skill);
+                    if (skill.getAdvValue() > 0) {
+                        entry.add(skill, 0, skill.getAdvValue());
+                    }
+                }
+
+                JSONArray talentsArray = entryJSON.getJSONArray("talents");
+                for (int j = 0; j < talentsArray.length(); j++) {
+                    JSONObject object = talentsArray.getJSONObject(j);
+                    ID = object.getInt("ID");
+                    name = object.getString("name");
+                    TalentSingle talent = connection.getTalent(ID, name);
+                    if (talent == null) {
+                        throw new JSONException(String.format("Cannot load talent: %s", name));
+                    }
+                    talent.setCurrentLvl(object.getInt("lvl"));
+                    talent.setAdvanceable(object.getBoolean("advanceable"));
+
+                    talents.put(ID, talent);
+                    if (talent.getCurrentLvl() > 0) {
+                        entry.add(talent, 0, talent.getCurrentLvl());
+                    }
+                }
+                history.add(entry);
             }
-
-            JSONArray skillsArray = jsonObject.getJSONArray("skills");
-            for (int i=0; i<skillsArray.length(); i++) {
-                JSONObject object = skillsArray.getJSONObject(i);
-                ID = object.getInt("ID");
-                name = object.getString("name");
-                SkillSingle skill = connection.getSkill(ID, name);
-                skill.setAdvValue(object.getInt("adv_value"));
-                skill.setAdvanceable(object.getBoolean("advanceable"));
-                skill.setEarning(object.getBoolean("earning"));
-                skills.put(ID, skill);
-            }
-
-            JSONArray talentsArray = jsonObject.getJSONArray("talents");
-            for (int i=0; i<talentsArray.length(); i++) {
-                JSONObject object = talentsArray.getJSONObject(i);
-                ID = object.getInt("ID");
-                name = object.getString("name");
-                TalentSingle talent = connection.getTalent(ID, name);
-                talent.setCurrentLvl(object.getInt("lvl"));
-                talent.setAdvanceable(object.getBoolean("advanceable"));
-                talents.put(ID, talent);
-            }
-
-            System.out.println(jsonObject.toString(4));
-        } catch (IOException e) {
+        }
+        catch (IOException | ParseException e) {
             e.printStackTrace();
         }
     }

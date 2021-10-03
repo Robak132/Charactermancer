@@ -86,14 +86,14 @@ public class StatBlockParser {
 
         Map<Integer, Attribute> attributes = connection.getAttributes(0).stream().collect(Collectors.toMap(Attribute::getID, Function.identity()));
         attributesPanel.createJLabel(0, 0, attributes.get(Attribute.MOVE).getName());
-        attributesPanel.createIntegerField(1, 0, 3, 1, null, new Dimension(30, -1), true);
+        attributesPanel.createIntegerField(1, 0, 3, 1, null, GridPanel.STANDARD_INTEGER_FIELD, true);
 
         for (int i = 1; i < attributes.values().size(); i++) {
             attributesPanel.createJLabel(0, i, attributes.get(i).getName());
-            JIntegerField sumAttr = attributesPanel.createIntegerField(3, i, 1, 1, null, new Dimension(30, -1), true);
+            JIntegerField sumAttr = attributesPanel.createIntegerField(3, i, 1, 1, null, GridPanel.STANDARD_INTEGER_FIELD, true);
         }
         attributesPanel.createJLabel(0, 12, "HP");
-        JIntegerField attrHP = attributesPanel.createIntegerField(1, 12, 3, 1, null, new Dimension(30, -1), true);
+        JIntegerField attrHP = attributesPanel.createIntegerField(1, 12, 3, 1, null, GridPanel.STANDARD_INTEGER_FIELD, true);
         attributesPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
 }

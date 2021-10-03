@@ -70,8 +70,8 @@ public class RaceSkillTab extends SkillTab {
 
     private final Dimension[] talentFieldDimensions = {
             new Dimension(200, -1),
-            new Dimension(30, -1),
-            new Dimension(30, -1),
+            GridPanel.STANDARD_INTEGER_FIELD,
+            GridPanel.STANDARD_INTEGER_FIELD,
             new Dimension(200, -1)
     };
 
@@ -105,10 +105,55 @@ public class RaceSkillTab extends SkillTab {
             rollTalents();
             rollRandomTalents(sheet.getSubrace().getRandomTalents());
         });
+
         rollButton.addActionListener(e -> rollRandomTalents());
         rollButton.setMnemonic(KeyEvent.VK_R);
         rollOKButton.addActionListener(e -> {
-            // TODO: Manual entering
+            int rollResultNumeric = rollResult.getValue();
+            if (rollResultNumeric <= 0 || rollResultNumeric > 100) {
+                return;
+            }
+
+            Talent rollTalent = connection.getRandomTalent(rollResultNumeric);
+            if (randomTalents.contains(rollTalent)) {
+                // TODO: Make "Roll doubled" dialog or do sth better
+            } else {
+                rollTalent.linkAttributeMap(sheet.getAttributes());
+                rollTalent.setCurrentLvl(1);
+                randomTalents.add(rollTalent);
+
+                int row = randomTalents.size() - 1;
+                JTextField textField = (JTextField) randomTalentsPanel.getComponent(0, row);
+                if (rollTalent instanceof TalentSingle) {
+                    textField.setText(rollTalent.getName());
+                    visibleRandomTalents.add((TalentSingle) rollTalent);
+                } else {
+                    TalentGroup rollTalentGroup = (TalentGroup) rollTalent;
+                    Dimension dimension = new Dimension(textField.getWidth(), -1);
+                    FilteredComboBox<TalentSingle> filteredComboBox = randomTalentsPanel.createFilteredComboBox(row, 0, dimension, TalentSingle::getName);
+                    randomTalentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
+
+                    filteredComboBox.addItems(rollTalentGroup.getSingleTalents());
+                    filteredComboBox.setToolTipText(MultiLineTooltip.splitToolTip(rollTalentGroup.getName()));
+                    visibleRandomTalents.add(rollTalentGroup.getSingleTalents().get(0));
+
+                    filteredComboBox.addActionListener(a -> {
+                        if (!filteredComboBox.isEditing()) {
+                            updateTalentRow(randomTalentsPanel, row, row, visibleRandomTalents, (TalentSingle) filteredComboBox.getSelectedItem());
+                        }
+                    });
+                }
+                updateTalentRow(randomTalentsPanel, row, row, visibleRandomTalents);
+
+                if (sheet.getSubrace().getRandomTalents() == randomTalents.size()) {
+                    rollButton.setEnabled(false);
+                    rollResult.setEditable(false);
+                    rollOKButton.setEnabled(false);
+                } else {
+                    rollResult.setText("");
+                }
+            }
+
         });
         option1Button.addActionListener(e -> {
             visibleRaceSkills.forEach(sheet::addSkill);
@@ -156,9 +201,9 @@ public class RaceSkillTab extends SkillTab {
                     newSkill -> updateSkillRow(skillsPanel, visibleRaceSkills, finalI, finalRow, finalColumn, newSkill));
             visibleRaceSkills.add(activeSkill);
 
-            skillsPanel.createTextField(finalRow, column++, activeSkill.getAttrName(), new Dimension(30, -1), false);
+            skillsPanel.createTextField(finalRow, column++, activeSkill.getAttrName(), GridPanel.STANDARD_INTEGER_FIELD, false);
             AdvancedSpinner jSpinner = createSpinner(skillsPanel, finalI, finalRow, finalColumn, column++);
-            skillsPanel.createIntegerField(finalRow, column++, activeSkill.getBaseSkill().getLinkedAttribute().getTotalValue(), new Dimension(30, -1), false);
+            skillsPanel.createIntegerField(finalRow, column++, activeSkill.getBaseSkill().getLinkedAttribute().getTotalValue(), GridPanel.STANDARD_INTEGER_FIELD, false);
 
             tabOrder.add(jSpinner.getTextField());
         }

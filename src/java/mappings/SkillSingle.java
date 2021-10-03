@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import tools.ColorPalette;
 
 @Entity
@@ -17,6 +19,7 @@ public class SkillSingle extends Skill {
     @Id
     private int ID;
 
+    @LazyCollection(LazyCollectionOption.TRUE)
     @ManyToOne
     @JoinColumn(name = "IDBASE")
     private SkillBase baseSkill;

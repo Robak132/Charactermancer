@@ -1,11 +1,10 @@
 package tabs;
 
-import com.intellij.uiDesigner.core.GridConstraints;
 import components.AdvancedSpinner;
 import components.CustomFocusTraversalPolicy;
+import components.FilteredComboBox;
 import components.GridPanel;
 import components.JIntegerField;
-import components.SearchableComboBox;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -15,14 +14,11 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
@@ -49,7 +45,8 @@ public class ProfSkillTab extends SkillTab {
     private JButton option1Button;
     private JIntegerField remainField;
 
-    private int remainValue = 40;
+    private int remainSkillPoints = 40;
+    private int remainTalentPoints = 1;
 
     private List<Skill> profSkills = new ArrayList<>();
     private List<Talent> profTalents = new ArrayList<>();
@@ -59,8 +56,8 @@ public class ProfSkillTab extends SkillTab {
 
     private final Dimension[] talentFieldDimensions = {
             new Dimension(200, -1),
-            new Dimension(30, -1),
-            new Dimension(30, -1),
+            GridPanel.STANDARD_INTEGER_FIELD,
+            GridPanel.STANDARD_INTEGER_FIELD,
             new Dimension(200, -1)
     };
 
@@ -93,10 +90,8 @@ public class ProfSkillTab extends SkillTab {
         });
         option1Button.addActionListener(e -> {
             visibleSkills.forEach(sheet::addSkill);
-//            sheet.setTalentList(visibleRaceTalents);
-
-            sheet.ToJSON();
-//            System.out.println(sheet);
+            visibleTalents.forEach(sheet::addTalent);
+            sheet.saveJSON("src/resources/test.json");
         });
     }
 
@@ -115,7 +110,7 @@ public class ProfSkillTab extends SkillTab {
                     newSkill -> updateSkillRow(skillsPanel, visibleSkills, finalI, finalRow, finalColumn, newSkill));
             visibleSkills.add(activeSkill);
 
-            skillsPanel.createTextField(finalRow, column++, activeSkill.getAttrName(), new Dimension(30, -1), false);
+            skillsPanel.createTextField(finalRow, column++, activeSkill.getAttrName(), GridPanel.STANDARD_INTEGER_FIELD, false);
 
             SpinnerModel model = new SpinnerNumberModel(activeSkill.getAdvValue(), activeSkill.getAdvValue(), activeSkill.getAdvValue()+10, 1);
             AdvancedSpinner jSpinner = skillsPanel.createAdvancedSpinner(finalRow, column++, model, new Dimension(35, -1), true);
@@ -125,7 +120,7 @@ public class ProfSkillTab extends SkillTab {
                 }
             });
 
-            skillsPanel.createIntegerField(finalRow, column++, activeSkill.getBaseSkill().getLinkedAttribute().getTotalValue(), new Dimension(30, -1), false);
+            skillsPanel.createIntegerField(finalRow, column++, activeSkill.getBaseSkill().getLinkedAttribute().getTotalValue(), GridPanel.STANDARD_INTEGER_FIELD, false);
             tabOrder.add(jSpinner.getTextField());
         }
         if (baseItr != 1) {
@@ -141,7 +136,6 @@ public class ProfSkillTab extends SkillTab {
         skillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
     private void createTalentTable(List<Talent> profTalents, Dimension[] fieldDimensions) {
-        ButtonGroup buttonGroup = new ButtonGroup();
         talentsPanel.createJLabel(0,0,1,-1, "Talents");
         for (int i = 0; i < profTalents.size(); i++) {
             Talent raceTalent = profTalents.get(i);
@@ -151,8 +145,12 @@ public class ProfSkillTab extends SkillTab {
 
             TalentSingle activeTalent = talentsPanel.createComboIfNeeded(raceTalent, row, column++, t -> Color.BLACK, newTalent ->
                     updateTalentRow(talentsPanel, finalI, row, 0, visibleTalents, newTalent));
+            visibleTalents.add(activeTalent);
 
-            talentsPanel.createIntegerField(row, column++, activeTalent.getCurrentLvl(), fieldDimensions[column-1], false);
+            int currentLvl = activeTalent.getCurrentLvl();
+            SpinnerModel model = new SpinnerNumberModel(currentLvl, 0, 1, 1);
+            AdvancedSpinner spinner = talentsPanel.createAdvancedSpinner(row, column++, model, GridPanel.STANDARD_INTEGER_FIELD, currentLvl==0);
+            spinner.addChangeListener(e->talentSpinnerChange(finalI, 1, spinner));
 
             talentsPanel.createIntegerField(row, column++, activeTalent.getMax(), fieldDimensions[column-1], false);
 
@@ -161,15 +159,6 @@ public class ProfSkillTab extends SkillTab {
 
             String tooltip = activeTalent.getBaseTalent().getDesc();
             talentsPanel.createJLabel(row, column++, new ImageIcon("src/resources/images/info.png"), MultiLineTooltip.splitToolTip(tooltip, 75, 10));
-
-            JRadioButton radioButton = new JRadioButton();
-            if (activeTalent.getCurrentLvl()==1) {
-                radioButton.setSelected(true);
-                radioButton.setEnabled(false);
-            } else {
-                buttonGroup.add(radioButton);
-            }
-            talentsPanel.add(radioButton, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
         }
         talentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
@@ -179,22 +168,35 @@ public class ProfSkillTab extends SkillTab {
         int now = (int) jSpinner.getValue();
 
         if (last != now) {
-            observersManager.firePropertyChange("points", remainValue, remainValue+last-now);
-            remainValue = remainValue+last-now;
+            observersManager.firePropertyChange("points", remainSkillPoints, remainSkillPoints +last-now);
+            remainSkillPoints = remainSkillPoints + last - now;
             visibleSkills.get(idx).setAdvValue(now);
             updateSkillRow(skillsPanel, visibleSkills, idx, row, column);
         }
-        option1Button.setEnabled(remainValue == 0);
+        option1Button.setEnabled(remainSkillPoints == 0);
+    }
+    private void talentSpinnerChange(int idx, int column, AdvancedSpinner spinner) {
+        int last = visibleTalents.get(idx).getCurrentLvl();
+        int now = (int) spinner.getValue();
+
+        if (last != now) {
+            remainTalentPoints = remainTalentPoints + last - now;
+            visibleTalents.get(idx).setCurrentLvl(now);
+
+            talentsPanel.iterateThroughRows(column, (o, i) -> {
+                SpinnerNumberModel model = (SpinnerNumberModel) ((AdvancedSpinner) o).getModel();
+                model.setMaximum(Math.max((int) model.getValue(), remainTalentPoints));
+            });
+        }
     }
 
     private void updateTalentRow(GridPanel panel, int idx, int row, int column, List<TalentSingle> talentList, TalentSingle newTalent) {
-        if (panel.getComponent(column, row) instanceof JTextField) {
-            ((JTextField) panel.getComponent(column, row)).setText(newTalent.getName());
-        } else {
-            ((SearchableComboBox) panel.getComponent(column, row)).setSelectedItem(newTalent.getName());
+        Component nameField = panel.getComponent(column, row);
+        if (nameField instanceof FilteredComboBox) {
+            ((FilteredComboBox<?>) nameField).setSelectedItem(newTalent);
         }
 
-        ((JIntegerField) panel.getComponent(column + 1, row)).setValue(newTalent.getCurrentLvl());
+        ((AdvancedSpinner) panel.getComponent(column + 1, row)).setValue(newTalent.getCurrentLvl());
         ((JIntegerField) panel.getComponent(column + 2, row)).setValue(newTalent.getMax());
         ((JTextArea) panel.getComponent(column + 3, row)).setText(newTalent.getBaseTalent().getTest());
         ((JLabel) panel.getComponent(column + 4, row)).setToolTipText(MultiLineTooltip.splitToolTip(newTalent.getBaseTalent().getDesc()));

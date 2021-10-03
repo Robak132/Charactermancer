@@ -34,6 +34,8 @@ public class GridPanel extends JPanel {
     private final DynamicMatrix2D<Component> components = new DynamicMatrix2D<>();
     private final Map<Component, GridConstraints> items = new LinkedHashMap<>();
 
+    public static final Dimension STANDARD_INTEGER_FIELD = new Dimension(30, -1);
+    
     public static final int ALIGNMENT_HORIZONTAL = 0;
     public static final int[] ALIGNMENT_HORIZONTAL_2 = {0, 2};
     public static final int ALIGNMENT_NOTOP = 1;
@@ -147,6 +149,9 @@ public class GridPanel extends JPanel {
         return label;
     }
 
+    public JIntegerField createIntegerField(int row, int column, Integer value, boolean editable) {
+        return createIntegerField(row, column, 1, 1, value, GridPanel.STANDARD_INTEGER_FIELD, editable);
+    }
     public JIntegerField createIntegerField(int row, int column, Integer value, Dimension dimension) {
         return createIntegerField(row, column, 1, 1, value, dimension, true);
     }

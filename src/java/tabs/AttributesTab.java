@@ -3,13 +3,13 @@ package tabs;
 import components.GridPanel;
 import components.JIntegerField;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Map;
-import javax.swing.*;
-
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import main.CharacterGen;
 import main.CharacterSheet;
 import main.Connection;
@@ -146,7 +146,7 @@ public class AttributesTab {
 
     private void createTable() {
         attrAttributesTable.createJLabel(0, 0, attributes.get(Attribute.MOVE).getName());
-        attrAttributesTable.createIntegerField(1, 0, 3, 1, attributes.get(Attribute.MOVE).getBaseValue(), new Dimension(30, -1), false);
+        attrAttributesTable.createIntegerField(1, 0, 3, 1, attributes.get(Attribute.MOVE).getBaseValue(), GridPanel.STANDARD_INTEGER_FIELD, false);
 
         for (int i = 1; i < attributes.size(); i++) {
             int finalI = i;
@@ -156,13 +156,13 @@ public class AttributesTab {
                 foregroundColor = ColorPalette.HALF_GREEN;
             }
             attrAttributesTable.createJLabel(0, i, attributes.get(i).getName());
-            JIntegerField baseAttr = attrAttributesTable.createIntegerField(1, i, 1, 1, attributes.get(i).getBaseValue(), new Dimension(30, -1), false);
+            JIntegerField baseAttr = attrAttributesTable.createIntegerField(1, i, 1, 1, attributes.get(i).getBaseValue(), GridPanel.STANDARD_INTEGER_FIELD, false);
             baseAttr.setForeground(foregroundColor);
             if (changeBackground) {
                 baseAttr.setBackground(ColorPalette.WHITE_BLUE);
             }
 
-            JIntegerField attr = attrAttributesTable.createIntegerField(2, i, 0, new Dimension(30, -1));
+            JIntegerField attr = attrAttributesTable.createIntegerField(2, i, 0, GridPanel.STANDARD_INTEGER_FIELD);
             attr.setForeground(foregroundColor);
             attr.addActionListener(e -> attributes.get(finalI).setRndValue(attr.getValue()));
             attr.addMouseListener((MouseClickedAdapter) this::replaceValues);
@@ -170,7 +170,7 @@ public class AttributesTab {
                 attr.setBackground(ColorPalette.WHITE_BLUE);
             }
 
-            JIntegerField sumAttr = attrAttributesTable.createIntegerField(3, i, 1, 1, attributes.get(i).getTotalValue(), new Dimension(30, -1), false);
+            JIntegerField sumAttr = attrAttributesTable.createIntegerField(3, i, 1, 1, attributes.get(i).getTotalValue(), GridPanel.STANDARD_INTEGER_FIELD, false);
             sumAttr.setFont(new Font(sumAttr.getFont().getName(),Font.ITALIC+Font.BOLD,sumAttr.getFont().getSize()+2));
             sumAttr.setForeground(foregroundColor);
             if (changeBackground) {
@@ -178,7 +178,7 @@ public class AttributesTab {
             }
         }
         attrAttributesTable.createJLabel(0, 12, "HP");
-        JIntegerField attrHP = attrAttributesTable.createIntegerField(1, 12, 3, 1, 0, new Dimension(30, -1), false);
+        JIntegerField attrHP = attrAttributesTable.createIntegerField(1, 12, 3, 1, 0, GridPanel.STANDARD_INTEGER_FIELD, false);
         attrHP.setFont(new Font(attrHP.getFont().getName(),Font.ITALIC+Font.BOLD, attrHP.getFont().getSize()+2));
         attrHP.setBackground(ColorPalette.WHITE_BLUE);
         sheet.addObserver("maxhp", attrHP);

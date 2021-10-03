@@ -35,12 +35,12 @@ public class SkillTab {
                     newSkill -> updateSkillRow(skillsPanel, visibleRaceSkills, finalI, finalRow, finalColumn, newSkill));
             visibleRaceSkills.add(activeSkill);
 
-            skillsPanel.createTextField(finalRow, column++, activeSkill.getAttrName(), new Dimension(30, -1), false);
+            skillsPanel.createTextField(finalRow, column++, activeSkill.getAttrName(), GridPanel.STANDARD_INTEGER_FIELD, false);
 
             SpinnerModel model = new SpinnerNumberModel(activeSkill.getAdvValue(), activeSkill.getAdvValue(), 10, 1);
             AdvancedSpinner jSpinner = skillsPanel.createAdvancedSpinner(finalRow, column++, model, new Dimension(35, -1), true);
 
-            skillsPanel.createIntegerField(finalRow, column++, activeSkill.getBaseSkill().getLinkedAttribute().getTotalValue(), new Dimension(30, -1), false);
+            skillsPanel.createIntegerField(finalRow, column++, activeSkill.getBaseSkill().getLinkedAttribute().getTotalValue(), GridPanel.STANDARD_INTEGER_FIELD, false);
             tabOrder.add(jSpinner.getTextField());
         }
         if (baseItr != 1) {
