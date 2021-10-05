@@ -83,7 +83,7 @@ public class TalentBase {
         this.constLvl = constLvl;
     }
     public Integer getMaxLvl() {
-        if (linkedAttribute!=null) {
+        if (linkedAttribute != null) {
             return linkedAttribute.getBonus();
         } else {
             return constLvl;
@@ -91,6 +91,10 @@ public class TalentBase {
     }
 
     public void linkAttributeMap(Map<Integer, Attribute> attributeMap) {
-        this.linkedAttribute = attributeMap.getOrDefault(attr, null);
+        if (attr == null) {
+            this.linkedAttribute = null;
+        } else {
+            this.linkedAttribute = attributeMap.getOrDefault(attr, null);
+        }
     }
 }

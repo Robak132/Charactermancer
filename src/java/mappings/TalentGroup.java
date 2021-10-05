@@ -58,7 +58,7 @@ public class TalentGroup extends Talent {
     }
 
     public Talent getRndTalent() {
-        return (TalentSingle) Dice.randomItem(getSingleTalents());
+        return Dice.randomItem(getSingleTalents());
     }
 
     public List<Talent> getChildTalents() {

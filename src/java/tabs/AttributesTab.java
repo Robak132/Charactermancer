@@ -162,7 +162,7 @@ public class AttributesTab {
                 baseAttr.setBackground(ColorPalette.WHITE_BLUE);
             }
 
-            JIntegerField attr = attrAttributesTable.createIntegerField(2, i, 0, GridPanel.STANDARD_INTEGER_FIELD);
+            JIntegerField attr = attrAttributesTable.createIntegerField(2, i, null, GridPanel.STANDARD_INTEGER_FIELD);
             attr.setForeground(foregroundColor);
             attr.addActionListener(e -> attributes.get(finalI).setRndValue(attr.getValue()));
             attr.addMouseListener((MouseClickedAdapter) this::replaceValues);

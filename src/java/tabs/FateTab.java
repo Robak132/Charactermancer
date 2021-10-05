@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import main.CharacterGen;
 import main.CharacterSheet;
@@ -47,7 +46,7 @@ public class FateTab {
         this.sheet = sheet;
         createTable();
 
-        AbstractActionHelper.createActionMnemonic(mainPanel, KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK), this::roll);
+        AbstractActionHelper.createActionMnemonic(mainPanel, KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK, this::roll);
         fateOption1Button.addActionListener(e -> {
             fateOption1Button.setEnabled(false);
             fateSpinner.setEnabled(false);

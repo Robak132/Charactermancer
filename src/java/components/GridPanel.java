@@ -35,7 +35,8 @@ public class GridPanel extends JPanel {
     private final Map<Component, GridConstraints> items = new LinkedHashMap<>();
 
     public static final Dimension STANDARD_INTEGER_FIELD = new Dimension(30, -1);
-    
+    public static final Dimension STANDARD_TEXT_FIELD = new Dimension(200, -1);
+
     public static final int ALIGNMENT_HORIZONTAL = 0;
     public static final int[] ALIGNMENT_HORIZONTAL_2 = {0, 2};
     public static final int ALIGNMENT_NOTOP = 1;
@@ -197,13 +198,6 @@ public class GridPanel extends JPanel {
         return advancedSpinner;
     }
 
-    public SearchableComboBox createSearchableComboBox(int row, int column, Dimension dimension, boolean locked) {
-        SearchableComboBox searchableComboBox = new SearchableComboBox();
-        searchableComboBox.setLocked(locked);
-        add(searchableComboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, dimension, null));
-        return searchableComboBox;
-    }
-
     public <T> FilteredComboBox<T> createFilteredComboBox(int row, int column, Dimension dimension, Function<T, String> stringParser) {
         FilteredComboBox<T> filteredComboBox = new FilteredComboBox<>(stringParser);
         add(filteredComboBox, new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, dimension, null));
@@ -246,7 +240,7 @@ public class GridPanel extends JPanel {
         } else {
             TalentGroup talentGroup = (TalentGroup) raceTalent;
             activeTalent = talentGroup.getSingleTalents().get(0);
-            FilteredComboBox<TalentSingle> talentNameCombo = createFilteredComboBox(row, column, null, TalentSingle::getName, TalentSingle::getColor);
+            FilteredComboBox<TalentSingle> talentNameCombo = createFilteredComboBox(row, column, null, TalentSingle::getName, color);
             talentNameCombo.setToolTipText(MultiLineTooltip.splitToolTip(talentGroup.getName()));
             talentNameCombo.addItems(talentGroup.getSingleTalents());
             talentNameCombo.addActionListener(e -> {

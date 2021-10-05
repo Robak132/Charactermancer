@@ -41,7 +41,7 @@ public class StatBlockParser {
     private final JFrame frame;
     private final Main previousScreen;
     private final Connection connection;
-    private CharacterSheet sheet;
+    private final CharacterSheet sheet;
 
     public StatBlockParser(JFrame _frame, CharacterSheet _sheet, Main _screen, Connection _connection) {
         this.frame = _frame;

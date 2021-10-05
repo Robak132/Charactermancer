@@ -14,9 +14,11 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import mappings.Attribute;
 import mappings.Profession;
+import mappings.Race;
 import mappings.Skill;
 import mappings.SkillGroup;
 import mappings.SkillSingle;
+import mappings.Subrace;
 import mappings.Talent;
 import mappings.TalentGroup;
 import org.apache.logging.log4j.LogManager;
@@ -105,6 +107,10 @@ public class CharacterGen {
     }
 
     // Base functions to use with GUI and text //
+    public Subrace getRandomSubrace(Connection connection) {
+        Race race = Race.getRandomRace(connection).getValue();
+        return race.getRndSubrace();
+    }
 
     public static Map<Integer, Attribute> randomAttributeAdvances(Profession profession, Map<Integer, Attribute> startAttributes, int maxPoints) {
         Map<Integer, Attribute> attributes = new ConcurrentHashMap<>(startAttributes);
@@ -162,4 +168,6 @@ public class CharacterGen {
         returns[1] = talent;
         return returns;
     }
+
+
 }

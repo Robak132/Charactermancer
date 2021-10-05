@@ -43,10 +43,10 @@ public class CharacterSheet {
     private Subrace subrace;
     private Profession profession;
     private Map<Integer, Attribute> attributes = new ConcurrentHashMap<>();
-    private Map<Integer, SkillSingle> skills = new ConcurrentHashMap<>();
-    private Map<Integer, TalentSingle> talents = new ConcurrentHashMap<>();
-    private List<SkillSingle> skillList = new ArrayList<>();
-    private List<TalentSingle> talentList = new ArrayList<>();
+    private final Map<Integer, SkillSingle> skills = new ConcurrentHashMap<>();
+    private final Map<Integer, TalentSingle> talents = new ConcurrentHashMap<>();
+    private final List<SkillSingle> skillList = new ArrayList<>();
+    private final List<TalentSingle> talentList = new ArrayList<>();
 
     private List<DateEntry> history = new ArrayList<>();
 

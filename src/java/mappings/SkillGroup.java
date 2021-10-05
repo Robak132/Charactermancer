@@ -67,7 +67,7 @@ public class SkillGroup extends Skill{
         return outputList;
     }
     public SkillSingle getRndSkill() {
-        return (SkillSingle) Dice.randomItem(getSingleSkills());
+        return Dice.randomItem(getSingleSkills());
     }
 
     public List<Skill> getSkills() {

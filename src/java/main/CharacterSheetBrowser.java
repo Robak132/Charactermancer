@@ -1,5 +1,6 @@
 package main;
 
+import com.intellij.uiDesigner.core.GridConstraints;
 import components.GridPanel;
 import components.JIntegerField;
 import java.awt.Color;
@@ -12,6 +13,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -20,7 +22,10 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import mappings.Attribute;
 import mappings.Profession;
 import mappings.Race;
@@ -28,12 +33,16 @@ import mappings.Skill;
 import mappings.SkillBase;
 import mappings.SkillSingle;
 import mappings.Subrace;
+import mappings.Talent;
+import mappings.TalentSingle;
 import org.apache.logging.log4j.LogManager;
 import org.json.JSONException;
+import tabs.TalentTab;
 import tools.ColorPalette;
 import tools.Dice;
+import tools.MultiLineTooltip;
 
-public class CharacterSheetBrowser {
+public class CharacterSheetBrowser implements TalentTab {
     public JPanel mainPanel;
     private JTextField nameField;
     private JTextField classField;
@@ -48,6 +57,7 @@ public class CharacterSheetBrowser {
     private JIntegerField freeExpField;
     private JIntegerField earnedExpField;
     private GridPanel logPanel;
+    private GridPanel talentsPanel;
 
     private final JFrame frame;
     private final Main previousScreen;
@@ -83,46 +93,38 @@ public class CharacterSheetBrowser {
         List<SkillSingle> skillsList = skillsMap.values().stream().sorted(Comparator.comparing(Skill::getName)).collect(Collectors.toList());
 
         createSkillsPanel(skillsList);
+        createTalentsPanel();
         createExpPanel();
         createLogPanel();
         fill();
     }
 
-    private void createLogPanel() {
-        List<DateEntry> history = sheet.getHistory();
-        int row = 0;
-        for (DateEntry dateEntry : history) {
-            int column = 0;
-            JLabel dateLabel = logPanel.createJLabel(row++, column, 1, -1, dateEntry.getDate("dd-MM-yyyy HH:mm"));
-            dateLabel.setFont(dateLabel.getFont().deriveFont(Font.BOLD, dateLabel.getFont().getSize()+2));
+    private void createAttributePanel() {
+        int fullHeight = sheet.isPlayer() ? 3 : 1;
+        attributesPanel.createJLabel(0, 0, sheet.getAttribute(Attribute.MOVE).getName());
+        JIntegerField attrMov = attributesPanel.createIntegerField(1, 0, fullHeight, 1, sheet.getAttribute(Attribute.MOVE).getBaseValue(), GridPanel.STANDARD_INTEGER_FIELD, false);
+        Font font = sheet.isPlayer() ? attrMov.getFont().deriveFont(Font.ITALIC + Font.BOLD, attrMov.getFont().getSize() + 2) : attrMov.getFont();
+        attrMov.setFont(font);
 
-            if (dateEntry.getAttributes().size() > 0) {
-                logPanel.createJLabel(row++, column, 1, -1, "Attributes");
-                row = createLogSection(row, column, dateEntry.getAttributes());
-            }
-            if (dateEntry.getSkills().size() > 0) {
-                logPanel.createJLabel(row++, column, 1, -1, "Skills");
-                row = createLogSection(row, column, dateEntry.getSkills());
-            }
-            if (dateEntry.getTalents().size() > 0) {
-                logPanel.createJLabel(row++, column, 1, -1, "Talents");
-                row = createLogSection(row, column, dateEntry.getTalents());
-            }
-        }
-        logPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
-    }
-    private int createLogSection(int row, int column, List<?> list) {
-        for (int i = 0; i < list.size(); i++) {
-            int shift = i % 2 == 0 ? 0 : 3;
-            Entry<?> entry = (Entry<?>) list.get(i);
-            logPanel.createTextField(row, column + shift, entry.getName(), new Dimension(-1, -1), false);
-            logPanel.createIntegerField(row, column + shift + 1, entry.getBefore(), false);
-            logPanel.createIntegerField(row, column + shift + 2, entry.getNow(), false);
-            row = i % 2 == 1 || i == list.size() - 1 ? row + 1 : row;
-        }
-        return row;
-    }
+        for (int i = 1; i < sheet.getAttributes().size(); i++) {
+            int row = 0;
+            Attribute attribute = sheet.getAttribute(i);
+            attributesPanel.createJLabel(row++, i, attribute.getName());
+            int addedValue = attribute.getBaseValue() + attribute.getRndValue();
 
+            if (sheet.isPlayer()) {
+                attributesPanel.createIntegerField(row++, i, 1, 1, addedValue, GridPanel.STANDARD_INTEGER_FIELD, false);
+                attributesPanel.createIntegerField(row++, i, attribute.getAdvValue(), GridPanel.STANDARD_INTEGER_FIELD, false);
+            }
+            JIntegerField sumAttr = attributesPanel.createIntegerField(row++, i, 1, 1, attribute.getTotalValue(), GridPanel.STANDARD_INTEGER_FIELD, false);
+            sumAttr.setFont(font);
+        }
+        attributesPanel.createJLabel(0, 12, "HP");
+        JIntegerField attrHP = attributesPanel.createIntegerField(1, 12, fullHeight, 1, sheet.getMaxHealthPoints(), GridPanel.STANDARD_INTEGER_FIELD, false);
+        attrHP.setFont(font);
+
+        attributesPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
+    }
     private void createSkillsPanel(List<SkillSingle> skillsList) {
         List<SkillBase> headers = new ArrayList<>();
         int baseItr = 1;
@@ -185,38 +187,78 @@ public class CharacterSheetBrowser {
         }
         skillsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
+    private void createTalentsPanel() {
+        List<TalentSingle> talents = sheet.getTalents().values().stream().sorted(
+                Comparator.comparing(TalentSingle::isAdvanceable).thenComparing(Talent::getName)).collect(Collectors.toList());
+        talents.forEach(e->e.linkAttributeMap(sheet.getAttributes()));
+
+        for (int row = 0; row < talents.size(); row++) {
+            TalentSingle talent = talents.get(row);
+            int column = 0;
+
+            JTextField nameField = talentsPanel.createTextField(row, column++, talent.getName(), GridPanel.STANDARD_TEXT_FIELD, false);
+            nameField.setForeground(talent.getColor());
+
+            JIntegerField lvlField = talentsPanel.createIntegerField(row, column++, talent.getCurrentLvl(), GridPanel.STANDARD_INTEGER_FIELD, false);
+            String format = String.format("/%d", talent.getMax());
+            lvlField.setFormat("%d" + format);
+            lvlField.setForeground(talent.getColor());
+
+            JTextArea testArea = talentsPanel.createTextArea(row, column++, talent.getBaseTalent().getTest(), GridPanel.STANDARD_TEXT_FIELD, false);
+            testArea.setFont(testArea.getFont().deriveFont(Font.PLAIN, 10));
+            testArea.setForeground(talent.getColor());
+
+            String tooltip = talent.getBaseTalent().getDesc();
+            talentsPanel.createJLabel(row, column, new ImageIcon("src/resources/images/info.png"), MultiLineTooltip.splitToolTip(tooltip, 75, 10));
+        }
+        talentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
+    }
     private void createExpPanel() {
         int usedExp = sheet.getUsedExp();
         usedExpField.setValue(usedExp);
         earnedExpField.setValue(sheet.getExp());
         freeExpField.setValue(sheet.getExp() - usedExp);
     }
-    private void createAttributePanel() {
-        int fullHeight = sheet.isPlayer() ? 3 : 1;
-        attributesPanel.createJLabel(0, 0, sheet.getAttribute(Attribute.MOVE).getName());
-        JIntegerField attrMov = attributesPanel.createIntegerField(1, 0, fullHeight, 1, sheet.getAttribute(Attribute.MOVE).getBaseValue(), GridPanel.STANDARD_INTEGER_FIELD, false);
-        Font font = sheet.isPlayer() ? attrMov.getFont().deriveFont(Font.ITALIC + Font.BOLD, attrMov.getFont().getSize() + 2) : attrMov.getFont();
-        attrMov.setFont(font);
+    private void createLogPanel() {
+        List<DateEntry> history = sheet.getHistory();
+        int row = 0;
+        for (DateEntry dateEntry : history) {
+            int column = 0;
+            JLabel dateLabel = logPanel.createJLabel(row++, column, 1, -1, dateEntry.getDate("dd-MM-yyyy HH:mm"));
+            dateLabel.setFont(dateLabel.getFont().deriveFont(Font.BOLD, dateLabel.getFont().getSize()+2));
 
-        for (int i = 1; i < sheet.getAttributes().size(); i++) {
-            int row = 0;
-            Attribute attribute = sheet.getAttribute(i);
-            attributesPanel.createJLabel(row++, i, attribute.getName());
-            int addedValue = attribute.getBaseValue() + attribute.getRndValue();
-
-            if (sheet.isPlayer()) {
-                attributesPanel.createIntegerField(row++, i, 1, 1, addedValue, GridPanel.STANDARD_INTEGER_FIELD, false);
-                attributesPanel.createIntegerField(row++, i, attribute.getAdvValue(), GridPanel.STANDARD_INTEGER_FIELD, false);
+            if (dateEntry.getAttributes().size() > 0) {
+                logPanel.createJLabel(row++, column, 1, -1, "Attributes");
+                row = createLogSection(row, column, dateEntry.getAttributes());
             }
-            JIntegerField sumAttr = attributesPanel.createIntegerField(row++, i, 1, 1, attribute.getTotalValue(), GridPanel.STANDARD_INTEGER_FIELD, false);
-            sumAttr.setFont(font);
-        }
-        attributesPanel.createJLabel(0, 12, "HP");
-        JIntegerField attrHP = attributesPanel.createIntegerField(1, 12, fullHeight, 1, sheet.getMaxHealthPoints(), GridPanel.STANDARD_INTEGER_FIELD, false);
-        attrHP.setFont(font);
+            if (dateEntry.getSkills().size() > 0) {
+                logPanel.createJLabel(row++, column, 1, -1, "Skills");
+                row = createLogSection(row, column, dateEntry.getSkills());
+            }
+            if (dateEntry.getTalents().size() > 0) {
+                logPanel.createJLabel(row++, column, 1, -1, "Talents");
+                row = createLogSection(row, column, dateEntry.getTalents());
+            }
+            logPanel.add(new JButton(), new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
 
-        attributesPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
+        }
+        logPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
+    private int createLogSection(int row, int column, List<?> list) {
+        for (int i = 0; i < list.size(); i++) {
+            int shift = i % 2 == 0 ? 0 : 3;
+            Entry<?> entry = (Entry<?>) list.get(i);
+            logPanel.createTextField(row, column + shift, entry.getName(), new Dimension(-1, -1), false);
+
+            String format = String.format("->%d", entry.getNow());
+            JIntegerField lvlField = logPanel.createIntegerField(row, column + shift + 1, entry.getBefore(), new Dimension(50, -1), false);
+            lvlField.setFormat("%d" + format);
+
+            row = i % 2 == 1 || i == list.size() - 1 ? row + 1 : row;
+        }
+        return row;
+    }
+
     private void createMenu() {
         JMenuBar mb = new JMenuBar();
         JMenu menu = new JMenu("File");
@@ -300,5 +342,10 @@ public class CharacterSheetBrowser {
 //        }
 
         fill();
+    }
+
+    @Override
+    public SpinnerModel getTalentSpinnerModel(TalentSingle talent) {
+        return new SpinnerNumberModel(1,1,1,1);
     }
 }
