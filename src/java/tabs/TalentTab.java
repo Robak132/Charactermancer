@@ -37,7 +37,7 @@ public interface TalentTab {
             AdvancedSpinner spinner = talentsPanel.createAdvancedSpinner(row, column++, model, GridPanel.STANDARD_INTEGER_FIELD, (int)model.getValue()==0);
             spinner.setForeground(colorFunction.apply(activeTalent));
 
-            JIntegerField maxLvl = talentsPanel.createIntegerField(row, column++, activeTalent.getMax(), GridPanel.STANDARD_INTEGER_FIELD, false);
+            JIntegerField maxLvl = talentsPanel.createIntegerField(row, column++, activeTalent.getMaxLvl(), GridPanel.STANDARD_INTEGER_FIELD, false);
             maxLvl.setForeground(colorFunction.apply(activeTalent));
 
             JTextArea testArea = talentsPanel.createTextArea(row, column++, activeTalent.getBaseTalent().getTest(), GridPanel.STANDARD_TEXT_FIELD, false);
@@ -60,7 +60,7 @@ public interface TalentTab {
         ((AdvancedSpinner) panel.getComponent(1, row)).setValue(newTalent.getCurrentLvl());
         panel.getComponent(1, row).setForeground(colorFunction.apply(newTalent));
 
-        ((JIntegerField) panel.getComponent(2, row)).setValue(newTalent.getMax());
+        ((JIntegerField) panel.getComponent(2, row)).setValue(newTalent.getMaxLvl());
         panel.getComponent(2, row).setForeground(colorFunction.apply(newTalent));
 
         ((JTextArea) panel.getComponent(3, row)).setText(newTalent.getBaseTalent().getTest());

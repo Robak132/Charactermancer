@@ -29,9 +29,6 @@ public class TalentSingle extends Talent {
     public int getCurrentLvl() {
         return currentLvl;
     }
-    public int getMaxLvl() {
-        return baseTalent.getMaxLvl();
-    }
     public TalentBase getBaseTalent() {
         return baseTalent;
     }
@@ -76,11 +73,11 @@ public class TalentSingle extends Talent {
     @Override
     public void update(Map<Integer, TalentSingle> talentMap) {}
 
-    public Integer getMax() {
+    public Integer getMaxLvl() {
         return baseTalent.getMaxLvl();
     }
     public String getMaxString() {
-        return String.valueOf(getMax());
+        return String.valueOf(getMaxLvl());
     }
 
     @Override

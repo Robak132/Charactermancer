@@ -1,6 +1,7 @@
 package main;
 
 import com.intellij.uiDesigner.core.GridConstraints;
+import components.AdvancedSpinner;
 import components.GridPanel;
 import components.JIntegerField;
 import java.awt.Color;
@@ -35,7 +36,6 @@ import mappings.SkillSingle;
 import mappings.Subrace;
 import mappings.Talent;
 import mappings.TalentSingle;
-import org.apache.logging.log4j.LogManager;
 import org.json.JSONException;
 import tabs.TalentTab;
 import tools.ColorPalette;
@@ -58,11 +58,16 @@ public class CharacterSheetBrowser implements TalentTab {
     private JIntegerField earnedExpField;
     private GridPanel logPanel;
     private GridPanel talentsPanel;
+    private JButton exportButton;
+    private GridPanel skillsAdvancesPanel;
+    private GridPanel talentsAdvancesPanel;
 
     private final JFrame frame;
     private final Main previousScreen;
     private final Connection connection;
     private CharacterSheet sheet;
+
+    private final List<SkillSingle> skillsList;
 
     public CharacterSheetBrowser(JFrame _frame, CharacterSheet _sheet, Main _screen, Connection _connection) {
         this.frame = _frame;
@@ -70,32 +75,36 @@ public class CharacterSheetBrowser implements TalentTab {
         this.connection = _connection;
         this.sheet = _sheet;
 
+        if (sheet == null) {
+            sheet = new CharacterSheet(connection);
+            try {
+                sheet.loadJSON("src/resources/test.json");
+            } catch (JSONException e) {
+//                LogManager.getLogger(getClass().getName()).error(e.getMessage());
+            }
+        }
+
+        Map<Integer, SkillSingle> skillsMap = connection.getSingleSkills();
+        sheet.getSkills().values().forEach(skill -> {
+            skill.updateMinimalValue();
+            skillsMap.put(skill.getID(), skill);
+        });
+        skillsList = skillsMap.values().stream().sorted(Comparator.comparing(Skill::getName)).collect(Collectors.toList());
+
         createMenu();
         exitButton.addActionListener(e -> {
             this.frame.setContentPane(previousScreen.mainPanel);
             this.frame.validate();
         });
         exitButton.setMnemonic(KeyEvent.VK_E);
-
-        if (sheet == null) {
-            sheet = new CharacterSheet(connection);
-            try {
-                sheet.loadJSON("src/resources/test.json");
-            } catch (JSONException e) {
-                LogManager.getLogger(getClass().getName()).error(e.getMessage());
-            }
-        }
+        exportButton.addActionListener(e -> new Thread(()->sheet.saveImage("output.jpg")).start());
+        exportButton.setMnemonic(KeyEvent.VK_N);
 
         createAttributePanel();
-
-        Map<Integer, SkillSingle> skillsMap = connection.getSingleSkills();
-        sheet.getSkills().values().forEach(skill -> skillsMap.put(skill.getID(), skill));
-        List<SkillSingle> skillsList = skillsMap.values().stream().sorted(Comparator.comparing(Skill::getName)).collect(Collectors.toList());
-
         createSkillsPanel(skillsList);
         createTalentsPanel();
         createExpPanel();
-        createLogPanel();
+        createLogPanel(5);
         fill();
     }
 
@@ -192,24 +201,25 @@ public class CharacterSheetBrowser implements TalentTab {
                 Comparator.comparing(TalentSingle::isAdvanceable).thenComparing(Talent::getName)).collect(Collectors.toList());
         talents.forEach(e->e.linkAttributeMap(sheet.getAttributes()));
 
-        for (int row = 0; row < talents.size(); row++) {
-            TalentSingle talent = talents.get(row);
+        int row = 0;
+        for (TalentSingle talent : talents) {
             int column = 0;
+            if (talent.getCurrentLvl() > 0) {
+                JTextField nameField = talentsPanel.createTextField(row, column++, talent.getName(), GridPanel.STANDARD_TEXT_FIELD, false);
+                nameField.setForeground(talent.getColor());
 
-            JTextField nameField = talentsPanel.createTextField(row, column++, talent.getName(), GridPanel.STANDARD_TEXT_FIELD, false);
-            nameField.setForeground(talent.getColor());
+                JIntegerField lvlField = talentsPanel.createIntegerField(row, column++, talent.getCurrentLvl(), GridPanel.STANDARD_INTEGER_FIELD, false);
+                String format = String.format("/%d", talent.getMaxLvl());
+                lvlField.setFormat("%d" + format);
+                lvlField.setForeground(talent.getColor());
 
-            JIntegerField lvlField = talentsPanel.createIntegerField(row, column++, talent.getCurrentLvl(), GridPanel.STANDARD_INTEGER_FIELD, false);
-            String format = String.format("/%d", talent.getMax());
-            lvlField.setFormat("%d" + format);
-            lvlField.setForeground(talent.getColor());
+                JTextArea testArea = talentsPanel.createTextArea(row, column++, talent.getBaseTalent().getTest(), GridPanel.STANDARD_TEXT_FIELD, false);
+                testArea.setFont(testArea.getFont().deriveFont(Font.PLAIN, 10));
+                testArea.setForeground(talent.getColor());
 
-            JTextArea testArea = talentsPanel.createTextArea(row, column++, talent.getBaseTalent().getTest(), GridPanel.STANDARD_TEXT_FIELD, false);
-            testArea.setFont(testArea.getFont().deriveFont(Font.PLAIN, 10));
-            testArea.setForeground(talent.getColor());
-
-            String tooltip = talent.getBaseTalent().getDesc();
-            talentsPanel.createJLabel(row, column, new ImageIcon("src/resources/images/info.png"), MultiLineTooltip.splitToolTip(tooltip, 75, 10));
+                String tooltip = talent.getBaseTalent().getDesc();
+                talentsPanel.createJLabel(row++, column, new ImageIcon("src/resources/images/info.png"), MultiLineTooltip.splitToolTip(tooltip, 75, 10));
+            }
         }
         talentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
@@ -218,8 +228,63 @@ public class CharacterSheetBrowser implements TalentTab {
         usedExpField.setValue(usedExp);
         earnedExpField.setValue(sheet.getExp());
         freeExpField.setValue(sheet.getExp() - usedExp);
+
+        List<SkillSingle> skills = new ArrayList<>(sheet.getSkills().values());
+        skills.sort(Comparator.comparing(Skill::isAdv).thenComparing(Skill::getName));
+
+        int row=0;
+        for (SkillSingle skill : skills) {
+            int column = 0;
+            if (skill.isAdvanceable()) {
+                skillsAdvancesPanel.createTextField(row, column++, skill.getName(), GridPanel.STANDARD_TEXT_FIELD, false);
+                skillsAdvancesPanel.createTextField(row, column++, skill.getAttrName(), GridPanel.STANDARD_INTEGER_FIELD, false);
+                SpinnerNumberModel model = new SpinnerNumberModel(skill.getAdvValue(),skill.getAdvValue(),99,1);
+                AdvancedSpinner spinner = skillsAdvancesPanel.createAdvancedSpinner(row, column++, model, GridPanel.STANDARD_INTEGER_FIELD, true);
+                JIntegerField totalField = skillsAdvancesPanel.createIntegerField(row++, column++, skill.getTotalValue(), GridPanel.STANDARD_INTEGER_FIELD, false);
+                totalField.setFont(new Font(totalField.getFont().getName(), Font.ITALIC + Font.BOLD, totalField.getFont().getSize() + 2));
+
+                spinner.addChangeListener(e -> {
+                    if ((int) model.getValue()==0) {
+                        totalField.setValue(0);
+                    } else {
+                        totalField.setValue(skill.getBaseSkill().getValue() + (int)model.getValue());
+                    }
+                    int last = skill.getAdvValue();
+                    int now = (int) model.getValue();
+                    int difference = sheet.calculateExp(last, 10) - sheet.calculateExp(now, 10);
+                    usedExpField.setValue(usedExpField.getValue() - difference);
+                    freeExpField.setValue(freeExpField.getValue() + difference);
+                    skill.setAdvValue(now);
+                });
+            }
+        }
+        skillsAdvancesPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
+
+        List<TalentSingle> talents = new ArrayList<>(sheet.getTalents().values());
+        talents.sort(Comparator.comparing(Talent::getName));
+
+        row=0;
+        for (TalentSingle talent : talents) {
+            int column = 0;
+            if (talent.isAdvanceable() && talent.getCurrentLvl() != talent.getMaxLvl()) {
+                talentsAdvancesPanel.createTextField(row, column++, talent.getName(), GridPanel.STANDARD_TEXT_FIELD, false);
+
+                int max = talent.getMaxLvl() == null ? 99 : talent.getMaxLvl();
+                SpinnerNumberModel model = new SpinnerNumberModel(talent.getCurrentLvl(),talent.getCurrentLvl(), max, 1);
+                AdvancedSpinner spinner = talentsAdvancesPanel.createAdvancedSpinner(row, column++, model, GridPanel.STANDARD_INTEGER_FIELD, true);
+
+                talentsAdvancesPanel.createIntegerField(row, column++, talent.getMaxLvl(), GridPanel.STANDARD_INTEGER_FIELD, false);
+
+                JTextArea testArea = talentsAdvancesPanel.createTextArea(row, column++, talent.getBaseTalent().getTest(), GridPanel.STANDARD_TEXT_FIELD, false);
+                testArea.setFont(testArea.getFont().deriveFont(Font.PLAIN, 10));
+
+                String tooltip = talent.getBaseTalent().getDesc();
+                talentsAdvancesPanel.createJLabel(row++, column++, new ImageIcon("src/resources/images/info.png"), MultiLineTooltip.splitToolTip(tooltip, 75, 10));
+            }
+        }
+        talentsAdvancesPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
-    private void createLogPanel() {
+    private void createLogPanel(int maxColumns) {
         List<DateEntry> history = sheet.getHistory();
         int row = 0;
         for (DateEntry dateEntry : history) {
@@ -229,32 +294,34 @@ public class CharacterSheetBrowser implements TalentTab {
 
             if (dateEntry.getAttributes().size() > 0) {
                 logPanel.createJLabel(row++, column, 1, -1, "Attributes");
-                row = createLogSection(row, column, dateEntry.getAttributes());
+                row = createLogSection(row, column, maxColumns, dateEntry.getAttributes());
             }
             if (dateEntry.getSkills().size() > 0) {
                 logPanel.createJLabel(row++, column, 1, -1, "Skills");
-                row = createLogSection(row, column, dateEntry.getSkills());
+                row = createLogSection(row, column, maxColumns, dateEntry.getSkills());
             }
             if (dateEntry.getTalents().size() > 0) {
                 logPanel.createJLabel(row++, column, 1, -1, "Talents");
-                row = createLogSection(row, column, dateEntry.getTalents());
+                row = createLogSection(row, column, maxColumns, dateEntry.getTalents());
             }
             logPanel.add(new JButton(), new GridConstraints(row, column, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null));
 
         }
         logPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
-    private int createLogSection(int row, int column, List<?> list) {
+    private int createLogSection(int row, int column, int maxColumns, List<?> list) {
         for (int i = 0; i < list.size(); i++) {
-            int shift = i % 2 == 0 ? 0 : 3;
+            int shift = (i % maxColumns) * 3;
             Entry<?> entry = (Entry<?>) list.get(i);
-            logPanel.createTextField(row, column + shift, entry.getName(), new Dimension(-1, -1), false);
+            JLabel label = logPanel.createJLabel(row, column + shift, entry.getName());
+            label.setFont(label.getFont().deriveFont(Font.PLAIN));
+            label.setHorizontalAlignment(JLabel.LEFT);
 
-            String format = String.format("->%d", entry.getNow());
-            JIntegerField lvlField = logPanel.createIntegerField(row, column + shift + 1, entry.getBefore(), new Dimension(50, -1), false);
-            lvlField.setFormat("%d" + format);
+            JLabel lvl = logPanel.createJLabel(row, column + shift + 1, String.format("%d->%d", entry.getBefore(), entry.getNow()));
+            lvl.setFont(label.getFont().deriveFont(Font.PLAIN));
+            lvl.setHorizontalAlignment(JLabel.LEFT);
 
-            row = i % 2 == 1 || i == list.size() - 1 ? row + 1 : row;
+            row = i % maxColumns == maxColumns - 1 || i == list.size() - 1 ? row + 1 : row;
         }
         return row;
     }

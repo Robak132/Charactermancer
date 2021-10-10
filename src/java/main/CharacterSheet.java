@@ -1,7 +1,21 @@
 package main;
 
+import com.itextpdf.html2pdf.ConverterProperties;
+import com.itextpdf.html2pdf.HtmlConverter;
+import com.itextpdf.html2pdf.resolver.font.DefaultFontProvider;
+import com.itextpdf.io.font.FontProgram;
+import com.itextpdf.io.font.FontProgramFactory;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.font.FontProvider;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -13,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import mappings.Attribute;
 import mappings.Profession;
@@ -20,11 +35,11 @@ import mappings.ProfessionCareer;
 import mappings.ProfessionClass;
 import mappings.Race;
 import mappings.Race.Size;
-import mappings.Skill;
 import mappings.SkillSingle;
 import mappings.Subrace;
-import mappings.Talent;
 import mappings.TalentSingle;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,8 +60,6 @@ public class CharacterSheet {
     private Map<Integer, Attribute> attributes = new ConcurrentHashMap<>();
     private final Map<Integer, SkillSingle> skills = new ConcurrentHashMap<>();
     private final Map<Integer, TalentSingle> talents = new ConcurrentHashMap<>();
-    private final List<SkillSingle> skillList = new ArrayList<>();
-    private final List<TalentSingle> talentList = new ArrayList<>();
 
     private List<DateEntry> history = new ArrayList<>();
 
@@ -111,6 +124,7 @@ public class CharacterSheet {
     public void setPlayer(boolean player) {
         this.player = player;
     }
+
     public int getExp() {
         return exp;
     }
@@ -133,7 +147,7 @@ public class CharacterSheet {
         }
         return usedExp - freeExp;
     }
-    private int calculateExp(int advances, int baseCost) {
+    public int calculateExp(int advances, int baseCost) {
         if (advances==0) {
             return 0;
         }
@@ -174,43 +188,10 @@ public class CharacterSheet {
     public void setHistory(List<DateEntry> history) {
         this.history = history;
     }
-
-    public String printAttributes() {
-        StringBuilder ret = new StringBuilder()
-            .append("Attributes = [\n");
-        for (Attribute attribute : attributes.values()) {
-            ret.append("\t").append(attribute).append("\n");
-        }
-        System.out.println(ret);
-        return ret.toString();
-    }
-
     public void addObserver(String propertyName, PropertyChangeListener l) {
         pcs.addPropertyChangeListener(propertyName, l);
     }
 
-    @Override
-    public String toString() {
-        StringBuilder ret = new StringBuilder();
-        ret.append("CharacterSheet {\n")
-            .append("exp = ").append(exp).append("\n")
-            .append(subrace).append("\n")
-            .append(profession).append("\n")
-            .append(printAttributes())
-            .append("]\n")
-            .append("Skills = [\n");
-        for (Skill skill : skillList) {
-            ret.append("\t").append(skill).append("\n");
-        }
-        ret.append("]\n")
-            .append("Talents = [\n");
-        for (Talent talent : talentList) {
-            ret.append("\t").append(talent).append("\n");
-        }
-        ret.append("]");
-
-        return ret.toString();
-    }
     public JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("exp", exp);
@@ -381,5 +362,72 @@ public class CharacterSheet {
         catch (IOException | ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    public String toHTML() throws IOException {
+        String html = new String(Files.readAllBytes(Paths.get("src/resources/out&in/statblock_template.html")));
+        html = fillHTML(html);
+        return html;
+    }
+    public ByteArrayOutputStream toPDF(PageSize size) throws IOException {
+        return convertHTMLToPDF(toHTML(), size);
+    }
+    public ByteArrayOutputStream convertHTMLToPDF(String html, PageSize size) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PdfWriter writer = new PdfWriter(outputStream);
+        PdfDocument pdf = new PdfDocument(writer);
+        pdf.setDefaultPageSize(size);
+        ConverterProperties properties = new ConverterProperties();
+        FontProvider fontProvider = new DefaultFontProvider(true, true, true);
+
+        try {
+            FontProgram fontProgram = FontProgramFactory.createFont("src/resources/Crimson Text-Regular.ttf");
+            fontProvider.addFont(fontProgram);
+            fontProgram = FontProgramFactory.createFont("src/resources/Crimson Text-Bold.ttf");
+            fontProvider.addFont(fontProgram);
+            properties.setFontProvider(fontProvider);
+            HtmlConverter.convertToPdf(html, pdf, properties);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        return outputStream;
+    }
+
+    public void savePDF(String filename) {
+        try {
+            ByteArrayOutputStream outputStream = convertHTMLToPDF(toHTML(), new PageSize(500, 250));
+            outputStream.writeTo(new FileOutputStream(filename));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void saveImage(String filename, PageSize size) {
+        try {
+            PDDocument document = PDDocument.load(new ByteArrayInputStream(toPDF(size).toByteArray()));
+            PDFRenderer renderer = new PDFRenderer(document);
+            BufferedImage image = renderer.renderImageWithDPI(0, 300);
+            ImageIO.write(image, "JPEG", new File(filename));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void saveImage(String filename) {
+        try {
+            PDDocument document = PDDocument.load(new ByteArrayInputStream(toPDF(new PageSize(500, 250)).toByteArray()));
+            PDFRenderer renderer = new PDFRenderer(document);
+            BufferedImage image = renderer.renderImageWithDPI(0, 300);
+            ImageIO.write(image, "JPEG", new File(filename));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String fillHTML(String template) {
+        for (Map.Entry<Integer, Attribute> entry : attributes.entrySet()) {
+            template = template.replace(String.format("$(ATTR_%d)", entry.getKey()), String.valueOf(entry.getValue().getTotalValue()));
+        }
+        template = template.replace("$(HP)", String.valueOf(getMaxHealthPoints()));
+        return template;
     }
 }
