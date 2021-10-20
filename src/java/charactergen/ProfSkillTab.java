@@ -1,4 +1,4 @@
-package tabs;
+package charactergen;
 
 import components.AdvancedSpinner;
 import components.GridPanel;
@@ -14,7 +14,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import main.CharacterGen;
 import main.CharacterSheet;
 import main.Connection;
 import mappings.Skill;
@@ -24,8 +23,10 @@ import mappings.TalentGroup;
 import mappings.TalentSingle;
 import tools.AbstractActionHelper;
 import tools.Dice;
+import tools.SkillTab;
+import tools.TalentTab;
 
-public class ProfSkillTab implements SkillTab, TalentTab {
+class ProfSkillTab implements SkillTab, TalentTab {
     private CharacterSheet sheet;
     private Connection connection;
     private final PropertyChangeSupport observersManager = new PropertyChangeSupport(this);

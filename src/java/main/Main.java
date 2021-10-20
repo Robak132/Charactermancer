@@ -1,14 +1,20 @@
 package main;
 
+import charactergen.CharacterGen;
+import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Locale;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import org.apache.logging.log4j.LogManager;
+import sheetbrowser.CharacterSheetBrowser;
 
 public class Main {
     private static JFrame frame;

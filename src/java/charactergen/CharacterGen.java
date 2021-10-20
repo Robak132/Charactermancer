@@ -1,4 +1,4 @@
-package main;
+package charactergen;
 
 import components.JIntegerField;
 import java.awt.event.KeyEvent;
@@ -12,6 +12,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import main.CharacterSheet;
+import main.Connection;
+import main.Main;
 import mappings.Attribute;
 import mappings.Profession;
 import mappings.Race;
@@ -22,12 +25,7 @@ import mappings.Subrace;
 import mappings.Talent;
 import mappings.TalentGroup;
 import org.apache.logging.log4j.LogManager;
-import tabs.AttributesTab;
-import tabs.FateTab;
-import tabs.ProfSkillTab;
-import tabs.ProfTab;
-import tabs.RaceSkillTab;
-import tabs.RaceTab;
+import sheetbrowser.CharacterSheetBrowser;
 import tools.Dice;
 
 public class CharacterGen {

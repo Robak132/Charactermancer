@@ -1,4 +1,4 @@
-package main;
+package sheetbrowser;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import components.AdvancedSpinner;
@@ -27,6 +27,11 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
+import main.CharacterSheet;
+import main.Connection;
+import main.DateEntry;
+import main.Entry;
+import main.Main;
 import mappings.Attribute;
 import mappings.Profession;
 import mappings.Race;
@@ -37,7 +42,7 @@ import mappings.Subrace;
 import mappings.Talent;
 import mappings.TalentSingle;
 import org.json.JSONException;
-import tabs.TalentTab;
+import tools.TalentTab;
 import tools.ColorPalette;
 import tools.Dice;
 import tools.MultiLineTooltip;

@@ -1,4 +1,4 @@
-package tabs;
+package charactergen;
 
 import components.GridPanel;
 import components.JIntegerField;
@@ -10,7 +10,6 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import main.CharacterGen;
 import main.CharacterSheet;
 import main.Connection;
 import mappings.Attribute;
@@ -18,7 +17,7 @@ import mappings.Race.Size;
 import tools.ColorPalette;
 import tools.MouseClickedAdapter;
 
-public class AttributesTab {
+class AttributesTab {
     private CharacterSheet sheet;
 
     private JPanel mainPanel;

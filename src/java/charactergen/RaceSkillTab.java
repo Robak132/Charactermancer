@@ -1,4 +1,4 @@
-package tabs;
+package charactergen;
 
 import components.AdvancedSpinner;
 import components.FilteredComboBox;
@@ -24,7 +24,6 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
-import main.CharacterGen;
 import main.CharacterSheet;
 import main.Connection;
 import mappings.Skill;
@@ -36,8 +35,10 @@ import org.apache.logging.log4j.LogManager;
 import tools.AbstractActionHelper;
 import tools.Dice;
 import tools.MultiLineTooltip;
+import tools.SkillTab;
+import tools.TalentTab;
 
-public class RaceSkillTab implements SkillTab, TalentTab {
+class RaceSkillTab implements SkillTab, TalentTab {
     private CharacterSheet sheet;
     private Connection connection;
     private final PropertyChangeSupport observersManager = new PropertyChangeSupport(this);

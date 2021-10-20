@@ -1,4 +1,4 @@
-package tabs;
+package tools;
 
 import components.AdvancedSpinner;
 import components.CustomFocusTraversalPolicy;
@@ -16,7 +16,7 @@ import javax.swing.SpinnerModel;
 import mappings.Skill;
 import mappings.SkillSingle;
 
-interface SkillTab {
+public interface SkillTab {
     default void createSkillTable(GridPanel skillsPanel, List<Skill> skills, List<SkillSingle> visibleSkills) {
         createSkillTable(skillsPanel, skills, visibleSkills, s->Color.BLACK);
     }

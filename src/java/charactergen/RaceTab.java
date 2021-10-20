@@ -1,4 +1,4 @@
-package tabs;
+package charactergen;
 
 import components.FilteredComboBox;
 import components.JIntegerField;
@@ -7,14 +7,13 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import main.CharacterGen;
 import main.CharacterSheet;
 import main.Connection;
 import mappings.Race;
 import mappings.Subrace;
 import org.apache.commons.collections4.KeyValue;
 
-public final class RaceTab {
+class RaceTab {
     private CharacterSheet sheet;
     private CharacterGen parent;
 

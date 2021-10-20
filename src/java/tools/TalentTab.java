@@ -1,4 +1,4 @@
-package tabs;
+package tools;
 
 import components.AdvancedSpinner;
 import components.FilteredComboBox;
@@ -15,7 +15,6 @@ import javax.swing.JTextArea;
 import javax.swing.SpinnerModel;
 import mappings.Talent;
 import mappings.TalentSingle;
-import tools.MultiLineTooltip;
 
 public interface TalentTab {
     default void createTalentTable(GridPanel talentsPanel, List<Talent> talents, List<TalentSingle> visibleTalents) {

@@ -1,4 +1,4 @@
-package tabs;
+package charactergen;
 
 import components.AdvancedSpinner;
 import components.CustomFocusTraversalPolicy;
@@ -14,13 +14,12 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SpinnerNumberModel;
-import main.CharacterGen;
 import main.CharacterSheet;
 import main.Connection;
 import mappings.Attribute;
 import tools.AbstractActionHelper;
 
-public class FateTab {
+class FateTab {
     private CharacterSheet sheet;
 
     private JPanel mainPanel;
