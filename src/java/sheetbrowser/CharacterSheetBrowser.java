@@ -231,8 +231,8 @@ public class CharacterSheetBrowser implements TalentTab {
     private void createExpPanel() {
         int usedExp = sheet.getUsedExp();
         usedExpField.setValue(usedExp);
-        earnedExpField.setValue(sheet.getExp());
-        freeExpField.setValue(sheet.getExp() - usedExp);
+        earnedExpField.setValue(sheet.getEarnedExp());
+        freeExpField.setValue(sheet.getEarnedExp() - usedExp);
 
         List<SkillSingle> skills = new ArrayList<>(sheet.getSkills().values());
         skills.sort(Comparator.comparing(Skill::isAdv).thenComparing(Skill::getName));
@@ -256,7 +256,7 @@ public class CharacterSheetBrowser implements TalentTab {
                     }
                     int last = skill.getAdvValue();
                     int now = (int) model.getValue();
-                    int difference = sheet.calculateExp(last, 10) - sheet.calculateExp(now, 10);
+                    int difference = sheet.getAdvancesCost(last, 10) - sheet.getAdvancesCost(now, 10);
                     usedExpField.setValue(usedExpField.getValue() - difference);
                     freeExpField.setValue(freeExpField.getValue() + difference);
                     skill.setAdvValue(now);

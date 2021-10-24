@@ -51,7 +51,7 @@ public class CharacterSheet {
 
     private final int MOVE = 11;
 
-    private int exp;
+    private int earnedExp;
     private int freeExp;
     private boolean player;
     private int healthPoints;
@@ -125,9 +125,17 @@ public class CharacterSheet {
         this.player = player;
     }
 
-    public int getExp() {
-        return exp;
+    public int getEarnedExp() {
+        return earnedExp;
     }
+    public void setEarnedExp(int earnedExp) {
+        pcs.firePropertyChange("exp", this.earnedExp, earnedExp);
+        this.earnedExp = earnedExp;
+    }
+    public void addExp(int exp) {
+        setEarnedExp(this.earnedExp + exp);
+    }
+
     public int getFreeExp() {
         return freeExp;
     }
@@ -137,28 +145,21 @@ public class CharacterSheet {
     public int getUsedExp() {
         int usedExp = 0;
         for (Attribute attribute : attributes.values()) {
-            usedExp += calculateExp(attribute.getAdvValue(), 25);
+            usedExp += getAdvancesCost(attribute.getAdvValue(), 25);
         }
         for (SkillSingle skill : skills.values()) {
-            usedExp += calculateExp(skill.getAdvValue(), 10);
+            usedExp += getAdvancesCost(skill.getAdvValue(), 10);
         }
         for (TalentSingle talent : talents.values()) {
             usedExp += talent.getCurrentLvl() * talent.getCurrentLvl() * 50;
         }
         return usedExp - freeExp;
     }
-    public int calculateExp(int advances, int baseCost) {
+    public int getAdvancesCost(int advances, int baseCost) {
         if (advances==0) {
             return 0;
         }
-        return baseCost + 5*((advances-1)/5) + calculateExp(advances-1, baseCost);
-    }
-    public void setExp(int exp) {
-        pcs.firePropertyChange("exp", this.exp, exp);
-        this.exp = exp;
-    }
-    public void addExp(int exp) {
-        setExp(this.exp + exp);
+        return baseCost + 5*((advances-1)/5) + getAdvancesCost(advances-1, baseCost);
     }
 
     public int getMaxHealthPoints() {
@@ -194,7 +195,7 @@ public class CharacterSheet {
 
     public JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("exp", exp);
+        jsonObject.put("exp", earnedExp);
         jsonObject.put("free_exp", getUsedExp());
         jsonObject.put("player", true);
 
@@ -277,7 +278,7 @@ public class CharacterSheet {
             JSONObject jsonObject = new JSONObject(content);
 
             player = jsonObject.getBoolean("player");
-            exp = jsonObject.getInt("exp");
+            earnedExp = jsonObject.getInt("exp");
             freeExp = jsonObject.getInt("free_exp");
 
             JSONObject subraceObject = jsonObject.getJSONObject("subrace");

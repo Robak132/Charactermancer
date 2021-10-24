@@ -23,7 +23,6 @@ import mappings.SkillSingle;
 import mappings.Talent;
 import mappings.TalentGroup;
 import mappings.TalentSingle;
-import sheetbrowser.CharacterSheetBrowser;
 import tools.AbstractActionHelper;
 import tools.Dice;
 import tools.SkillTab;
@@ -82,10 +81,8 @@ class ProfSkillTab implements DatabaseConnection, SkillTab, TalentTab {
         option1Button.addActionListener(e -> {
             visibleSkills.forEach(sheet::addSkill);
             visibleTalents.forEach(sheet::addTalent);
-            sheet.saveJSON("src/resources/test.json");
 
-            frame.setContentPane(new CharacterSheetBrowser(frame, sheet, parent.parent, connection).mainPanel);
-            frame.validate();
+            parent.export();
         });
     }
 

@@ -98,6 +98,8 @@ public class CharacterGen implements DatabaseConnection {
         }
     }
     public void export() {
+        sheet.setFreeExp(sheet.getUsedExp());
+        sheet.saveJSON("src/resources/test.json");
         frame.setContentPane(new CharacterSheetBrowser(frame, sheet, parent, connection).mainPanel);
         frame.validate();
     }
