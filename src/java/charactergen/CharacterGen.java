@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import main.CharacterSheet;
 import main.Connection;
+import main.DatabaseConnection;
 import main.Main;
 import mappings.Attribute;
 import mappings.Profession;
@@ -28,12 +29,12 @@ import org.apache.logging.log4j.LogManager;
 import sheetbrowser.CharacterSheetBrowser;
 import tools.Dice;
 
-public class CharacterGen {
+public class CharacterGen implements DatabaseConnection {
     public JPanel mainPanel;
-    public final Main previousScreen;
+    public final Main parent;
 
     private final JFrame frame;
-    private final Connection connection;
+    private Connection connection;
     private final CharacterSheet sheet;
     private JLabel imageLabel;
     private JTabbedPane tabbedPane;
@@ -47,15 +48,15 @@ public class CharacterGen {
     private RaceSkillTab raceSkillTab;
     private ProfSkillTab profSkillTab;
 
-    public CharacterGen(JFrame frame, Main screen, Connection connection) {
+    public CharacterGen(JFrame frame, Main parent) {
         this.frame = frame;
-        this.previousScreen = screen;
-        this.connection = connection;
+        this.parent = parent;
+        this.connection = getConnection();
         sheet = new CharacterSheet(connection);
         sheet.addObserver("exp", expField);
 
         // Race //
-        raceTab.initialise(this, sheet, this.connection);
+        raceTab.initialise(this, sheet);
 
         // Pane controls //
         tabbedPane.addChangeListener(e -> {
@@ -65,7 +66,7 @@ public class CharacterGen {
             imageLabel.setIcon(icon);
         });
         exitButton.addActionListener(e -> {
-            this.frame.setContentPane(previousScreen.mainPanel);
+            this.frame.setContentPane(this.parent.mainPanel);
             this.frame.validate();
         });
         exitButton.setMnemonic(KeyEvent.VK_E);
@@ -78,26 +79,26 @@ public class CharacterGen {
         LogManager.getLogger(getClass().getName()).info(String.format("Loaded tab %d", tab + 1));
         switch (tab + 1) {
             case 1:
-                profTab.initialise(this, sheet, connection);
+                profTab.initialise(this, sheet);
                 break;
             case 2:
-                attributesTab.initialise(this, sheet, connection);
+                attributesTab.initialise(this, sheet);
                 break;
             case 3:
-                fateTab.initialise(this, sheet, connection);
+                fateTab.initialise(this, sheet);
                 break;
             case 4:
-                raceSkillTab.initialise(this, sheet, connection);
+                raceSkillTab.initialise(this, sheet);
                 break;
             case 5:
-                profSkillTab.initialise(this, sheet, connection);
+                profSkillTab.initialise(this, sheet);
                 break;
             default:
                 break;
         }
     }
     public void export() {
-        frame.setContentPane(new CharacterSheetBrowser(frame, sheet, previousScreen, connection).mainPanel);
+        frame.setContentPane(new CharacterSheetBrowser(frame, sheet, parent, connection).mainPanel);
         frame.validate();
     }
     private void createUIComponents() {
@@ -109,7 +110,6 @@ public class CharacterGen {
         Race race = Race.getRandomRace(connection).getValue();
         return race.getRndSubrace();
     }
-
     public static Map<Integer, Attribute> randomAttributeAdvances(Profession profession, Map<Integer, Attribute> startAttributes, int maxPoints) {
         Map<Integer, Attribute> attributes = new ConcurrentHashMap<>(startAttributes);
         List<Attribute> profAttributes = profession.getAttributesList(attributes);
@@ -167,5 +167,14 @@ public class CharacterGen {
         return returns;
     }
 
-
+    @Override
+    public Connection getConnection() {
+        if (connection == null) {
+            connection = parent.getConnection();
+        }
+        return connection;
+    }
+    public JFrame getFrame() {
+        return frame;
+    }
 }

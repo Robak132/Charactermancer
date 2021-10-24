@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 import org.apache.logging.log4j.LogManager;
 import sheetbrowser.CharacterSheetBrowser;
 
-public class Main {
+public class Main implements DatabaseConnection {
     private static JFrame frame;
     public JPanel mainPanel;
 
@@ -47,7 +47,7 @@ public class Main {
         comboBox1.addItem(new ImageIcon("src/resources/images/eng.gif"));
         comboBox1.addItem(new ImageIcon("src/resources/images/pl.gif"));
         createcharButton.addActionListener(e -> {
-            frame.setContentPane(new CharacterGen(frame, this, connection).mainPanel);
+            frame.setContentPane(new CharacterGen(frame, this).mainPanel);
             frame.validate();
         });
         createcharButton.setMnemonic(KeyEvent.VK_1);
@@ -70,5 +70,8 @@ public class Main {
                 }
             }
         });
+    }
+    public Connection getConnection() {
+        return connection;
     }
 }

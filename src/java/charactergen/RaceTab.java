@@ -9,13 +9,15 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import main.CharacterSheet;
 import main.Connection;
+import main.DatabaseConnection;
 import mappings.Race;
 import mappings.Subrace;
 import org.apache.commons.collections4.KeyValue;
 
-class RaceTab {
+class RaceTab implements DatabaseConnection {
     private CharacterSheet sheet;
     private CharacterGen parent;
+    private Connection connection;
 
     private JButton raceRollButton;
     private JIntegerField raceRollResult;
@@ -34,13 +36,14 @@ class RaceTab {
     public RaceTab() {
         // Needed for GUI Designer
     }
-    public RaceTab(CharacterGen parent, CharacterSheet sheet, Connection connection) {
-        initialise(parent, sheet, connection);
+    public RaceTab(CharacterGen parent, CharacterSheet sheet) {
+        initialise(parent, sheet);
     }
 
-    public void initialise(CharacterGen parent, CharacterSheet sheet, Connection connection) {
+    public void initialise(CharacterGen parent, CharacterSheet sheet) {
         this.sheet = sheet;
         this.parent = parent;
+        this.connection = getConnection();
 
         raceRollButton.addActionListener(e -> {
             KeyValue<Integer, Race> result = Race.getRandomRace(connection);
@@ -128,5 +131,13 @@ class RaceTab {
         raceOption1Button.setEnabled(true);
         raceOption2Combo.setEnabled(true);
         raceOption2Button.setEnabled(true);
+    }
+
+    @Override
+    public Connection getConnection() {
+        if (connection == null) {
+            connection = parent.getConnection();
+        }
+        return connection;
     }
 }

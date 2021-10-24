@@ -11,23 +11,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import main.CharacterSheet;
 import main.Connection;
+import main.DatabaseConnection;
 import mappings.Skill;
 import mappings.SkillSingle;
 import mappings.Talent;
 import mappings.TalentGroup;
 import mappings.TalentSingle;
+import sheetbrowser.CharacterSheetBrowser;
 import tools.AbstractActionHelper;
 import tools.Dice;
 import tools.SkillTab;
 import tools.TalentTab;
 
-class ProfSkillTab implements SkillTab, TalentTab {
+class ProfSkillTab implements DatabaseConnection, SkillTab, TalentTab {
+    private JFrame frame;
     private CharacterSheet sheet;
+    private CharacterGen parent;
     private Connection connection;
     private final PropertyChangeSupport observersManager = new PropertyChangeSupport(this);
 
@@ -49,13 +54,15 @@ class ProfSkillTab implements SkillTab, TalentTab {
     public ProfSkillTab() {
         // Needed for GUI Designer
     }
-    public ProfSkillTab(CharacterGen parent, CharacterSheet sheet, Connection connection) {
-        initialise(parent, sheet, connection);
+    public ProfSkillTab(CharacterGen parent, CharacterSheet sheet) {
+        initialise(parent, sheet);
     }
 
-    public void initialise(CharacterGen parent, CharacterSheet sheet, Connection connection) {
+    public void initialise(CharacterGen parent, CharacterSheet sheet) {
         this.sheet = sheet;
-        this.connection = connection;
+        this.parent = parent;
+        this.frame = parent.getFrame();
+        this.connection = getConnection();
 
         observersManager.addPropertyChangeListener("points", remainField);
 
@@ -76,6 +83,9 @@ class ProfSkillTab implements SkillTab, TalentTab {
             visibleSkills.forEach(sheet::addSkill);
             visibleTalents.forEach(sheet::addTalent);
             sheet.saveJSON("src/resources/test.json");
+
+            frame.setContentPane(new CharacterSheetBrowser(frame, sheet, parent.parent, connection).mainPanel);
+            frame.validate();
         });
     }
 
@@ -149,4 +159,11 @@ class ProfSkillTab implements SkillTab, TalentTab {
         remainField = new JIntegerField(40, "%d/40");
     }
 
+    @Override
+    public Connection getConnection() {
+        if (connection == null) {
+            connection = parent.getConnection();
+        }
+        return connection;
+    }
 }

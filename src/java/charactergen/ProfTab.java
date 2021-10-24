@@ -10,14 +10,16 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import main.CharacterSheet;
 import main.Connection;
+import main.DatabaseConnection;
 import mappings.Profession;
 import mappings.ProfessionCareer;
 import org.apache.commons.collections4.KeyValue;
 import org.apache.logging.log4j.LogManager;
 
-class ProfTab {
+class ProfTab implements DatabaseConnection {
     private CharacterSheet sheet;
     private CharacterGen parent;
+    private Connection connection;
 
     private JPanel mainPanel;
     private JButton profOKButton;
@@ -50,13 +52,15 @@ class ProfTab {
     public ProfTab() {
         // Needed for GUI Designer
     }
-    public ProfTab(CharacterGen parent, CharacterSheet sheet, Connection connection) {
-        initialise(parent, sheet, connection);
+    public ProfTab(CharacterGen parent, CharacterSheet sheet) {
+        initialise(parent, sheet);
     }
 
-    public void initialise(CharacterGen parent, CharacterSheet sheet, Connection connection) {
+    public void initialise(CharacterGen parent, CharacterSheet sheet) {
         this.sheet = sheet;
         this.parent = parent;
+        this.connection = getConnection();
+
         profOption4b.addItems(sheet.getRace().getRaceCareers());
         profOption4b.setListRenderer(ProfessionCareer::getName);
 
@@ -150,5 +154,13 @@ class ProfTab {
         profOption4b.setLocked(true);
 
         parent.moveToNextTab();
+    }
+
+    @Override
+    public Connection getConnection() {
+        if (connection == null) {
+            connection = parent.getConnection();
+        }
+        return connection;
     }
 }

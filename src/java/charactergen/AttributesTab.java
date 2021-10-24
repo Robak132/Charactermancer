@@ -19,6 +19,7 @@ import tools.MouseClickedAdapter;
 
 class AttributesTab {
     private CharacterSheet sheet;
+    private Connection connection;
 
     private JPanel mainPanel;
     private GridPanel attrAttributesTable;
@@ -40,12 +41,14 @@ class AttributesTab {
     public AttributesTab() {
         // Needed for GUI Designer
     }
-    public AttributesTab(CharacterGen parent, CharacterSheet sheet, Connection connection) {
-        initialise(parent, sheet, connection);
+    public AttributesTab(CharacterGen parent, CharacterSheet sheet) {
+        initialise(parent, sheet);
     }
 
-    public void initialise(CharacterGen parent, CharacterSheet sheet, Connection connection) {
+    public void initialise(CharacterGen parent, CharacterSheet sheet) {
         this.sheet = sheet;
+        this.connection = parent.getConnection();
+
         attributes = sheet.getRace().getAttributes(connection, 0);
         createTable();
 

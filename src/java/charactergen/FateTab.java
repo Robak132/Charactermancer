@@ -15,7 +15,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SpinnerNumberModel;
 import main.CharacterSheet;
-import main.Connection;
 import mappings.Attribute;
 import tools.AbstractActionHelper;
 
@@ -37,11 +36,11 @@ class FateTab {
     public FateTab() {
         // Needed for GUI Designer
     }
-    public FateTab(CharacterGen parent, CharacterSheet sheet, Connection connection) {
-        initialise(parent, sheet, connection);
+    public FateTab(CharacterGen parent, CharacterSheet sheet) {
+        initialise(parent, sheet);
     }
 
-    public void initialise(CharacterGen parent, CharacterSheet sheet, Connection connection) {
+    public void initialise(CharacterGen parent, CharacterSheet sheet) {
         this.sheet = sheet;
         createTable();
 

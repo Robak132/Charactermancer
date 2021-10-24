@@ -68,13 +68,13 @@ class RaceSkillTab implements SkillTab, TalentTab {
     public RaceSkillTab() {
         // Needed for GUI Designer
     }
-    public RaceSkillTab(CharacterGen parent, CharacterSheet sheet, Connection connection) {
-        initialise(parent, sheet, connection);
+    public RaceSkillTab(CharacterGen parent, CharacterSheet sheet) {
+        initialise(parent, sheet);
     }
 
-    public void initialise(CharacterGen parent, CharacterSheet sheet, Connection connection) {
+    public void initialise(CharacterGen parent, CharacterSheet sheet) {
         this.sheet = sheet;
-        this.connection = connection;
+        this.connection = parent.getConnection();
 
         raceskillPoints = new ConcurrentHashMap<>(Map.of(0, 0, 3, 3, 5, 3));
         observersManager.addPropertyChangeListener("points3", points3Field);
