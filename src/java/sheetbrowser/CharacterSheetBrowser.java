@@ -42,10 +42,10 @@ import mappings.Subrace;
 import mappings.Talent;
 import mappings.TalentSingle;
 import org.json.JSONException;
-import tools.TalentTab;
 import tools.ColorPalette;
 import tools.Dice;
 import tools.MultiLineTooltip;
+import tools.TalentTab;
 
 public class CharacterSheetBrowser implements TalentTab {
     public JPanel mainPanel;
@@ -73,6 +73,10 @@ public class CharacterSheetBrowser implements TalentTab {
     private CharacterSheet sheet;
 
     private final List<SkillSingle> skillsList;
+    private List<Integer> advancesCostList = new ArrayList<>();
+
+    private int usedExp;
+    private int freeExp;
 
     public CharacterSheetBrowser(JFrame _frame, CharacterSheet _sheet, Main _screen, Connection _connection) {
         this.frame = _frame;
@@ -229,7 +233,9 @@ public class CharacterSheetBrowser implements TalentTab {
         talentsPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);
     }
     private void createExpPanel() {
-        int usedExp = sheet.getUsedExp();
+        usedExp = sheet.getUsedExp();
+        freeExp = sheet.getEarnedExp() - usedExp;
+
         usedExpField.setValue(usedExp);
         earnedExpField.setValue(sheet.getEarnedExp());
         freeExpField.setValue(sheet.getEarnedExp() - usedExp);
@@ -238,29 +244,33 @@ public class CharacterSheetBrowser implements TalentTab {
         skills.sort(Comparator.comparing(Skill::isAdv).thenComparing(Skill::getName));
 
         int row=0;
+        int index=0;
         for (SkillSingle skill : skills) {
             int column = 0;
             if (skill.isAdvanceable()) {
                 skillsAdvancesPanel.createTextField(row, column++, skill.getName(), GridPanel.STANDARD_TEXT_FIELD, false);
                 skillsAdvancesPanel.createTextField(row, column++, skill.getAttrName(), GridPanel.STANDARD_INTEGER_FIELD, false);
-                SpinnerNumberModel model = new SpinnerNumberModel(skill.getAdvValue(),skill.getAdvValue(),99,1);
+                SpinnerNumberModel model = new SpinnerNumberModel(skill.getAdvValue(), skill.getAdvValue(), 99, 1);
                 AdvancedSpinner spinner = skillsAdvancesPanel.createAdvancedSpinner(row, column++, model, GridPanel.STANDARD_INTEGER_FIELD, true);
-                JIntegerField totalField = skillsAdvancesPanel.createIntegerField(row++, column++, skill.getTotalValue(), GridPanel.STANDARD_INTEGER_FIELD, false);
+                JIntegerField totalField = skillsAdvancesPanel.createIntegerField(row++, column++, skill.getTotalValue(),
+                        GridPanel.STANDARD_INTEGER_FIELD, false);
                 totalField.setFont(new Font(totalField.getFont().getName(), Font.ITALIC + Font.BOLD, totalField.getFont().getSize() + 2));
 
+                advancesCostList.add(sheet.getAdvancesCost(skill.getAdvValue(), 10));
+
+                int finalIndex = index;
                 spinner.addChangeListener(e -> {
-                    if ((int) model.getValue()==0) {
+                    if ((int) model.getValue() == 0) {
                         totalField.setValue(0);
                     } else {
-                        totalField.setValue(skill.getBaseSkill().getValue() + (int)model.getValue());
+                        totalField.setValue(skill.getBaseSkill().getValue() + (int) model.getValue());
                     }
-                    int last = skill.getAdvValue();
                     int now = (int) model.getValue();
-                    int difference = sheet.getAdvancesCost(last, 10) - sheet.getAdvancesCost(now, 10);
-                    usedExpField.setValue(usedExpField.getValue() - difference);
-                    freeExpField.setValue(freeExpField.getValue() + difference);
-                    skill.setAdvValue(now);
+                    int difference = sheet.getAdvancesCost(now, 10) - advancesCostList.get(finalIndex);
+                    usedExpField.setValue(usedExp+difference);
+                    freeExpField.setValue(freeExp-difference);
                 });
+                index++;
             }
         }
         skillsAdvancesPanel.build(GridPanel.ALIGNMENT_HORIZONTAL);

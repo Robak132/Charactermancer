@@ -196,7 +196,7 @@ public class CharacterSheet {
     public JSONObject toJSON() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("exp", earnedExp);
-        jsonObject.put("free_exp", getUsedExp());
+        jsonObject.put("free_exp", freeExp);
         jsonObject.put("player", true);
 
         JSONObject subraceObject = new JSONObject();
